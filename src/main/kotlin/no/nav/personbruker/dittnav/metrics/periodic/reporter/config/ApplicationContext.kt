@@ -2,15 +2,14 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.buildDBMetricsProbe
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.buildDbEventCountingMetricsProbe
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.buildEventMetricsProbe
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.buildTopicMetricsProbe
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.CacheEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.KafkaEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.KafkaTopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.closeConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.PeriodicMetricsSubmitter
@@ -24,12 +23,8 @@ class ApplicationContext {
     val environment = Environment()
     val database: Database = PostgresDatabase(environment)
 
-    val eventMetricsProbe = buildEventMetricsProbe(environment, database)
-    val dbMetricsProbe = buildDBMetricsProbe(environment, database)
-
     val healthService = HealthService(this)
 
-    val kafkaEventCounterService = KafkaEventCounterService(environment)
     val kafkaTopicEventCounterService = KafkaTopicEventCounterService(environment)
 
     val metricsRepository = MetricsRepository(database)
@@ -50,6 +45,12 @@ class ApplicationContext {
             oppgaveCountConsumer = oppgaveCountConsumer,
             doneCountConsumer = doneCountConsumer
     )
+    val kafkaEventCounterService = KafkaEventCounterService(
+            beskjedCountConsumer = beskjedCountConsumer,
+            innboksCountConsumer = innboksCountConsumer,
+            oppgaveCountConsumer = oppgaveCountConsumer,
+            doneCountConsumer = doneCountConsumer
+    )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()
 
@@ -64,5 +65,12 @@ class ApplicationContext {
 
     private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
             PeriodicMetricsSubmitter(dbEventCounterService, topicEventCounterService)
+
+    fun closeAllConsumers() {
+        closeConsumer(beskjedCountConsumer)
+        closeConsumer(innboksCountConsumer)
+        closeConsumer(oppgaveCountConsumer)
+        closeConsumer(doneCountConsumer)
+    }
 
 }

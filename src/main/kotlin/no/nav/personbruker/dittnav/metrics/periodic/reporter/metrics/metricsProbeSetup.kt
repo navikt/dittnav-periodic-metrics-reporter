@@ -2,25 +2,10 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsProbe
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.InfluxMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.SensuClient
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsProbe
-
-fun buildEventMetricsProbe(environment: Environment, database: Database): EventMetricsProbe {
-    val metricsReporter = resolveMetricsReporter(environment)
-    val nameResolver = ProducerNameResolver(database)
-    val nameScrubber = ProducerNameScrubber(nameResolver)
-    return EventMetricsProbe(metricsReporter, nameScrubber)
-}
-
-fun buildDBMetricsProbe(environment: Environment, database: Database): DBMetricsProbe {
-    val metricsReporter = resolveMetricsReporter(environment)
-    val nameResolver = ProducerNameResolver(database)
-    val nameScrubber = ProducerNameScrubber(nameResolver)
-    return DBMetricsProbe(metricsReporter, nameScrubber)
-}
 
 fun buildTopicMetricsProbe(environment: Environment, database: Database): TopicMetricsProbe {
     val metricsReporter = resolveMetricsReporter(environment)

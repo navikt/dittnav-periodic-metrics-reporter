@@ -58,7 +58,7 @@ class TopicEventCounterServiceIT {
         metricsSession.getTotalNumber() `should be equal to` events.size * 3
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
 
-        service.closeAllConsumers()
+        beskjedCountConsumer.close()
     }
 
     @Test
@@ -75,7 +75,7 @@ class TopicEventCounterServiceIT {
 
         `tell og verifiser korrekte antall eventer flere ganger paa rad`(service, metricsSession)
 
-        service.closeAllConsumers()
+        beskjedCountConsumer.close()
     }
 
     private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(service: TopicEventCounterService,
