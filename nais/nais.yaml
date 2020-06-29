@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: dittnav-event-aggregator
+  name: dittnav-periodic-metrics-reporter
   namespace: {{namespace}}
   labels:
     team: personbruker
@@ -28,7 +28,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/{{cluster}}/sbs/dittnav-event-aggregator/{{namespace}}
+      - kvPath: /kv/{{cluster}}/sbs/dittnav-periodic-metrics-reporter/{{namespace}}
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: /serviceuser/data/{{environment}}/srvdn-e-aggregator
         mountPath: /secret/serviceuser

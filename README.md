@@ -1,18 +1,12 @@
-# DittNAV event aggregator
+# DittNAV periodic metrics repotert
 
-Microservice som brukes for å lese inn eventer fra DittNAV sine kafka-topics, og lagrer disse i DittNAV sin 
-event-cache (database). DittNAV-api henter ut eventer per bruker fra denne event-cache-en for å serve 
-DittNAV (frontend).
+Denne appen samker periodisk inn metrikker for DittNAV sine apper, og tilgjengeliggjør disse via Influx og Prometheus.
 
 # Kom i gang
-1. Bygge dittnav-event-aggregator:
+1. Bygge dittnav-periodic-metrics-reporter:
     * bygge og kjøre enhetstester: `gradle clean test`
     * bygge og kjøre integrasjonstester: `gradle clean build`
-2. Start lokal instans av Kafka og Postgres ved å kjøre `docker-compose up -d`
-3. Start konsumenten ved å kjøre kommandoen `gradle runServer`
-
-# Feilsøking
-For å være sikker på at man får en ny tom database og tomme kafka-topics kan man kjøre kommandoen: `docker-compose down -v`
+2. Start appen ved å kjøre kommandoen `gradle runServer`
 
 # Henvendelser
 
