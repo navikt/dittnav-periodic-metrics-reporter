@@ -1,10 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.DBMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.DB_EVENTS_CACHED
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_EVENTS_CACHED
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

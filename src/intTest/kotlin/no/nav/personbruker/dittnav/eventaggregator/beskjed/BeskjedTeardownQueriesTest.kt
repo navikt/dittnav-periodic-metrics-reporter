@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.Test

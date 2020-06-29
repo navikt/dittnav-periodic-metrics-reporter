@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateFodselsnummer
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateNonNullFieldMaxLength
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateFodselsnummer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateNonNullFieldMaxLength
 import java.time.LocalDateTime
 
 data class Done(

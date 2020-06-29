@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.consumer
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.consumer
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -7,19 +7,19 @@ import no.nav.brukernotifikasjon.schemas.Innboks
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.common.KafkaEnvironment
-import no.nav.personbruker.dittnav.eventaggregator.common.SimpleEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaTestUtil
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.Consumer
-import no.nav.personbruker.dittnav.eventaggregator.config.Environment
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.Kafka
-import no.nav.personbruker.dittnav.eventaggregator.config.KafkaConsumerSetup.setupConsumerForTheBeskjedTopic
-import no.nav.personbruker.dittnav.eventaggregator.config.KafkaConsumerSetup.setupConsumerForTheInnboksTopic
-import no.nav.personbruker.dittnav.eventaggregator.config.KafkaConsumerSetup.setupConsumerForTheOppgaveTopic
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.innboks.AvroInnboksObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.AvroOppgaveObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.SimpleEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupConsumerForTheBeskjedTopic
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupConsumerForTheInnboksTopic
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupConsumerForTheOppgaveTopic
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboksObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.AvroOppgaveObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.AfterAll

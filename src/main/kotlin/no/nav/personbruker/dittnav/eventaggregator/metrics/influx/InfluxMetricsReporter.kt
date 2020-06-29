@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.influx
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx
 
-import no.nav.personbruker.dittnav.eventaggregator.config.Environment
-import no.nav.personbruker.dittnav.eventaggregator.metrics.MetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
 import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit

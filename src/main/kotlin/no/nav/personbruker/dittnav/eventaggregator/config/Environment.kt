@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.config
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS"),
                        val schemaRegistryUrl: String = getEnvVar("KAFKA_SCHEMAREGISTRY_SERVERS"),

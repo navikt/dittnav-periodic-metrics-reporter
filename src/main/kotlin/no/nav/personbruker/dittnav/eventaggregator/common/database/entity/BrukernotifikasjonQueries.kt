@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.entity
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.list
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.list
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import java.sql.Array
 import java.sql.Connection
 import java.sql.ResultSet

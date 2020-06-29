@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.innboks
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks
 
 import java.sql.Connection
 

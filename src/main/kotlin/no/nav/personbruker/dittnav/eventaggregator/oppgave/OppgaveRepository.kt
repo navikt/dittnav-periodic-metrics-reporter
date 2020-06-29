@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventaggregator.oppgave
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonRepository
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.persistEachIndividuallyAndAggregateResults
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonRepository
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.persistEachIndividuallyAndAggregateResults
 import org.slf4j.LoggerFactory
 
 class OppgaveRepository(private val database: Database) : BrukernotifikasjonRepository<Oppgave> {

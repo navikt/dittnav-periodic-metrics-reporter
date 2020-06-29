@@ -1,17 +1,17 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.consumer
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.consumer
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.KafkaEnvironment
-import no.nav.personbruker.dittnav.eventaggregator.common.SimpleEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaTestUtil
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.Consumer
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.Kafka
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.SimpleEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.shouldEqualTo

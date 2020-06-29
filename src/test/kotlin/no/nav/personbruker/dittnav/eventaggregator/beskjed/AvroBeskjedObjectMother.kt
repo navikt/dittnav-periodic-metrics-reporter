@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import java.time.Instant

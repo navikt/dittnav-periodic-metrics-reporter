@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 
 class EventMetricsSession(val eventType: EventType) {
     private val numberProcessedByProducer = HashMap<String, Int>()

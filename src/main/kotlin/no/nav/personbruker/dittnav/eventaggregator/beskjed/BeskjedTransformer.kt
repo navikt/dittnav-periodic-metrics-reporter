@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.timestampToUTCDateOrNull
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.timestampToUTCDateOrNull
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

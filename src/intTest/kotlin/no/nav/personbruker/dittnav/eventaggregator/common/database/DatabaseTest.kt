@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database
 
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.AggregatorBatchUpdateException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.AggregatorBatchUpdateException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.RetriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UnretriableDatabaseException
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking

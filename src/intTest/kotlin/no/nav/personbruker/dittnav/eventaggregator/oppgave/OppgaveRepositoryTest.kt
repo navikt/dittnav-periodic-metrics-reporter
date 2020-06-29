@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.oppgave
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
 import org.amshove.kluent.`should contain same`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

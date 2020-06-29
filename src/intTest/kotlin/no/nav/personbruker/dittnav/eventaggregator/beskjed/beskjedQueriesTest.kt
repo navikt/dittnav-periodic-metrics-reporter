@@ -1,11 +1,11 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.countTotalNumberOfEvents
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.countTotalNumberOfEventsByActiveStatus
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.done.DoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.countTotalNumberOfEvents
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.countTotalNumberOfEventsByActiveStatus
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.DoneObjectMother
 import org.amshove.kluent.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test

@@ -1,14 +1,14 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.foundRecords
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.resetTheGroupIdsOffsetToZero
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.isOtherEnvironmentThanProd
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.closeConsumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.closeConsumer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer

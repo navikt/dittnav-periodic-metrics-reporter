@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db.count
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

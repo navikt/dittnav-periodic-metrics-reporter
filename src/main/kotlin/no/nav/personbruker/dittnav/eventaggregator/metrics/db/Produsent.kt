@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db
 
 data class Produsent(
         val systembruker: String,

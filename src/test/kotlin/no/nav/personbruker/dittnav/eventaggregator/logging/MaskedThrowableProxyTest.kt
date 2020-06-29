@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.logging
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.logging
 
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxyUtil
-import no.nav.personbruker.dittnav.eventaggregator.logging.MaskedThrowableProxy.Companion.mask
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.logging.MaskedThrowableProxy.Companion.mask
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`
 import org.junit.jupiter.api.Test

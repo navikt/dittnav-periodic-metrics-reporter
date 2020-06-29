@@ -1,16 +1,16 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.emptyPersistResult
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UntransformableRecordException
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.BrukernotifikasjonObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.ConsumerRecordsObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.ConsumerRecordsObjectMother.createMatchingRecords
-import no.nav.personbruker.dittnav.eventaggregator.done.schema.AvroDoneObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.metrics.EventMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.EventMetricsSession
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.emptyPersistResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UntransformableRecordException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.BrukernotifikasjonObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother.createMatchingRecords
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.schema.AvroDoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.EventMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.EventMetricsSession
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking

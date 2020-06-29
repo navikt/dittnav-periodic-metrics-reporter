@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.innboks
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks
 
 import no.nav.brukernotifikasjon.schemas.Innboks
 import java.time.Instant

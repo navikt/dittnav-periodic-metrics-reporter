@@ -1,18 +1,18 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.common.SimpleEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.common.ThrowingEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaTestUtil
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UnretriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.Kafka
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.SimpleEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.ThrowingEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.RetriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.apache.kafka.clients.consumer.ConsumerConfig

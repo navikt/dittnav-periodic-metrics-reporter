@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database
 
 class PersistActionResult private constructor(
         val entityId: Int, val wasSuccessful: Boolean, val persistOutcome: PersistFailureReason) {

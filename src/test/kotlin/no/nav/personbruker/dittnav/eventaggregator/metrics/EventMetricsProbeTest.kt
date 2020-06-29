@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.KAFKA_EVENTS_BATCH
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.KAFKA_EVENTS_FAILED
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.KAFKA_EVENTS_PROCESSED
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.KAFKA_EVENTS_SEEN
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.KAFKA_EVENTS_BATCH
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.KAFKA_EVENTS_FAILED
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.KAFKA_EVENTS_PROCESSED
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.KAFKA_EVENTS_SEEN
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

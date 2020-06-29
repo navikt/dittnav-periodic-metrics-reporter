@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.config
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.brukernotifikasjon.schemas.*
-import no.nav.personbruker.dittnav.eventaggregator.common.EventBatchProcessorService
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.Consumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.EventBatchProcessorService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

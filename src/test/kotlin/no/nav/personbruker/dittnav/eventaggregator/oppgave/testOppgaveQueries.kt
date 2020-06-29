@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.oppgave
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave
 
 import java.sql.Connection
 

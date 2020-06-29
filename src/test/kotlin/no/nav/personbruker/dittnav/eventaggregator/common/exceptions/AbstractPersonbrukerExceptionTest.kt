@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.exceptions
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions
 
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`

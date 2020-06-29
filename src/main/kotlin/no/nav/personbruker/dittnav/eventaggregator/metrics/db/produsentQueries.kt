@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.list
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.list
 import java.sql.Connection
 import java.sql.ResultSet
 

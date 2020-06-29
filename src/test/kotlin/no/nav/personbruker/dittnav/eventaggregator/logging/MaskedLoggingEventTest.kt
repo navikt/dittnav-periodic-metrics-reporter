@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.logging
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.logging
 
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should equal`

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.config
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStarted
@@ -8,13 +8,13 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.routing.routing
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.done.waitTableApi
-import no.nav.personbruker.dittnav.eventaggregator.health.healthApi
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.count.cacheCountingApi
-import no.nav.personbruker.dittnav.eventaggregator.metrics.eventCountingApi
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.kafkaCountingApi
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.pollingApi
-import no.nav.personbruker.dittnav.eventaggregator.metrics.submitter.metricsSubmitterApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.waitTableApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.healthApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.cacheCountingApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.eventCountingApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.kafkaCountingApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.pollingApi
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.metricsSubmitterApi
 
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
     DefaultExports.initialize()

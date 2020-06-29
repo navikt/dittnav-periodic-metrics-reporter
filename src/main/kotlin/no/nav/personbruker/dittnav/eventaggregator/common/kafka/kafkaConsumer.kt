@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import org.apache.kafka.clients.consumer.ConsumerRecords

@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.getProdusentnavn
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.getProdusentnavn
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.Exception

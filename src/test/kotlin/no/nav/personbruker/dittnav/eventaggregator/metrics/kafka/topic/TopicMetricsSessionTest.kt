@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.UniqueKafkaEventIdentifier
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 

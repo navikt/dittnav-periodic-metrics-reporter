@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.count.DbEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic.TopicEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.metrics.submitter.PeriodicMetricsSubmitter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.PeriodicMetricsSubmitter
 import org.junit.jupiter.api.Test
 
 internal class PeriodicMetricsSubmitterTest {

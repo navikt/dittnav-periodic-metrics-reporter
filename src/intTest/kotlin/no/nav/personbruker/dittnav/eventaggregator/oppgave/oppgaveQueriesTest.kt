@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.oppgave
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
-import no.nav.personbruker.dittnav.eventaggregator.done.DoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.DoneObjectMother
 import org.amshove.kluent.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test

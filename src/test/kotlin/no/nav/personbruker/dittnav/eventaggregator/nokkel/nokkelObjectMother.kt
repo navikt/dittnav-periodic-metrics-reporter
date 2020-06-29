@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.nokkel
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
 

@@ -1,10 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.objectmother
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother
 
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.Beskjed
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.innboks.Innboks
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.Oppgave
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.Beskjed
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.Innboks
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.Oppgave
 
 object BrukernotifikasjonObjectMother {
 

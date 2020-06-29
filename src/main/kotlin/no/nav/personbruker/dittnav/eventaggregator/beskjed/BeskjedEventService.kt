@@ -1,31 +1,31 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.EventBatchProcessorService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonPersistingService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.FieldValidationException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.NokkelNullException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UntransformableRecordException
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.serializer.getNonNullKey
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType.BESKJED
-import no.nav.personbruker.dittnav.eventaggregator.metrics.EventMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.EventMetricsSession
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.EventBatchProcessorService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonPersistingService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.FieldValidationException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.NokkelNullException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UntransformableRecordException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.serializer.getNonNullKey
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType.BESKJED
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.EventMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.EventMetricsSession
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class BeskjedEventService(
-        private val persistingService: BrukernotifikasjonPersistingService<no.nav.personbruker.dittnav.eventaggregator.beskjed.Beskjed>,
+        private val persistingService: BrukernotifikasjonPersistingService<no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.Beskjed>,
         private val metricsProbe: EventMetricsProbe
 ) : EventBatchProcessorService<Beskjed> {
 
     private val log: Logger = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
     override suspend fun processEvents(events: ConsumerRecords<Nokkel, Beskjed>) {
-        val successfullyTransformedEvents = mutableListOf<no.nav.personbruker.dittnav.eventaggregator.beskjed.Beskjed>()
+        val successfullyTransformedEvents = mutableListOf<no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.Beskjed>()
         val problematicEvents = mutableListOf<ConsumerRecord<Nokkel, Beskjed>>()
 
         metricsProbe.runWithMetrics(eventType = BESKJED) {
@@ -61,7 +61,7 @@ class BeskjedEventService(
         kastExceptionHvisMislykkedeTransformasjoner(problematicEvents)
     }
 
-    private fun EventMetricsSession.countDuplicateKeyEvents(result: ListPersistActionResult<no.nav.personbruker.dittnav.eventaggregator.beskjed.Beskjed>) {
+    private fun EventMetricsSession.countDuplicateKeyEvents(result: ListPersistActionResult<no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.Beskjed>) {
         if (result.foundConflictingKeys()) {
 
             val constraintErrors = result.getConflictingEntities().size

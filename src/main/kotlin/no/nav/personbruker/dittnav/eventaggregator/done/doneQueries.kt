@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.*
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.*
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet

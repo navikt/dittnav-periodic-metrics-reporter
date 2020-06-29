@@ -1,22 +1,22 @@
-package no.nav.personbruker.dittnav.eventaggregator
+package no.nav.personbruker.dittnav.metrics.periodic.reporter
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.KafkaEnvironment
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.*
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonPersistingService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaTestUtil
-import no.nav.personbruker.dittnav.eventaggregator.common.kafka.Consumer
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.Kafka
-import no.nav.personbruker.dittnav.eventaggregator.metrics.EventMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.ProducerNameResolver
-import no.nav.personbruker.dittnav.eventaggregator.metrics.ProducerNameScrubber
-import no.nav.personbruker.dittnav.eventaggregator.metrics.StubMetricsReporter
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.*
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonPersistingService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.EventMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.StubMetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.shouldEqualTo
 import org.apache.kafka.clients.consumer.KafkaConsumer

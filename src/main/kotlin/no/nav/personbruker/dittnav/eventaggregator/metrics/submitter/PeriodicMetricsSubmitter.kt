@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.submitter
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.time.delay
-import no.nav.personbruker.dittnav.eventaggregator.done.PeriodicDoneEventWaitingTableProcessor
-import no.nav.personbruker.dittnav.eventaggregator.health.HealthStatus
-import no.nav.personbruker.dittnav.eventaggregator.health.Status
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.count.DbEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic.TopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.PeriodicDoneEventWaitingTableProcessor
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration

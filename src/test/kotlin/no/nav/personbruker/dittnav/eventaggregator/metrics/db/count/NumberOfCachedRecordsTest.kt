@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db.count
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

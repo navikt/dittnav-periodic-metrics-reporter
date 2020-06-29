@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db.count
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
-import no.nav.personbruker.dittnav.eventaggregator.config.Environment
-import no.nav.personbruker.dittnav.eventaggregator.config.isOtherEnvironmentThanProd
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
 import org.slf4j.LoggerFactory
 
 class CacheEventCounterService(val environment: Environment, val repository: MetricsRepository) {

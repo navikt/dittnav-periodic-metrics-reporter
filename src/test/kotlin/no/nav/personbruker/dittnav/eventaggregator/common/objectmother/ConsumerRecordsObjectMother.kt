@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.objectmother
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother
 
 import no.nav.brukernotifikasjon.schemas.*
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventaggregator.done.schema.AvroDoneObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.innboks.AvroInnboksObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.AvroOppgaveObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.schema.AvroDoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboksObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.AvroOppgaveObjectMother
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.common.TopicPartition

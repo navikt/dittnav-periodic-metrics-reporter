@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka
 
 import io.mockk.*
 import kotlinx.coroutines.CancellationException
@@ -6,12 +6,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.EventBatchProcessorService
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UnretriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UntransformableRecordException
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.ConsumerRecordsObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.health.Status
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.EventBatchProcessorService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.RetriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UntransformableRecordException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
 import org.amshove.kluent.`should equal`
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.DisconnectException
@@ -34,7 +34,7 @@ class ConsumerTest {
     }
 
     fun staticMocks() {
-        mockkStatic("no.nav.personbruker.dittnav.eventaggregator.common.kafka.KafkaConsumerKt")
+        mockkStatic("no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.KafkaConsumerKt")
     }
 
     @Test

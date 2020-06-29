@@ -1,10 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka.serializer
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.serializer
 
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import org.amshove.kluent.`should be null`
 import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Test

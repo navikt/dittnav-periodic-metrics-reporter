@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import org.slf4j.LoggerFactory
 

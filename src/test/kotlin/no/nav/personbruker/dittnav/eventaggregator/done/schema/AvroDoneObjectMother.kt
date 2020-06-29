@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.done.schema
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done.schema
 
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel

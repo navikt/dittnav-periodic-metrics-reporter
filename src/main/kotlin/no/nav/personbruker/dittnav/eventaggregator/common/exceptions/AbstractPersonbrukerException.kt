@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.exceptions
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions
 
 open class AbstractPersonbrukerException(message: String, cause: Throwable?) : Exception(message, cause) {
 

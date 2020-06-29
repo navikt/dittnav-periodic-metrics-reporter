@@ -1,14 +1,14 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka
 
 import kotlinx.coroutines.*
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.EventBatchProcessorService
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UnretriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UntransformableRecordException
-import no.nav.personbruker.dittnav.eventaggregator.health.HealthCheck
-import no.nav.personbruker.dittnav.eventaggregator.health.HealthStatus
-import no.nav.personbruker.dittnav.eventaggregator.health.Status
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.EventBatchProcessorService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.RetriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UntransformableRecordException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthCheck
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.errors.RetriableException

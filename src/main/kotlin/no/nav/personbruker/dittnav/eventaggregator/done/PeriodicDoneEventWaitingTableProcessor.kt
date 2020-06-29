@@ -1,13 +1,13 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.time.delay
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.UnretriableDatabaseException
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.health.HealthStatus
-import no.nav.personbruker.dittnav.eventaggregator.health.Status
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.DBMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.RetriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsProbe
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration

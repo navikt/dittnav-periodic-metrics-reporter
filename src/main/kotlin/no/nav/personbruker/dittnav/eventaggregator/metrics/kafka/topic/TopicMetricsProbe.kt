@@ -1,10 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.metrics.MetricsReporter
-import no.nav.personbruker.dittnav.eventaggregator.metrics.ProducerNameScrubber
-import no.nav.personbruker.dittnav.eventaggregator.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.*
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
 import org.slf4j.LoggerFactory
 
 class TopicMetricsProbe(private val metricsReporter: MetricsReporter,

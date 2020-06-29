@@ -1,13 +1,13 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.BrukernotifikasjonObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.DBMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.DBMetricsSession
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.BrukernotifikasjonObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsSession
 import org.junit.jupiter.api.Test
 
 internal class PeriodicDoneEventWaitingTableProcessorTest {

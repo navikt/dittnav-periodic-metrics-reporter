@@ -1,15 +1,15 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.AvroBeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaTestUtil
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.config.KafkaConsumerSetup.createCountConsumer
-import no.nav.personbruker.dittnav.eventaggregator.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldEqualTo
 import org.apache.avro.generic.GenericRecord

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
 import kotlinx.coroutines.withTimeoutOrNull

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.logging
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.logging
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.Appender

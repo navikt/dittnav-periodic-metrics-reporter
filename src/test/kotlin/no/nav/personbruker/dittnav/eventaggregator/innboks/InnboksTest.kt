@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.innboks
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks
 
-import no.nav.personbruker.dittnav.eventaggregator.common.`with message containing`
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.FieldValidationException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.FieldValidationException
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking

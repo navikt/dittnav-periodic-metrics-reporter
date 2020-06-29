@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka
 
 data class NumberOfKafkaRecords(val beskjed: Long = 0,
                                 val innboks: Long = 0,

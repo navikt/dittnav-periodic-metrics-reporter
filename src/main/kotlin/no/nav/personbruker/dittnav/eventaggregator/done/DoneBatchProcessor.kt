@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

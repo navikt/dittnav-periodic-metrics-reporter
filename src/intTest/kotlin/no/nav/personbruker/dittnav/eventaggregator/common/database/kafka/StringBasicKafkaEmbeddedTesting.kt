@@ -1,10 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka
 
 import kotlinx.coroutines.runBlocking
 import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaConsumerUtil
-import no.nav.personbruker.dittnav.eventaggregator.common.database.kafka.util.KafkaProducerUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaConsumerUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaProducerUtil
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.shouldContainAll
 import org.amshove.kluent.shouldEqualTo

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.config
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway

@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.config.Environment
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.DBMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.count.DbCountingMetricsProbe
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.InfluxMetricsReporter
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.SensuClient
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.topic.TopicMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.DBMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.InfluxMetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.SensuClient
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsProbe
 
 fun buildEventMetricsProbe(environment: Environment, database: Database): EventMetricsProbe {
     val metricsReporter = resolveMetricsReporter(environment)

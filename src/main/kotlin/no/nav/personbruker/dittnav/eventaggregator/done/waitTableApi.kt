@@ -1,11 +1,11 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import no.nav.personbruker.dittnav.eventaggregator.config.ApplicationContext
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ApplicationContext
 
 fun Routing.waitTableApi(appContext: ApplicationContext) {
 

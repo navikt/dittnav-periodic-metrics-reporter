@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.validation
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation
 
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.FieldValidationException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.FieldValidationException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

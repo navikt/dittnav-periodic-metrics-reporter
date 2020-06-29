@@ -1,11 +1,11 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db.count
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.metrics.MetricsReporter
-import no.nav.personbruker.dittnav.eventaggregator.metrics.ProducerNameScrubber
-import no.nav.personbruker.dittnav.eventaggregator.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE
-import no.nav.personbruker.dittnav.eventaggregator.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
 import org.slf4j.LoggerFactory
 
 class DbCountingMetricsProbe(private val metricsReporter: MetricsReporter,

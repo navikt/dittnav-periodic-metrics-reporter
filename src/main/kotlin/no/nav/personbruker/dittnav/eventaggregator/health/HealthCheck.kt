@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.health
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.health
 
 interface HealthCheck {
 

@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.count.CacheEventCounterService
-import no.nav.personbruker.dittnav.eventaggregator.metrics.kafka.KafkaEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.CacheEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.KafkaEventCounterService
 
 fun Routing.eventCountingApi(kafkaEventCounterService: KafkaEventCounterService, cacheEventCounterService: CacheEventCounterService) {
 

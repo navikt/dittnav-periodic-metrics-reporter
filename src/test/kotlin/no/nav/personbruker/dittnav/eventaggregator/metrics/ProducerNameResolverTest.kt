@@ -1,12 +1,12 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.metrics.db.Produsent
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.Produsent
 import org.amshove.kluent.`should be null`
 import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.AfterEach

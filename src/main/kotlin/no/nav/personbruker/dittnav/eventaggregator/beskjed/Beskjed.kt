@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateMaxLength
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateNonNullFieldMaxLength
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateSikkerhetsnivaa
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateMaxLength
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateNonNullFieldMaxLength
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateSikkerhetsnivaa
 import java.time.LocalDateTime
 
 data class Beskjed(

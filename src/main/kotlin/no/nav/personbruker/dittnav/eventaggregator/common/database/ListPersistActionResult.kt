@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistFailureReason.CONFLICTING_KEYS
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistFailureReason.NO_ERROR
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.AggregatorBatchUpdateException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistFailureReason.CONFLICTING_KEYS
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistFailureReason.NO_ERROR
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.AggregatorBatchUpdateException
 
 class ListPersistActionResult<T> private constructor(private val resultList: List<RowResult<T>>) {
 

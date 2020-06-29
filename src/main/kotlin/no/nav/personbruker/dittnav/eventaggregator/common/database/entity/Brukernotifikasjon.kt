@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.entity
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
-import no.nav.personbruker.dittnav.eventaggregator.done.Done
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.Done
 
 data class Brukernotifikasjon(
         val eventId: String,

@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 
 class DBMetricsSession(val eventType: EventType) {
 

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka.serializer
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.serializer
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
 import io.confluent.kafka.serializers.KafkaAvroDeserializer

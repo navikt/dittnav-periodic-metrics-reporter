@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventaggregator.beskjed
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonRepository
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.persistEachIndividuallyAndAggregateResults
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonRepository
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.persistEachIndividuallyAndAggregateResults
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

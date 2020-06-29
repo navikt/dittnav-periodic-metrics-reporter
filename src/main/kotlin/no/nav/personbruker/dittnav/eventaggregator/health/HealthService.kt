@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.health
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.health
 
-import no.nav.personbruker.dittnav.eventaggregator.config.ApplicationContext
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ApplicationContext
 
 class HealthService(private val applicationContext: ApplicationContext) {
 

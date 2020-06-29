@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.entity
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity
 
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.BrukernotifikasjonObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.done.DoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.BrukernotifikasjonObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.DoneObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 

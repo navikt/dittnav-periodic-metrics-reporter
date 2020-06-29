@@ -1,8 +1,8 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
 
 import io.prometheus.client.Counter
 import io.prometheus.client.Gauge
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 
 object PrometheusMetricsCollector {
 

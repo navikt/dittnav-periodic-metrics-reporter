@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.db.count
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldContainAll
 import org.junit.jupiter.api.Test

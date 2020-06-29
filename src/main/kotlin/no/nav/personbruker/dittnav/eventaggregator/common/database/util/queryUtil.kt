@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.util
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistFailureReason
-import no.nav.personbruker.dittnav.eventaggregator.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistFailureReason
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import java.sql.*
 import java.time.LocalDateTime
 

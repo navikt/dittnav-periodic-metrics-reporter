@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.innboks
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.validation.validateNonNullField
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateNonNullField
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

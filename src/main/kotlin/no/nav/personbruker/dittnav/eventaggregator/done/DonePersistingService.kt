@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonPersistingService
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonPersistingService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
 
 class DonePersistingService(private val doneRepository: DoneRepository) : BrukernotifikasjonPersistingService<Done>(doneRepository) {
 

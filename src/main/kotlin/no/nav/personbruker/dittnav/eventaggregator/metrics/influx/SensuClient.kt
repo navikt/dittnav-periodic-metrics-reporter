@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.influx
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

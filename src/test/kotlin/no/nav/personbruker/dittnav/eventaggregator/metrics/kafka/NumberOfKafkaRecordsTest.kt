@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.kafka
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka
 
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

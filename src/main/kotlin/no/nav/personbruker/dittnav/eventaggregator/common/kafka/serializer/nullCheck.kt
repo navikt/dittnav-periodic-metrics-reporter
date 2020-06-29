@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.kafka.serializer
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.serializer
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.NokkelNullException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.NokkelNullException
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
 fun <T> ConsumerRecord<Nokkel, T>.getNonNullKey(): Nokkel {

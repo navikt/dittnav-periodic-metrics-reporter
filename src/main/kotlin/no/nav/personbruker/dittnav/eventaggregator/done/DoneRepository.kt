@@ -1,14 +1,14 @@
-package no.nav.personbruker.dittnav.eventaggregator.done
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.setBeskjederAktivflagg
-import no.nav.personbruker.dittnav.eventaggregator.common.database.BrukernotifikasjonRepository
-import no.nav.personbruker.dittnav.eventaggregator.common.database.Database
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventaggregator.common.database.entity.getBrukernotifikasjonFromViewForEventIds
-import no.nav.personbruker.dittnav.eventaggregator.common.database.util.persistEachIndividuallyAndAggregateResults
-import no.nav.personbruker.dittnav.eventaggregator.innboks.setInnboksEventerAktivFlag
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.setOppgaverAktivFlag
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.setBeskjederAktivflagg
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.BrukernotifikasjonRepository
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.getBrukernotifikasjonFromViewForEventIds
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.persistEachIndividuallyAndAggregateResults
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.setInnboksEventerAktivFlag
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.setOppgaverAktivFlag
 
 class DoneRepository(private val database: Database) : BrukernotifikasjonRepository<Done> {
 

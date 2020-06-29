@@ -1,7 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.common
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common
 
-import no.nav.personbruker.dittnav.eventaggregator.common.database.ListPersistActionResult
-import no.nav.personbruker.dittnav.eventaggregator.common.database.PersistFailureReason
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ListPersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistFailureReason
 
 fun <T> successfulEvents(events: List<T>): ListPersistActionResult<T> {
     return events.map{ event ->

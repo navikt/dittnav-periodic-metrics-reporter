@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventaggregator.metrics.influx
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx
 
 import org.influxdb.dto.Point
 

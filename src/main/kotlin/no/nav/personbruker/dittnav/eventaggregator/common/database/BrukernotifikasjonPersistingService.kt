@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database
 
-import no.nav.personbruker.dittnav.eventaggregator.common.exceptions.AggregatorBatchUpdateException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.AggregatorBatchUpdateException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

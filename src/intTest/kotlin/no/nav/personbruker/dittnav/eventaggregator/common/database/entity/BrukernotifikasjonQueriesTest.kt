@@ -1,17 +1,17 @@
-package no.nav.personbruker.dittnav.eventaggregator.common.database.entity
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.BeskjedObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventaggregator.beskjed.deleteAllBeskjed
-import no.nav.personbruker.dittnav.eventaggregator.common.database.H2Database
-import no.nav.personbruker.dittnav.eventaggregator.common.objectmother.BrukernotifikasjonObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.innboks.InnboksObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.innboks.createInnboks
-import no.nav.personbruker.dittnav.eventaggregator.innboks.deleteAllInnboks
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.OppgaveObjectMother
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.createOppgave
-import no.nav.personbruker.dittnav.eventaggregator.oppgave.deleteAllOppgave
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.BeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.createBeskjed
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.deleteAllBeskjed
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.BrukernotifikasjonObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.InnboksObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.createInnboks
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.deleteAllInnboks
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.OppgaveObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.createOppgave
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.deleteAllOppgave
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.AfterAll
