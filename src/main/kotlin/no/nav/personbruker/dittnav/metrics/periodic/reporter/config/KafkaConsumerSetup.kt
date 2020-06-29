@@ -12,28 +12,6 @@ object KafkaConsumerSetup {
 
     private val log: Logger = LoggerFactory.getLogger(KafkaConsumerSetup::class.java)
 
-    fun startAllKafkaPollers(appContext: ApplicationContext) {
-        appContext.beskjedConsumer.startPolling()
-        appContext.oppgaveConsumer.startPolling()
-        appContext.doneConsumer.startPolling()
-        if (isOtherEnvironmentThanProd()) {
-            appContext.innboksConsumer.startPolling()
-        } else {
-            log.info("Er i produksjonsmiljø, unnlater å starte innboksconsumer.")
-        }
-    }
-
-    suspend fun stopAllKafkaConsumers(appContext: ApplicationContext) {
-        log.info("Begynner å stoppe kafka-pollerne...")
-        appContext.beskjedConsumer.stopPolling()
-        appContext.oppgaveConsumer.stopPolling()
-        appContext.doneConsumer.stopPolling()
-        if (isOtherEnvironmentThanProd()) {
-            appContext.innboksConsumer.stopPolling()
-        }
-        log.info("...ferdig med å stoppe kafka-pollerne.")
-    }
-
     fun setupConsumerForTheBeskjedTopic(kafkaProps: Properties, eventProcessor: EventBatchProcessorService<Beskjed>): Consumer<Beskjed> {
         val kafkaConsumer = KafkaConsumer<Nokkel, Beskjed>(kafkaProps)
         return Consumer(Kafka.beskjedTopicName, kafkaConsumer, eventProcessor)
