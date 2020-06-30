@@ -83,7 +83,7 @@ fun Connection.getBeskjedById(id: Int): Beskjed =
         prepareStatement("""SELECT * FROM beskjed WHERE id = ?""")
                 .use {
                     it.setInt(1, id)
-                    it.executeQuery().singleResult() {
+                    it.executeQuery().singleResult {
                         toBeskjed()
                     }
                 }
@@ -92,7 +92,7 @@ fun Connection.getBeskjedByEventId(eventId: String): Beskjed =
         prepareStatement("""SELECT * FROM beskjed WHERE eventId = ?""")
                 .use {
                     it.setString(1, eventId)
-                    it.executeQuery().singleResult() {
+                    it.executeQuery().singleResult {
                         toBeskjed()
                     }
                 }
