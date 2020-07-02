@@ -18,7 +18,7 @@ object Flyway {
         configBuilder.dataSource(dataSource)
 
         if (ConfigUtil.isCurrentlyRunningOnNais()) {
-            configBuilder.initSql("SET ROLE \"${env.dbAdmin}\"")
+            configBuilder.initSql("SET ROLE \"${env.dbUser}\"")
         }
         return configBuilder
     }
@@ -31,7 +31,7 @@ object Flyway {
     }
 
     private fun createDataSourceViaVaultWithAdminUser(env: Environment): HikariDataSource {
-        return PostgresDatabase.hikariDatasourceViaVault(env, env.dbAdmin)
+        return PostgresDatabase.hikariDatasourceViaVault(env, env.dbUser)
     }
 
     private fun createDataSourceForLocalDbWithAdminUser(env: Environment): HikariDataSource {
