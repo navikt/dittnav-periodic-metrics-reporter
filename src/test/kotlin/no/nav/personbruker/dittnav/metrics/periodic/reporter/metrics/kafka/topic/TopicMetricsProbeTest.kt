@@ -28,7 +28,7 @@ internal class TopicMetricsProbeTest {
     fun `Should report correct number of events`() {
         coEvery { producerNameResolver.getProducerNameAlias(any()) } returns "test-user"
         val nameScrubber = ProducerNameScrubber(producerNameResolver)
-        val topicMetricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
+        val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
 
         val capturedFieldsForUnique = slot<Map<String, Any>>()
         val capturedFieldsForDuplicated = slot<Map<String, Any>>()
@@ -43,7 +43,7 @@ internal class TopicMetricsProbeTest {
         coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER, capture(capturedFieldsForUniqueByProducer), any()) } returns Unit
 
         runBlocking {
-            topicMetricsProbe.runWithMetrics(EventType.BESKJED) {
+            metricsProbe.runWithMetrics(EventType.BESKJED) {
                 countEvent(UniqueKafkaEventIdentifier("1", "producer", "123"))
                 countEvent(UniqueKafkaEventIdentifier("2", "producer", "123"))
                 countEvent(UniqueKafkaEventIdentifier("3", "producer", "123"))
@@ -105,6 +105,45 @@ internal class TopicMetricsProbeTest {
         assertEquals(producerAlias, capturedTagsForUniqueByProducer.captured["producer"])
         assertEquals(producerAlias, capturedTagsForTotalByProducer.captured["producer"])
         assertEquals(producerAlias, capturedTagsForDuplicates.captured["producer"])
+    }
+
+    @Test
+    fun `Should not report metrics for count sessions with a lower count than the previous count session`() {
+        coEvery { producerNameResolver.getProducerNameAlias(any()) } returns "test-user"
+        val nameScrubber = ProducerNameScrubber(producerNameResolver)
+        val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
+
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+
+        `sesjon som teller tre eventer`(metricsProbe)
+        `sesjon som feilaktig teller to eventer`(metricsProbe)
+        `sesjon som teller tre eventer`(metricsProbe)
+
+        val numberOfSuccessfulCountingSessions = 2
+        coVerify(exactly = 4 * numberOfSuccessfulCountingSessions) { metricsReporter.registerDataPoint(any(), any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEvents(3, any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEvents(3, any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEventsByProducer(3, any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(3, any(), any()) }
+    }
+
+    private fun `sesjon som teller tre eventer`(metricsProbe: TopicMetricsProbe) = runBlocking {
+        metricsProbe.runWithMetrics(EventType.BESKJED) {
+            countEvent(UniqueKafkaEventIdentifier("1", "producer", "123"))
+            countEvent(UniqueKafkaEventIdentifier("2", "producer", "123"))
+            countEvent(UniqueKafkaEventIdentifier("3", "producer", "123"))
+        }
+    }
+
+    private fun `sesjon som feilaktig teller to eventer`(metricsProbe: TopicMetricsProbe) = runBlocking {
+        metricsProbe.runWithMetrics(EventType.BESKJED) {
+            countEvent(UniqueKafkaEventIdentifier("1", "producer", "123"))
+            countEvent(UniqueKafkaEventIdentifier("3", "producer", "123"))
+        }
     }
 
 }

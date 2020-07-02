@@ -12,18 +12,36 @@ class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
 
     private val log = LoggerFactory.getLogger(TopicMetricsProbe::class.java)
 
+    private val lastReportedUniqueEvents = mutableMapOf<EventType, Int>().apply {
+        put(EventType.BESKJED, 0)
+        put(EventType.INNBOKS, 0)
+        put(EventType.OPPGAVE, 0)
+        put(EventType.DONE, 0)
+    }
+
     suspend fun runWithMetrics(eventType: EventType, block: suspend TopicMetricsSession.() -> Unit) {
         val session = TopicMetricsSession(eventType)
         block.invoke(session)
 
-        if (session.getNumberOfUniqueEvents() > 0) {
+        if (countedMoreEventsThanLastCount(session, eventType)) {
             handleUniqueEvents(session)
             handleTotalNumberOfEvents(session)
             handleUniqueEventsByProducer(session)
             handleDuplicatedEventsByProducer(session)
             handleTotalNumberOfEventsByProducer(session)
+            lastReportedUniqueEvents[eventType] = session.getNumberOfUniqueEvents()
+
+        } else {
+            val currentCount = session.getNumberOfUniqueEvents()
+            val previousCount = lastReportedUniqueEvents.getOrDefault(eventType, 0)
+            val msg = "Det har oppstått en tellefeil, rapporterer derfor ikke nye metrikker. " +
+                    "Antall unike eventer ved forrige rapportering $previousCount, antall telt nå $currentCount."
+            log.warn(msg)
         }
     }
+
+    private fun countedMoreEventsThanLastCount(session: TopicMetricsSession, eventType: EventType) =
+            session.getNumberOfUniqueEvents() >= lastReportedUniqueEvents.getOrDefault(eventType, 0)
 
     private suspend fun handleUniqueEvents(session: TopicMetricsSession) {
         val uniqueEvents = session.getNumberOfUniqueEvents()
