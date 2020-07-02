@@ -8,7 +8,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundR
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.closeConsumer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -100,13 +99,6 @@ class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
             val event = UniqueKafkaEventIdentifierTransformer.toInternal(record)
             metricsSession.countEvent(event)
         }
-    }
-
-    fun closeAllConsumers() {
-        closeConsumer(beskjedCountConsumer)
-        closeConsumer(innboksCountConsumer)
-        closeConsumer(oppgaveCountConsumer)
-        closeConsumer(doneCountConsumer)
     }
 
 }

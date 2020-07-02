@@ -8,12 +8,10 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.routing.routing
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.waitTableApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.healthApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.cacheCountingApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.eventCountingApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.kafkaCountingApi
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.pollingApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.metricsSubmitterApi
 
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
@@ -24,8 +22,6 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         kafkaCountingApi(appContext.kafkaEventCounterService, appContext.kafkaTopicEventCounterService)
         cacheCountingApi(appContext.cacheEventCounterService)
         eventCountingApi(appContext.kafkaEventCounterService, appContext.cacheEventCounterService)
-        pollingApi(appContext)
-        waitTableApi(appContext)
         metricsSubmitterApi(appContext)
     }
 
@@ -35,9 +31,6 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
 
 private fun Application.configureStartupHook(appContext: ApplicationContext) {
     environment.monitor.subscribe(ApplicationStarted) {
-        Flyway.runFlywayMigrations(appContext.environment)
-        KafkaConsumerSetup.startAllKafkaPollers(appContext)
-        appContext.periodicDoneEventWaitingTableProcessor.start()
         appContext.periodicMetricsSubmitter.start()
     }
 }
@@ -45,12 +38,9 @@ private fun Application.configureStartupHook(appContext: ApplicationContext) {
 private fun Application.configureShutdownHook(appContext: ApplicationContext) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         runBlocking {
-            KafkaConsumerSetup.stopAllKafkaConsumers(appContext)
-            appContext.periodicDoneEventWaitingTableProcessor.stop()
             appContext.periodicMetricsSubmitter.stop()
         }
         appContext.database.dataSource.close()
-        appContext.kafkaEventCounterService.closeAllConsumers()
-        appContext.topicEventCounterService.closeAllConsumers()
+        appContext.closeAllConsumers()
     }
 }

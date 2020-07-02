@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter
 
 import io.mockk.coVerify
 import io.mockk.confirmVerified

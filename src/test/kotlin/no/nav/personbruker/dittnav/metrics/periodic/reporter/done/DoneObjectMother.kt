@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.entity.Brukernotifikasjon
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -24,27 +23,6 @@ object DoneObjectMother {
                 LocalDateTime.now(ZoneId.of("UTC")),
                 fodselsnummer,
                 "100${eventId}"
-        )
-    }
-
-    fun giveMeOneDoneEventForEach(brukernotifikasjoner: List<Brukernotifikasjon>): MutableList<Done> {
-        val doneEvents = mutableListOf<Done>()
-        brukernotifikasjoner.forEach { brukernotifikasjon ->
-            val associatedDoneEvent = giveMeDone(
-                    brukernotifikasjon.eventId,
-                    brukernotifikasjon.systembruker,
-                    brukernotifikasjon.fodselsnummer
-            )
-            doneEvents.add(associatedDoneEvent)
-        }
-        return doneEvents
-    }
-
-    fun giveMeMatchingDoneEvent(brukernotifikasjonToMatch: Brukernotifikasjon): Done {
-        return giveMeDone(
-                brukernotifikasjonToMatch.eventId,
-                brukernotifikasjonToMatch.systembruker,
-                brukernotifikasjonToMatch.fodselsnummer
         )
     }
 
