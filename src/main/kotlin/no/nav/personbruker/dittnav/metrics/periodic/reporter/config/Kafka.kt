@@ -38,15 +38,6 @@ object Kafka {
         }
     }
 
-    fun consumerProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
-        val groupIdAndEventType = buildGroupIdIncludingEventType(env, eventTypeToConsume)
-        return Properties().apply {
-            put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
-            put(ConsumerConfig.CLIENT_ID_CONFIG, groupIdAndEventType + getHostname(InetSocketAddress(0)))
-            commonProps(env, enableSecurity)
-        }
-    }
-
     fun counterConsumerProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
         val groupIdAndEventType = "dn-periodic_metrics_reporter_" + eventTypeToConsume.eventType
         val sixMinutes = 6 * 60 * 1000
@@ -70,8 +61,5 @@ object Kafka {
             putAll(credentialProps(env))
         }
     }
-
-    private fun buildGroupIdIncludingEventType(env: Environment, eventTypeToConsume: EventType) =
-            env.groupId + eventTypeToConsume.eventType
 
 }

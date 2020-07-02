@@ -37,7 +37,6 @@ object KafkaTestUtil {
                 schemaRegistryUrl = embeddedEnv.schemaRegistry!!.url,
                 username = username,
                 password = password,
-                groupId = "groupId-for-tests",
                 dbReadOnlyUser = "dbAdminIkkeIBrukHer",
                 dbHost = "dbHostIkkeIBrukHer",
                 dbMountPath = "dbMountPathIkkeIBrukHer",
