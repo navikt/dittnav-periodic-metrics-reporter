@@ -30,7 +30,7 @@ spec:
     paths:
       - kvPath: /kv/{{cluster}}/sbs/dittnav-periodic-metrics-reporter/{{namespace}}
         mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: /serviceuser/data/{{environment}}/srvdn-e-aggregator
+      - kvPath: /serviceuser/data/{{environment}}/srvdittnav-p-metrics
         mountPath: /secret/serviceuser
   resources:
     limits:
