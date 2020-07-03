@@ -35,8 +35,10 @@ class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
         }
     }
 
-    private fun countedMoreEventsThanLastCount(session: TopicMetricsSession, eventType: EventType) =
-            session.getNumberOfUniqueEvents() >= lastReportedUniqueEvents.getOrDefault(eventType, 0)
+    private fun countedMoreEventsThanLastCount(session: TopicMetricsSession, eventType: EventType): Boolean {
+        val currentCount = session.getNumberOfUniqueEvents()
+        return currentCount > 0 && currentCount >= lastReportedUniqueEvents.getOrDefault(eventType, 0)
+    }
 
     private suspend fun handleUniqueEvents(session: TopicMetricsSession) {
         val uniqueEvents = session.getNumberOfUniqueEvents()
