@@ -145,7 +145,7 @@ internal class TopicMetricsProbeTest {
 
         runBlocking {
             metricsProbe.runWithMetrics(EventType.BESKJED) {
-
+                // Triggers uten at det blir rapportert noen eventer, for å simulere en feiltelling.
             }
         }
 
