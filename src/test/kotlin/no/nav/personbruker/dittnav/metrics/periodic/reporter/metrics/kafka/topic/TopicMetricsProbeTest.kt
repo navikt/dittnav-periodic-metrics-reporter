@@ -131,6 +131,32 @@ internal class TopicMetricsProbeTest {
         verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(3, any(), any()) }
     }
 
+    @Test
+    fun `Should not report metrics if current count is zero`() {
+        coEvery { producerNameResolver.getProducerNameAlias(any()) } returns "test-user"
+        val nameScrubber = ProducerNameScrubber(producerNameResolver)
+        val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
+
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+
+        runBlocking {
+            metricsProbe.runWithMetrics(EventType.BESKJED) {
+                // Triggers uten at det blir rapportert noen eventer, for å simulere en feiltelling.
+            }
+        }
+
+        val numberOfSuccessfulCountingSessions = 0
+        coVerify(exactly = numberOfSuccessfulCountingSessions) { metricsReporter.registerDataPoint(any(), any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEvents(any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEvents(any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEventsByProducer(any(), any(), any()) }
+        verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(any(), any(), any()) }
+    }
+
     private fun `sesjon som teller tre eventer`(metricsProbe: TopicMetricsProbe) = runBlocking {
         metricsProbe.runWithMetrics(EventType.BESKJED) {
             countEvent(UniqueKafkaEventIdentifier("1", "producer", "123"))
