@@ -12,12 +12,7 @@ class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
 
     private val log = LoggerFactory.getLogger(TopicMetricsProbe::class.java)
 
-    private val lastReportedUniqueEvents = mutableMapOf<EventType, Int>().apply {
-        put(EventType.BESKJED, 0)
-        put(EventType.INNBOKS, 0)
-        put(EventType.OPPGAVE, 0)
-        put(EventType.DONE, 0)
-    }
+    private val lastReportedUniqueEvents = HashMap<EventType, Int>()
 
     suspend fun runWithMetrics(eventType: EventType, block: suspend TopicMetricsSession.() -> Unit) {
         val session = TopicMetricsSession(eventType)
