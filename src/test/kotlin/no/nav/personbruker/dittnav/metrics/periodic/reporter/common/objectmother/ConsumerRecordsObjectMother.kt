@@ -4,6 +4,7 @@ import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.common.TopicPartition
@@ -29,6 +30,16 @@ object ConsumerRecordsObjectMother {
 
     fun <T> createConsumerRecord(nokkel: Nokkel, actualEvent: T): ConsumerRecord<Nokkel, T> {
         return ConsumerRecord("dummyTopic", 1, 0, nokkel, actualEvent)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> createConsumerRecordWithoutNokkel(actualEvent: T): ConsumerRecord<Nokkel, T> {
+        return ConsumerRecord("dummyTopic", 1, 0, null, actualEvent) as ConsumerRecord<Nokkel, T>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun createConsumerRecordWithoutRecord(nokkel: Nokkel): ConsumerRecord<Nokkel, GenericRecord> {
+        return ConsumerRecord("dummyTopic", 1, 0, nokkel, null) as ConsumerRecord<Nokkel, GenericRecord>
     }
 
 }
