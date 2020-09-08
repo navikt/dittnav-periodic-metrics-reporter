@@ -48,7 +48,7 @@ class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
             countEventsAndReportMetrics(beskjedCountConsumer, EventType.BESKJED)
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall beskjed-eventer", e)
+            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall beskjed-eventer", e)
         }
     }
 
@@ -58,7 +58,7 @@ class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
                 countEventsAndReportMetrics(innboksCountConsumer, EventType.INNBOKS)
 
             } catch (e: Exception) {
-                log.warn("Klarte ikke å telle og rapportere metrics for antall innboks-eventer", e)
+                log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall innboks-eventer", e)
             }
         }
     }
@@ -68,7 +68,7 @@ class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
             countEventsAndReportMetrics(oppgaveCountConsumer, EventType.OPPGAVE)
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall oppgave-eventer", e)
+            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall oppgave-eventer", e)
         }
     }
 
@@ -77,7 +77,7 @@ class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
             countEventsAndReportMetrics(doneCountConsumer, EventType.DONE)
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall done-eventer", e)
+            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall done-eventer", e)
         }
     }
 
