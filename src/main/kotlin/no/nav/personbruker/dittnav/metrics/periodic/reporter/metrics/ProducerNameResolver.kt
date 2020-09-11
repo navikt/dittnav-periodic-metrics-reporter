@@ -25,7 +25,7 @@ class ProducerNameResolver(private val database: Database) {
                 updateCache()
             }
             if(!containsAlias) {
-                log.warn("Manglet alias for oppgitt systembruker, forsøker å oppdatere cache på nytt.")
+                log.info("Manglet alias for oppgitt systembruker, forsøker å oppdatere cache på nytt.")
             }
         }
         return producerNameAliases[systembruker]
