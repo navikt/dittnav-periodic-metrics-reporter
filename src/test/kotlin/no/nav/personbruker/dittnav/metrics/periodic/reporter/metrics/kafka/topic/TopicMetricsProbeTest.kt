@@ -9,9 +9,9 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNam
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
+import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 internal class TopicMetricsProbeTest {
 
@@ -58,11 +58,11 @@ internal class TopicMetricsProbeTest {
         verify(exactly = 1) { PrometheusMetricsCollector.registerDuplicatedEventsOnTopic(1, any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(4, any(), any()) }
 
-        assertEquals(1, capturedFieldsForDuplicated.captured["counter"])
-        assertEquals(4, capturedFieldsForTotalEvents.captured["counter"])
-        assertEquals(3, capturedFieldsForUnique.captured["counter"])
-        assertEquals(3, capturedFieldsForUniqueByProducer.captured["counter"])
-        assertEquals(4, capturedFieldsForTotalEventsByProducer.captured["counter"])
+        capturedFieldsForDuplicated.captured["counter"] `should equal` 1
+        capturedFieldsForTotalEvents.captured["counter"] `should equal` 4
+        capturedFieldsForUnique.captured["counter"] `should equal` 3
+        capturedFieldsForUniqueByProducer.captured["counter"] `should equal` 3
+        capturedFieldsForTotalEventsByProducer.captured["counter"] `should equal` 4
     }
 
     @Test
@@ -101,10 +101,10 @@ internal class TopicMetricsProbeTest {
         verify(exactly = 1) { PrometheusMetricsCollector.registerDuplicatedEventsOnTopic(any(), any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(any(), any(), any()) }
 
-        assertEquals(producerAlias, producerNameForPrometheus.captured)
-        assertEquals(producerAlias, capturedTagsForUniqueByProducer.captured["producer"])
-        assertEquals(producerAlias, capturedTagsForTotalByProducer.captured["producer"])
-        assertEquals(producerAlias, capturedTagsForDuplicates.captured["producer"])
+        producerNameForPrometheus.captured `should equal` producerAlias
+        capturedTagsForUniqueByProducer.captured["producer"] `should equal` producerAlias
+        capturedTagsForTotalByProducer.captured["producer"] `should equal` producerAlias
+        capturedTagsForDuplicates.captured["producer"] `should equal` producerAlias
     }
 
     @Test
