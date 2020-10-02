@@ -9,3 +9,4 @@ const val KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER = "$METRIC_NAMESPACE.topic.pro
 const val KAFKA_UNIQUE_EVENTS_ON_TOPIC = "$METRIC_NAMESPACE.topic.aggregated.unique"
 const val KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER = "$METRIC_NAMESPACE.topic.producer.unique"
 const val KAFKA_DUPLICATE_EVENTS_ON_TOPIC = "$METRIC_NAMESPACE.topic.duplicates"
+const val KAFKA_COUNT_PROCESSING_TIME = "$METRIC_NAMESPACE.topic.count.processing.time"

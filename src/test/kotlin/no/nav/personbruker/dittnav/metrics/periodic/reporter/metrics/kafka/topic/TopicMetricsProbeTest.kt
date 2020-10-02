@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import io.mockk.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
@@ -10,6 +11,8 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusM
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.amshove.kluent.`should equal`
+import org.amshove.kluent.shouldBeGreaterOrEqualTo
+import org.amshove.kluent.shouldBeLessThan
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -37,6 +40,7 @@ internal class TopicMetricsProbeTest {
         val capturedFieldsForTotalEventsByProducer = slot<Map<String, Any>>()
 
         coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, capture(capturedFieldsForUnique), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_COUNT_PROCESSING_TIME, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, capture(capturedFieldsForTotalEvents), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, capture(capturedFieldsForDuplicated), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, capture(capturedFieldsForTotalEventsByProducer), any()) } returns Unit
@@ -51,7 +55,7 @@ internal class TopicMetricsProbeTest {
             }
         }
 
-        coVerify(exactly = 5) { metricsReporter.registerDataPoint(any(), any(), any()) }
+        coVerify(exactly = 6) { metricsReporter.registerDataPoint(any(), any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerUniqueEvents(3, any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEvents(4, any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerUniqueEventsByProducer(3, any(), any()) }
@@ -63,6 +67,36 @@ internal class TopicMetricsProbeTest {
         capturedFieldsForUnique.captured["counter"] `should equal` 3
         capturedFieldsForUniqueByProducer.captured["counter"] `should equal` 3
         capturedFieldsForTotalEventsByProducer.captured["counter"] `should equal` 4
+    }
+
+    @Test
+    fun `Should report the elapsed to count the events`() {
+        val expectedProcessingTimeMs = 100L
+        val expectedProcessingTimeNs = expectedProcessingTimeMs * 1000000
+
+        coEvery { producerNameResolver.getProducerNameAlias(any()) } returns "test-user"
+        val nameScrubber = ProducerNameScrubber(producerNameResolver)
+        val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
+
+        val capturedFieldsForProcessingTime = slot<Map<String, Long>>()
+
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_COUNT_PROCESSING_TIME, capture(capturedFieldsForProcessingTime), any()) } returns Unit
+
+        runBlocking {
+            metricsProbe.runWithMetrics(EventType.BESKJED) {
+                countEvent(UniqueKafkaEventIdentifier("1", "sys-t-user", "123"))
+                delay(expectedProcessingTimeMs)
+            }
+        }
+
+        capturedFieldsForProcessingTime.captured["counter"]!!.shouldBeGreaterOrEqualTo(expectedProcessingTimeNs)
+        val fiftyPercentMoreThanExpectedTime  = (expectedProcessingTimeNs * 1.5).toLong()
+        capturedFieldsForProcessingTime.captured["counter"]!!.shouldBeLessThan(fiftyPercentMoreThanExpectedTime)
     }
 
     @Test
@@ -81,6 +115,7 @@ internal class TopicMetricsProbeTest {
 
         every { PrometheusMetricsCollector.registerUniqueEventsByProducer(any(), any(), capture(producerNameForPrometheus)) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_COUNT_PROCESSING_TIME, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), capture(capturedTagsForDuplicates)) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), capture(capturedTagsForTotalByProducer)) } returns Unit
@@ -113,8 +148,9 @@ internal class TopicMetricsProbeTest {
         val nameScrubber = ProducerNameScrubber(producerNameResolver)
         val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
 
-        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_COUNT_PROCESSING_TIME, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit
@@ -124,7 +160,7 @@ internal class TopicMetricsProbeTest {
         `sesjon som teller tre eventer`(metricsProbe)
 
         val numberOfSuccessfulCountingSessions = 2
-        coVerify(exactly = 4 * numberOfSuccessfulCountingSessions) { metricsReporter.registerDataPoint(any(), any(), any()) }
+        coVerify(exactly = 5 * numberOfSuccessfulCountingSessions) { metricsReporter.registerDataPoint(any(), any(), any()) }
         verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEvents(3, any()) }
         verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerTotalNumberOfEvents(3, any()) }
         verify(exactly = numberOfSuccessfulCountingSessions) { PrometheusMetricsCollector.registerUniqueEventsByProducer(3, any(), any()) }
@@ -138,6 +174,7 @@ internal class TopicMetricsProbeTest {
         val metricsProbe = TopicMetricsProbe(metricsReporter, nameScrubber)
 
         coEvery { metricsReporter.registerDataPoint(KAFKA_UNIQUE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
+        coEvery { metricsReporter.registerDataPoint(KAFKA_COUNT_PROCESSING_TIME, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_DUPLICATE_EVENTS_ON_TOPIC, any(), any()) } returns Unit
         coEvery { metricsReporter.registerDataPoint(KAFKA_TOTAL_EVENTS_ON_TOPIC_BY_PRODUCER, any(), any()) } returns Unit

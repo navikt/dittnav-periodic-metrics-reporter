@@ -5,15 +5,16 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 
 object PrometheusMetricsCollector {
 
-    const val NAMESPACE = "dittnav_consumer"
+    private const val NAMESPACE = "dittnav_consumer"
 
-    const val KAFKA_TOPIC_TOTAL_EVENTS = "kafka_topic_total_events"
-    const val KAFKA_TOPIC_TOTAL_EVENTS_BY_PRODUCER = "kafka_topic_total_events_by_producer"
-    const val KAFKA_TOPIC_UNIQUE_EVENTS = "kafka_topic_unique_events"
-    const val KAFKA_TOPIC_UNIQUE_EVENTS_BY_PRODUCER = "kafka_topic_unique_events_by_producer"
-    const val KAFKA_TOPIC_DUPLICATED_EVENTS = "kafka_topic_duplicated_events"
-    const val DB_TOTAL_EVENTS = "db_total_events"
-    const val DB_TOTAL_EVENTS_BY_PRODUCER = "db_total_events_by_producer"
+    private const val KAFKA_TOPIC_TOTAL_EVENTS = "kafka_topic_total_events"
+    private const val KAFKA_TOPIC_TOTAL_EVENTS_BY_PRODUCER = "kafka_topic_total_events_by_producer"
+    private const val KAFKA_TOPIC_UNIQUE_EVENTS = "kafka_topic_unique_events"
+    private const val KAFKA_TOPIC_UNIQUE_EVENTS_BY_PRODUCER = "kafka_topic_unique_events_by_producer"
+    private const val KAFKA_TOPIC_DUPLICATED_EVENTS = "kafka_topic_duplicated_events"
+    private const val KAFKA_TOPIC_COUNT_PROCESSING_TIME = "kafka_topic_count_processing_time"
+    private const val DB_TOTAL_EVENTS = "db_total_events"
+    private const val DB_TOTAL_EVENTS_BY_PRODUCER = "db_total_events_by_producer"
 
     private val MESSAGES_UNIQUE: Gauge = Gauge.build()
             .name(KAFKA_TOPIC_UNIQUE_EVENTS)
@@ -34,6 +35,13 @@ object PrometheusMetricsCollector {
             .namespace(NAMESPACE)
             .help("Number of duplicated events of type on topic")
             .labelNames("type", "producer")
+            .register()
+
+    private val MESSAGES_COUNT_PROCESSING_TIME: Gauge = Gauge.build()
+            .name(KAFKA_TOPIC_COUNT_PROCESSING_TIME)
+            .namespace(NAMESPACE)
+            .help("Time used to count events of this type in nanoseconds")
+            .labelNames("type")
             .register()
 
     private val MESSAGES_TOTAL: Gauge = Gauge.build()
@@ -82,6 +90,10 @@ object PrometheusMetricsCollector {
 
     fun registerTotalNumberOfEventsByProducer(count: Int, eventType: EventType, producer: String) {
         MESSAGES_TOTAL_BY_PRODUCER.labels(eventType.eventType, producer).set(count.toDouble())
+    }
+
+    fun registerProcessingTime(processingTime: Long, eventType: EventType) {
+        MESSAGES_COUNT_PROCESSING_TIME.labels(eventType.eventType).set(processingTime.toDouble())
     }
 
     fun registerTotalNumberOfEventsInCache(count: Int, eventType: EventType) {

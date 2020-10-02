@@ -7,16 +7,20 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusM
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
 import org.slf4j.LoggerFactory
 
-class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
-                        private val nameScrubber: ProducerNameScrubber) {
+class TopicMetricsProbe(
+    private val metricsReporter: MetricsReporter,
+    private val nameScrubber: ProducerNameScrubber
+) {
 
     private val log = LoggerFactory.getLogger(TopicMetricsProbe::class.java)
 
     private val lastReportedUniqueEvents = HashMap<EventType, Int>()
 
     suspend fun runWithMetrics(eventType: EventType, block: suspend TopicMetricsSession.() -> Unit) {
+        val start = System.nanoTime()
         val session = TopicMetricsSession(eventType)
         block.invoke(session)
+        val processingTime = System.nanoTime() - start
 
         if (countedMoreEventsThanLastCount(session, eventType)) {
             handleUniqueEvents(session)
@@ -24,6 +28,7 @@ class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
             handleUniqueEventsByProducer(session)
             handleDuplicatedEventsByProducer(session)
             handleTotalNumberOfEventsByProducer(session)
+            reportTimeUsed(session, processingTime)
             lastReportedUniqueEvents[eventType] = session.getNumberOfUniqueEvents()
 
         } else {
@@ -89,20 +94,35 @@ class TopicMetricsProbe(private val metricsReporter: MetricsReporter,
         }
     }
 
+    private suspend fun reportTimeUsed(session: TopicMetricsSession, processingTime: Long) {
+        reportProcessingTimeEvent(processingTime, session)
+        PrometheusMetricsCollector.registerProcessingTime(processingTime, session.eventType)
+    }
+
     private suspend fun reportEvents(count: Int, eventType: String, producerAlias: String, metricName: String) {
         metricsReporter.registerDataPoint(metricName, counterField(count), createTagMap(eventType, producerAlias))
     }
 
+    private suspend fun reportProcessingTimeEvent(processingTime: Long, session: TopicMetricsSession) {
+        val metricName = KAFKA_COUNT_PROCESSING_TIME
+        metricsReporter.registerDataPoint(
+            metricName, counterField(processingTime),
+            createTagMap(session.eventType.eventType)
+        )
+    }
+
     private fun counterField(events: Int): Map<String, Int> = listOf("counter" to events).toMap()
 
+    private fun counterField(events: Long): Map<String, Long> = listOf("counter" to events).toMap()
+
     private fun createTagMap(eventType: String, producer: String): Map<String, String> =
-            listOf("eventType" to eventType, "producer" to producer).toMap()
+        listOf("eventType" to eventType, "producer" to producer).toMap()
 
     private suspend fun reportEvents(count: Int, eventType: String, metricName: String) {
         metricsReporter.registerDataPoint(metricName, counterField(count), createTagMap(eventType))
     }
 
     private fun createTagMap(eventType: String): Map<String, String> =
-            listOf("eventType" to eventType).toMap()
+        listOf("eventType" to eventType).toMap()
 
 }
