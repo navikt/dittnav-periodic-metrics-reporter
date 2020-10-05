@@ -15,6 +15,7 @@ object PrometheusMetricsCollector {
     private const val KAFKA_TOPIC_COUNT_PROCESSING_TIME = "kafka_topic_count_processing_time"
     private const val DB_TOTAL_EVENTS = "db_total_events"
     private const val DB_TOTAL_EVENTS_BY_PRODUCER = "db_total_events_by_producer"
+    private const val DB_COUNT_PROCESSING_TIME = "db_count_processing_time"
 
     private val MESSAGES_UNIQUE: Gauge = Gauge.build()
             .name(KAFKA_TOPIC_UNIQUE_EVENTS)
@@ -72,6 +73,13 @@ object PrometheusMetricsCollector {
             .labelNames("type", "producer")
             .register()
 
+    private val CACHED_COUNT_PROCESSING_TIME: Gauge = Gauge.build()
+        .name(DB_COUNT_PROCESSING_TIME)
+        .namespace(NAMESPACE)
+        .help("Time used to count events of this type in nanoseconds")
+        .labelNames("type")
+        .register()
+
     fun registerUniqueEvents(count: Int, eventType: EventType) {
         MESSAGES_UNIQUE.labels(eventType.eventType).set(count.toDouble())
     }
@@ -102,6 +110,10 @@ object PrometheusMetricsCollector {
 
     fun registerTotalNumberOfEventsInCacheByProducer(count: Int, eventType: EventType, producer: String) {
         CACHED_EVENTS_IN_TOTAL_BY_PRODUCER.labels(eventType.eventType, producer).set(count.toDouble())
+    }
+
+    fun registerProcessingTimeInCache(processingTime: Long, eventType: EventType) {
+        CACHED_COUNT_PROCESSING_TIME.labels(eventType.eventType).set(processingTime.toDouble())
     }
 
 }
