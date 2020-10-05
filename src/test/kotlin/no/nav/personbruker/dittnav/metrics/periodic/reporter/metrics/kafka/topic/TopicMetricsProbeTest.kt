@@ -69,7 +69,7 @@ internal class TopicMetricsProbeTest {
     }
 
     @Test
-    fun `Should report the elapsed to count the events`() {
+    fun `Should report the elapsed time to count the events`() {
         val expectedProcessingTimeMs = 100L
         val expectedProcessingTimeNs = expectedProcessingTimeMs * 1000000
 
