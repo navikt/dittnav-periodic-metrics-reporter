@@ -8,7 +8,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboks
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.AvroOppgaveObjectMother
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldNotBeNull
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -80,7 +80,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
         val transformed = UniqueKafkaEventIdentifierTransformer.toInternal(recordWithouKey)
 
         transformed.shouldNotBeNull()
-        transformed `should equal` UniqueKafkaEventIdentifier.createInvalidEvent()
+        transformed `should be equal to` UniqueKafkaEventIdentifier.createInvalidEvent()
     }
 
     @Test
@@ -90,7 +90,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
         val transformed = UniqueKafkaEventIdentifierTransformer.toInternal(recordWithoutValue)
 
         transformed.shouldNotBeNull()
-        transformed `should equal` UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
+        transformed `should be equal to` UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
             nokkel.getEventId(),
             nokkel.getSystembruker()
         )
