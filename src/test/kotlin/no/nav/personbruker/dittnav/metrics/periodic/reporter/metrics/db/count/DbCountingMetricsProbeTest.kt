@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNam
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_COUNT_PROCESSING_TIME
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeGreaterOrEqualTo
 import org.amshove.kluent.shouldBeLessThan
 import org.junit.jupiter.api.BeforeEach
@@ -54,7 +54,7 @@ internal class DbCountingMetricsProbeTest {
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsInCacheByProducer(2, any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerProcessingTimeInCache(any(), any()) }
 
-        capturedTotalEventsInCacheByProducer.captured["counter"] `should equal` 1
+        capturedTotalEventsInCacheByProducer.captured["counter"] `should be equal to` 1
     }
 
     @Test
@@ -112,8 +112,8 @@ internal class DbCountingMetricsProbeTest {
 
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsInCacheByProducer(any(), any(), any()) }
 
-        producerNameForPrometheus.captured `should equal` producerAlias
-        capturedTagsForTotalByProducer.captured["producer"] `should equal` producerAlias
+        producerNameForPrometheus.captured `should be equal to` producerAlias
+        capturedTagsForTotalByProducer.captured["producer"] `should be equal to` producerAlias
     }
 
 }

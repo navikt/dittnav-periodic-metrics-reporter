@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNam
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeGreaterOrEqualTo
 import org.amshove.kluent.shouldBeLessThan
 import org.junit.jupiter.api.BeforeEach
@@ -61,11 +61,11 @@ internal class TopicMetricsProbeTest {
         verify(exactly = 1) { PrometheusMetricsCollector.registerDuplicatedEventsOnTopic(1, any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(4, any(), any()) }
 
-        capturedFieldsForDuplicated.captured["counter"] `should equal` 1
-        capturedFieldsForTotalEvents.captured["counter"] `should equal` 4
-        capturedFieldsForUnique.captured["counter"] `should equal` 3
-        capturedFieldsForUniqueByProducer.captured["counter"] `should equal` 3
-        capturedFieldsForTotalEventsByProducer.captured["counter"] `should equal` 4
+        capturedFieldsForDuplicated.captured["counter"] `should be equal to` 1
+        capturedFieldsForTotalEvents.captured["counter"] `should be equal to` 4
+        capturedFieldsForUnique.captured["counter"] `should be equal to` 3
+        capturedFieldsForUniqueByProducer.captured["counter"] `should be equal to` 3
+        capturedFieldsForTotalEventsByProducer.captured["counter"] `should be equal to` 4
     }
 
     @Test
@@ -127,10 +127,10 @@ internal class TopicMetricsProbeTest {
         verify(exactly = 1) { PrometheusMetricsCollector.registerDuplicatedEventsOnTopic(any(), any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEventsByProducer(any(), any(), any()) }
 
-        producerNameForPrometheus.captured `should equal` producerAlias
-        capturedTagsForUniqueByProducer.captured["producer"] `should equal` producerAlias
-        capturedTagsForTotalByProducer.captured["producer"] `should equal` producerAlias
-        capturedTagsForDuplicates.captured["producer"] `should equal` producerAlias
+        producerNameForPrometheus.captured `should be equal to` producerAlias
+        capturedTagsForUniqueByProducer.captured["producer"] `should be equal to` producerAlias
+        capturedTagsForTotalByProducer.captured["producer"] `should be equal to` producerAlias
+        capturedTagsForDuplicates.captured["producer"] `should be equal to` producerAlias
     }
 
     @Test

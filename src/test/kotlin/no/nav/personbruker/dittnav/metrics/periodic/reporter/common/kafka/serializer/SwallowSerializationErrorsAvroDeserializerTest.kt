@@ -1,13 +1,12 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.serializer
 
-
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import org.amshove.kluent.`should be null`
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 class SwallowSerializationErrorsAvroDeserializerTest {
@@ -33,7 +32,7 @@ class SwallowSerializationErrorsAvroDeserializerTest {
         val serialized = serializer.serialize(topic, original)
         val deserialized = deserializer.deserialize(topic, serialized)
 
-        deserialized shouldEqual original
+        deserialized `should be equal to` original
     }
 
     @Test
