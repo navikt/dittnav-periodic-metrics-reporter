@@ -28,6 +28,7 @@ internal class DbCountingMetricsSessionTest {
         session.addEventsByProducer(beskjederGruppertPerProdusent)
 
         session.getTotalNumber() `should be equal to` (produsent1Antall + produsent2Antall + produsent3Antall)
+        session.getNumberOfUniqueEvents() `should be equal to` session.getTotalNumber()
 
         session.getProducers().size `should be equal to` alleProdusenter.size
         session.getProducers() shouldContainAll alleProdusenter
