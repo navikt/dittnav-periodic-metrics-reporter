@@ -12,7 +12,7 @@ class CountingMetricsSessions {
 
     fun totalUniqueEvents(): Int {
         var total = 0
-        sessions.forEach { (eventType: EventType, session: CountingMetricsSession) ->
+        sessions.forEach { (_, session: CountingMetricsSession) ->
             total += session.getNumberOfUniqueEvents()
         }
         return total
