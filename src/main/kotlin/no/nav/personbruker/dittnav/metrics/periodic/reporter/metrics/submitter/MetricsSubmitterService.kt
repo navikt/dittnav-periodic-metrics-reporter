@@ -29,9 +29,9 @@ class MetricsSubmitterService(
         try {
             val topicSessions = topicEventCounterService.countAllEventTypesAsync()
             val dbSessions = dbEventCounterService.countAllEventTypesAsync()
+            val sessionComparator = SessionComparator(topicSessions, dbSessions)
 
-            // TODO: Legg på sjekk som verifiserer at de samme eventtypene er telt fra både kafka og databasen?
-            topicSessions.getEventTypesWithSession().forEach { eventType ->
+            sessionComparator.eventTypesWithSessionFromBothSources().forEach { eventType ->
                 reportMetricsByEventType(topicSessions, dbSessions, eventType)
             }
 
