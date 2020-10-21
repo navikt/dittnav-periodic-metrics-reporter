@@ -1,9 +1,10 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
-class TopicMetricsSession(val eventType: EventType) {
+class TopicMetricsSession(val eventType: EventType) : CountingMetricsSession {
 
     private val treMillioner = 3000000
 
@@ -11,6 +12,9 @@ class TopicMetricsSession(val eventType: EventType) {
     private var totalNumberOfEventsByProducer = HashMap<String, Int>(50)
     private val uniqueEventsOnTopicByProducer = HashMap<String, Int>(50)
     private val uniqueEventsOnTopic = HashSet<UniqueKafkaEventIdentifier>(treMillioner)
+
+    private val start = System.nanoTime()
+    private var processingTime : Long = 0L
 
     fun countEvent(event: UniqueKafkaEventIdentifier) {
         val produsent = event.systembruker
@@ -23,7 +27,7 @@ class TopicMetricsSession(val eventType: EventType) {
         }
     }
 
-    fun getNumberOfUniqueEvents(): Int {
+    override fun getNumberOfUniqueEvents(): Int {
         return uniqueEventsOnTopic.size
     }
 
@@ -74,6 +78,14 @@ class TopicMetricsSession(val eventType: EventType) {
 |                   duplicates=$duplicatesByProdusent, 
 |                   total=$totalNumberOfEventsByProducer, 
 |                 )""".trimMargin()
+    }
+
+    fun calculateProcessingTime() {
+        processingTime = System.nanoTime() - start
+    }
+
+    fun getProcessingTime(): Long {
+        return processingTime
     }
 
 }

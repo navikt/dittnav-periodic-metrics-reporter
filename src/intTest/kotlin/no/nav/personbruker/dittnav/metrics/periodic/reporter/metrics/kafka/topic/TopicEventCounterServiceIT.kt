@@ -11,7 +11,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldEqualTo
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.junit.jupiter.api.AfterAll
@@ -51,7 +50,7 @@ class TopicEventCounterServiceIT {
         val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer)
 
         runBlocking {
-            service.countAndReportMetricsForBeskjeder()
+            service.countBeskjeder()
         }
 
         metricsSession.getDuplicates() `should be equal to` events.size * 2
@@ -87,7 +86,7 @@ class TopicEventCounterServiceIT {
 
     private fun `tell og verifiser korrekt antall eventer`(service: TopicEventCounterService, metricsSession: TopicMetricsSession) {
         runBlocking {
-            service.countAndReportMetricsForBeskjeder()
+            service.countBeskjeder()
         }
 
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
@@ -99,13 +98,14 @@ class TopicEventCounterServiceIT {
             val fikkProduserBatch2 = KafkaTestUtil.produceEvents(testEnvironment, topicen, events)
             val fikkProduserBatch3 = KafkaTestUtil.produceEvents(testEnvironment, topicen, events)
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
-        } shouldEqualTo true
+        } `should be equal to` true
     }
 
     private fun `Sorg for at metrics session trigges`(metricsProbe: TopicMetricsProbe, metricsSession: TopicMetricsSession) {
         val slot = slot<suspend TopicMetricsSession.() -> Unit>()
         coEvery { metricsProbe.runWithMetrics(any(), capture(slot)) } coAnswers {
             slot.captured.invoke(metricsSession)
+            metricsSession
         }
     }
 

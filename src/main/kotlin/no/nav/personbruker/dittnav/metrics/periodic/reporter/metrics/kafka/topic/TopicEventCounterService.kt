@@ -4,10 +4,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -15,74 +17,87 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class TopicEventCounterService(val topicMetricsProbe: TopicMetricsProbe,
-                               val beskjedCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
-                               val innboksCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
-                               val oppgaveCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
-                               val doneCountConsumer: KafkaConsumer<Nokkel, GenericRecord>) {
+class TopicEventCounterService(
+    val topicMetricsProbe: TopicMetricsProbe,
+    val beskjedCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+    val innboksCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+    val oppgaveCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+    val doneCountConsumer: KafkaConsumer<Nokkel, GenericRecord>
+) {
 
     private val log = LoggerFactory.getLogger(TopicEventCounterService::class.java)
 
-    suspend fun countEventsAndReportMetrics() = withContext(Dispatchers.IO) {
+    suspend fun countAllEventTypesAsync(): CountingMetricsSessions = withContext(Dispatchers.IO) {
         val beskjeder = async {
-            countAndReportMetricsForBeskjeder()
+            countBeskjeder()
         }
         val innboks = async {
-            countAndReportMetricsForInnboksEventer()
+            countInnboksEventer()
         }
         val oppgave = async {
-            countAndReportMetricsForOppgaver()
+            countOppgaver()
         }
         val done = async {
-            countAndReportMetricsForDoneEvents()
+            countDoneEvents()
         }
 
-        beskjeder.await()
-        innboks.await()
-        oppgave.await()
-        done.await()
+        val sessions = CountingMetricsSessions()
+        sessions.put(EventType.BESKJED, beskjeder.await())
+        sessions.put(EventType.DONE, done.await())
+        sessions.put(EventType.INNBOKS, innboks.await())
+        sessions.put(EventType.OPPGAVE, oppgave.await())
+        return@withContext sessions
     }
 
-    suspend fun countAndReportMetricsForBeskjeder() {
-        try {
-            countEventsAndReportMetrics(beskjedCountConsumer, EventType.BESKJED)
+    suspend fun countBeskjeder(): TopicMetricsSession {
+        val eventType = EventType.BESKJED
+        return try {
+            countAllEventTypesAsync(beskjedCountConsumer, eventType)
 
         } catch (e: Exception) {
-            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall beskjed-eventer", e)
+            throw CountException("Klarte ikke å telle antall beskjed-eventer", e)
         }
     }
 
-    suspend fun countAndReportMetricsForInnboksEventer() {
-        if (isOtherEnvironmentThanProd()) {
+    suspend fun countInnboksEventer(): TopicMetricsSession {
+        val eventType = EventType.INNBOKS
+        return if (isOtherEnvironmentThanProd()) {
             try {
-                countEventsAndReportMetrics(innboksCountConsumer, EventType.INNBOKS)
+                countAllEventTypesAsync(innboksCountConsumer, eventType)
 
             } catch (e: Exception) {
-                log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall innboks-eventer", e)
+                throw CountException("Klarte ikke å telle antall innboks-eventer", e)
             }
+
+        } else {
+            TopicMetricsSession(eventType)
         }
     }
 
-    suspend fun countAndReportMetricsForOppgaver() {
-        try {
-            countEventsAndReportMetrics(oppgaveCountConsumer, EventType.OPPGAVE)
+    suspend fun countOppgaver(): TopicMetricsSession {
+        val eventType = EventType.OPPGAVE
+        return try {
+            countAllEventTypesAsync(oppgaveCountConsumer, eventType)
 
         } catch (e: Exception) {
-            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall oppgave-eventer", e)
+            throw CountException("Klarte ikke å telle antall oppgave-eventer", e)
         }
     }
 
-    suspend fun countAndReportMetricsForDoneEvents() {
-        try {
-            countEventsAndReportMetrics(doneCountConsumer, EventType.DONE)
+    suspend fun countDoneEvents(): TopicMetricsSession {
+        return try {
+            countAllEventTypesAsync(doneCountConsumer, EventType.DONE)
 
         } catch (e: Exception) {
-            log.error("En uventet feil oppstod, klarte ikke å telle og rapportere metrics for antall done-eventer", e)
+            throw CountException("Klarte ikke å telle antall done-eventer", e)
         }
     }
 
-    private suspend fun countEventsAndReportMetrics(kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>, eventType: EventType) {
-        topicMetricsProbe.runWithMetrics(eventType) {
+    private suspend fun countAllEventTypesAsync(
+        kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+        eventType: EventType
+    ): TopicMetricsSession {
+        return topicMetricsProbe.runWithMetrics(eventType) {
             var records = kafkaConsumer.poll(Duration.of(5000, ChronoUnit.MILLIS))
             countBatch(records, this)
 

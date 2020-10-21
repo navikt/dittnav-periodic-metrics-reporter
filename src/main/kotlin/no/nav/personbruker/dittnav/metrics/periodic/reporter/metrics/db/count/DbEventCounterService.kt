@@ -3,82 +3,94 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.slf4j.LoggerFactory
 
-class DbEventCounterService(private val metricsProbe: DbCountingMetricsProbe,
-                            private val repository: MetricsRepository) {
+class DbEventCounterService(
+    private val metricsProbe: DbCountingMetricsProbe,
+    private val repository: MetricsRepository
+) {
 
     private val log = LoggerFactory.getLogger(DbEventCounterService::class.java)
 
-    suspend fun countEventsAndReportMetrics() = withContext(Dispatchers.IO) {
+    suspend fun countAllEventTypesAsync() : CountingMetricsSessions = withContext(Dispatchers.IO) {
         val beskjeder = async {
-            countAndReportMetricsForBeskjeder()
+            countBeskjeder()
         }
         val innboks = async {
-            countAndReportMetricsForInnboksEventer()
+            countInnboksEventer()
         }
         val oppgave = async {
-            countAndReportMetricsForOppgaver()
+            countOppgaver()
         }
         val done = async {
-            countAndReportMetricsForDoneEvents()
+            countDoneEvents()
         }
 
-        beskjeder.await()
-        innboks.await()
-        oppgave.await()
-        done.await()
+        val sessions = CountingMetricsSessions()
+        sessions.put(EventType.BESKJED, beskjeder.await())
+        sessions.put(EventType.DONE, done.await())
+        sessions.put(EventType.INNBOKS, innboks.await())
+        sessions.put(EventType.OPPGAVE, oppgave.await())
+        return@withContext sessions
     }
 
-    private suspend fun countAndReportMetricsForBeskjeder() {
-        try {
-            metricsProbe.runWithMetrics(EventType.BESKJED) {
+    suspend fun countBeskjeder(): DbCountingMetricsSession {
+        val eventType = EventType.BESKJED
+        return try {
+            metricsProbe.runWithMetrics(eventType) {
                 val grupperPerProdusent = repository.getNumberOfBeskjedEventsGroupedByProdusent()
                 addEventsByProducer(grupperPerProdusent)
             }
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall beskjed-eventer i cache-en", e)
+            throw CountException("Klarte ikke å telle antall beskjed-eventer i cache-en", e)
         }
     }
 
-    private suspend fun countAndReportMetricsForInnboksEventer() {
-        if (isOtherEnvironmentThanProd()) {
+    suspend fun countInnboksEventer(): DbCountingMetricsSession {
+        val eventType = EventType.INNBOKS
+        return if (isOtherEnvironmentThanProd()) {
             try {
-                metricsProbe.runWithMetrics(EventType.INNBOKS) {
+                metricsProbe.runWithMetrics(eventType) {
                     val grupperPerProdusent = repository.getNumberOfInnboksEventsGroupedByProdusent()
                     addEventsByProducer(grupperPerProdusent)
                 }
 
             } catch (e: Exception) {
-                log.warn("Klarte ikke å telle og rapportere metrics for antall innboks-eventer i cache-en", e)
+                throw CountException("Klarte ikke å telle antall innboks-eventer i cache-en", e)
             }
+        } else {
+            DbCountingMetricsSession(eventType)
         }
     }
 
-    private suspend fun countAndReportMetricsForOppgaver() {
-        try {
-            metricsProbe.runWithMetrics(EventType.OPPGAVE) {
+    suspend fun countOppgaver(): DbCountingMetricsSession {
+        val eventType = EventType.OPPGAVE
+        return try {
+            metricsProbe.runWithMetrics(eventType) {
                 val grupperPerProdusent = repository.getNumberOfOppgaveEventsGroupedByProdusent()
                 addEventsByProducer(grupperPerProdusent)
             }
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall oppgave-eventer i cache-en", e)
+            throw CountException("Klarte ikke å telle antall oppgave-eventer i cache-en", e)
         }
     }
 
-    private suspend fun countAndReportMetricsForDoneEvents() {
-        try {
-            metricsProbe.runWithMetrics(EventType.DONE) {
+    suspend fun countDoneEvents(): DbCountingMetricsSession {
+        val eventType = EventType.DONE
+        return try {
+            metricsProbe.runWithMetrics(eventType) {
                 addEventsByProducer(repository.getNumberOfDoneEventsInWaitingTableGroupedByProdusent())
                 addEventsByProducer(repository.getNumberOfInactiveBrukernotifikasjonerGroupedByProdusent())
             }
 
         } catch (e: Exception) {
-            log.warn("Klarte ikke å telle og rapportere metrics for antall done-eventer i cache-en", e)
+            throw CountException("Klarte ikke å telle antall done-eventer i cache-en", e)
         }
     }
 

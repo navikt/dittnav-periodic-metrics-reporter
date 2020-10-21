@@ -23,6 +23,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.OppgaveObje
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.createOppgaver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.deleteAllOppgave
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should not be null`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
@@ -44,6 +45,31 @@ internal class DbEventCounterServiceTestIT {
     }
 
     @Test
+    fun `Should count all in common counting metrics session`() {
+        val beskjeder = createBeskjedEventer()
+        val innboksEventer = createInnboksEventer()
+        val oppgaver = createOppgaveEventer()
+        createDoneEventInWaitingTable()
+
+        val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
+        initMetricsSession(metricsProbe, EventType.BESKJED)
+        initMetricsSession(metricsProbe, EventType.INNBOKS)
+        initMetricsSession(metricsProbe, EventType.OPPGAVE)
+        initMetricsSession(metricsProbe, EventType.DONE)
+        val service = DbEventCounterService(metricsProbe, repository)
+
+        val countingMetricsSessions = runBlocking {
+            service.countAllEventTypesAsync()
+        }
+
+        countingMetricsSessions.`should not be null`()
+        countingMetricsSessions.getForType(EventType.BESKJED).getNumberOfUniqueEvents() `should be equal to` beskjeder.size
+        countingMetricsSessions.getForType(EventType.INNBOKS).getNumberOfUniqueEvents() `should be equal to` innboksEventer.size
+        countingMetricsSessions.getForType(EventType.OPPGAVE).getNumberOfUniqueEvents() `should be equal to` oppgaver.size
+        countingMetricsSessions.getForType(EventType.DONE).getNumberOfUniqueEvents() `should be equal to` 4
+    }
+
+    @Test
     fun `Should count beskjed events`() {
         val beskjeder = createBeskjedEventer()
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
@@ -51,7 +77,7 @@ internal class DbEventCounterServiceTestIT {
         val service = DbEventCounterService(metricsProbe, repository)
 
         runBlocking {
-            service.countEventsAndReportMetrics()
+            service.countBeskjeder()
         }
 
         metricsSession.getTotalNumber() `should be equal to` 2
@@ -59,7 +85,6 @@ internal class DbEventCounterServiceTestIT {
         metricsSession.getNumberOfEventsFor(beskjeder[0].systembruker) `should be equal to` 1
         metricsSession.getNumberOfEventsFor(beskjeder[1].systembruker) `should be equal to` 1
     }
-
 
     @Test
     fun `Should count innboks events`() {
@@ -69,7 +94,7 @@ internal class DbEventCounterServiceTestIT {
         val service = DbEventCounterService(metricsProbe, repository)
 
         runBlocking {
-            service.countEventsAndReportMetrics()
+            service.countInnboksEventer()
         }
 
         metricsSession.getTotalNumber() `should be equal to` 2
@@ -86,7 +111,7 @@ internal class DbEventCounterServiceTestIT {
         val service = DbEventCounterService(metricsProbe, repository)
 
         runBlocking {
-            service.countEventsAndReportMetrics()
+            service.countOppgaver()
         }
 
         metricsSession.getTotalNumber() `should be equal to` 2
@@ -107,7 +132,7 @@ internal class DbEventCounterServiceTestIT {
         val service = DbEventCounterService(metricsProbe, repository)
 
         runBlocking {
-            service.countEventsAndReportMetrics()
+            service.countDoneEvents()
         }
 
         metricsSession.getTotalNumber() `should be equal to` 4
@@ -124,8 +149,11 @@ internal class DbEventCounterServiceTestIT {
 
     private fun `Sorg for at metrics session trigges`(metricsProbe: DbCountingMetricsProbe, metricsSession: DbCountingMetricsSession, eventType: EventType) {
         val slot = slot<suspend DbCountingMetricsSession.() -> Unit>()
-        coEvery { metricsProbe.runWithMetrics(eventType, capture(slot)) } coAnswers {
+        coEvery {
+            metricsProbe.runWithMetrics(eventType, capture(slot))
+        } coAnswers {
             slot.captured.invoke(metricsSession)
+            metricsSession
         }
     }
 

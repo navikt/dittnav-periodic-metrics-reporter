@@ -4,8 +4,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.time.delay
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
@@ -13,9 +11,8 @@ import java.time.Instant
 import kotlin.coroutines.CoroutineContext
 
 class PeriodicMetricsSubmitter(
-        val dbEventCounterService: DbEventCounterService,
-        val topicEventCounterService: TopicEventCounterService,
-        private val job: Job = Job()
+    private val metricsSubmitterService: MetricsSubmitterService,
+    private val job: Job = Job()
 ) : CoroutineScope {
 
     private val log: Logger = LoggerFactory.getLogger(PeriodicMetricsSubmitter::class.java)
@@ -51,11 +48,10 @@ class PeriodicMetricsSubmitter(
     }
 
     suspend fun submitMetrics() {
-        log.info("Starter å rapportere inn metrikker...")
         val start = Instant.now()
+        log.info("Starter å rapportere inn metrikker...")
 
-        topicEventCounterService.countEventsAndReportMetrics()
-        dbEventCounterService.countEventsAndReportMetrics()
+        metricsSubmitterService.submitMetrics()
 
         val elapsedTime = calculateElapsedTime(start)
         log.info("...ferdig med å rapportere inn metrikker, det ${elapsedTime}ms.")
@@ -66,5 +62,4 @@ class PeriodicMetricsSubmitter(
         val elapsedTime = stop.toEpochMilli() - start.toEpochMilli()
         return elapsedTime
     }
-
 }
