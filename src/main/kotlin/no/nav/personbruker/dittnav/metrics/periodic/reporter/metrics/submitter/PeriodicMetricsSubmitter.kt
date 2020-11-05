@@ -16,7 +16,7 @@ class PeriodicMetricsSubmitter(
 ) : CoroutineScope {
 
     private val log: Logger = LoggerFactory.getLogger(PeriodicMetricsSubmitter::class.java)
-    private val minutesToWait = Duration.ofMinutes(5)
+    private val minutesToWait = Duration.ofMinutes(10)
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job
