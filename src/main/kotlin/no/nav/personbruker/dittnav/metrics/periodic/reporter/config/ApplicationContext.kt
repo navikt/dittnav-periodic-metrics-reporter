@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.Kafka
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.closeConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsProbe
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventTypeCounter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.resolveMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.MetricsSubmitterService
@@ -39,20 +39,21 @@ class ApplicationContext {
     val dbEventCounterService = DbEventCounterService(dbEventCountingMetricsProbe, metricsRepository)
     val dbMetricsReporter = DbMetricsReporter(metricsReporter, nameScrubber)
 
-    val topicMetricsProbe = TopicMetricsProbe()
     val kafkaMetricsReporter = TopicMetricsReporter(metricsReporter, nameScrubber)
 
     val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, Kafka.beskjedTopicName, environment)
     val innboksCountConsumer = createCountConsumer<GenericRecord>(EventType.INNBOKS, Kafka.innboksTopicName, environment)
     val oppgaveCountConsumer = createCountConsumer<GenericRecord>(EventType.OPPGAVE, Kafka.oppgaveTopicName, environment)
     val doneCountConsumer = createCountConsumer<GenericRecord>(EventType.DONE, Kafka.doneTopicName, environment)
+    val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
+    val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
+    val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
+    val doneCounter = TopicEventTypeCounter(doneCountConsumer, EventType.DONE, environment.deltaCountingEnabled)
     val topicEventCounterService = TopicEventCounterService(
-        topicMetricsProbe = topicMetricsProbe,
-        beskjedCountConsumer = beskjedCountConsumer,
-        innboksCountConsumer = innboksCountConsumer,
-        oppgaveCountConsumer = oppgaveCountConsumer,
-        doneCountConsumer = doneCountConsumer,
-        environment = environment
+            beskjedCounter = beskjedCounter,
+            innboksCounter = innboksCounter,
+            oppgaveCounter = oppgaveCounter,
+            doneCounter = doneCounter
     )
     val kafkaEventCounterService = KafkaEventCounterService(
         beskjedCountConsumer = beskjedCountConsumer,
