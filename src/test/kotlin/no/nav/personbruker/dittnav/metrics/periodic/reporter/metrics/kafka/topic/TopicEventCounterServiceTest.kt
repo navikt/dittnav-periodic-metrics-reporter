@@ -34,7 +34,7 @@ internal class TopicEventCounterServiceTest {
     @Test
     internal fun `Should handle exceptions and rethrow as internal exception`() {
         val simulatedException = Exception("Simulated error in a test")
-        coEvery { topicMetricsProbe.runWithMetrics(any(), any()) } throws simulatedException
+        coEvery { topicMetricsProbe.runWithMetrics(any(), any(), any()) } throws simulatedException
 
         invoking {
             runBlocking {

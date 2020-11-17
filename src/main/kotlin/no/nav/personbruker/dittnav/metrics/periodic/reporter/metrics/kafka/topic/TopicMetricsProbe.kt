@@ -7,7 +7,10 @@ class TopicMetricsProbe {
 
     private val log = LoggerFactory.getLogger(TopicMetricsProbe::class.java)
 
-    suspend fun runWithMetrics(eventType: EventType, block: suspend TopicMetricsSession.() -> Unit): TopicMetricsSession {
+    suspend fun runWithMetrics(eventType: EventType,
+                               previousSession: TopicMetricsSession?,
+                               block: suspend TopicMetricsSession.() -> Unit): TopicMetricsSession {
+
         val session = TopicMetricsSession(eventType)
         block.invoke(session)
         session.calculateProcessingTime()

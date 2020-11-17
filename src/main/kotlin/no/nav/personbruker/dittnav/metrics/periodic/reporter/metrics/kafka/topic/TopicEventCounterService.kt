@@ -99,7 +99,7 @@ class TopicEventCounterService (
         kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
         eventType: EventType
     ): TopicMetricsSession {
-        return topicMetricsProbe.runWithMetrics(eventType) {
+        return topicMetricsProbe.runWithMetrics(eventType, null) {
             var records = kafkaConsumer.poll(Duration.of(5000, ChronoUnit.MILLIS))
             countBatch(records, this)
 

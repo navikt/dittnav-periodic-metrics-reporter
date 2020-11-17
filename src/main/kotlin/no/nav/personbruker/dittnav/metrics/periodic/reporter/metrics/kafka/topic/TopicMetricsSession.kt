@@ -4,17 +4,35 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
-class TopicMetricsSession(val eventType: EventType) : CountingMetricsSession {
+class TopicMetricsSession : CountingMetricsSession {
+
+    val eventType: EventType
 
     private val treMillioner = 3000000
 
-    private var duplicatesByProdusent = HashMap<String, Int>(50)
-    private var totalNumberOfEventsByProducer = HashMap<String, Int>(50)
-    private val uniqueEventsOnTopicByProducer = HashMap<String, Int>(50)
-    private val uniqueEventsOnTopic = HashSet<UniqueKafkaEventIdentifier>(treMillioner)
+    private var duplicatesByProdusent: MutableMap<String, Int>
+    private var totalNumberOfEventsByProducer: MutableMap<String, Int>
+    private val uniqueEventsOnTopicByProducer: MutableMap<String, Int>
+    private val uniqueEventsOnTopic: MutableSet<UniqueKafkaEventIdentifier>
 
     private val start = System.nanoTime()
     private var processingTime : Long = 0L
+
+    constructor(eventType: EventType) {
+        this.eventType = eventType
+        this.duplicatesByProdusent = HashMap(50)
+        this.totalNumberOfEventsByProducer = HashMap(50)
+        this.uniqueEventsOnTopicByProducer = HashMap(50)
+        this.uniqueEventsOnTopic = HashSet(treMillioner)
+    }
+
+    constructor(previousSession: TopicMetricsSession) {
+        this.eventType = previousSession.eventType
+        this.duplicatesByProdusent = previousSession.duplicatesByProdusent
+        this.totalNumberOfEventsByProducer = previousSession.totalNumberOfEventsByProducer
+        this.uniqueEventsOnTopicByProducer = previousSession.uniqueEventsOnTopicByProducer
+        this.uniqueEventsOnTopic = previousSession.uniqueEventsOnTopic
+    }
 
     fun countEvent(event: UniqueKafkaEventIdentifier) {
         val produsent = event.systembruker

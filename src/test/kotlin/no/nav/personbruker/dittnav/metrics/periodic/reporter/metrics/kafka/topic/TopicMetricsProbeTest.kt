@@ -14,7 +14,7 @@ internal class TopicMetricsProbeTest {
         val minimumProcessingTimeInMs: Long = 500
         val minimumProcessingTimeInNs: Long = minimumProcessingTimeInMs * 1000000
         val session = runBlocking {
-            probe.runWithMetrics(EventType.BESKJED) {
+            probe.runWithMetrics(EventType.BESKJED, null) {
                 delay(minimumProcessingTimeInMs)
             }
         }
