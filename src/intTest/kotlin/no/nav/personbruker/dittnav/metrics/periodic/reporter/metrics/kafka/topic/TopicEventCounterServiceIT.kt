@@ -1,12 +1,14 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
@@ -25,6 +27,10 @@ class TopicEventCounterServiceIT {
     private val adminClient = embeddedEnv.adminClient
 
     private val events = (1..5).map { createNokkel(it) to AvroBeskjedObjectMother.createBeskjed(it) }.toMap()
+
+    private val environment = mockk<Environment>().also {
+        every { it.deltaCountingEnabled } returns false
+    }
 
     init {
         embeddedEnv.start()
@@ -47,7 +53,7 @@ class TopicEventCounterServiceIT {
         val oppgaveCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
         val innboksCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
         val doneCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer)
+        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer, environment)
 
         runBlocking {
             service.countBeskjeder()
@@ -70,7 +76,7 @@ class TopicEventCounterServiceIT {
         val oppgaveCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
         val innboksCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
         val doneCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer)
+        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer, environment)
 
         `tell og verifiser korrekte antall eventer flere ganger paa rad`(service, metricsSession)
 

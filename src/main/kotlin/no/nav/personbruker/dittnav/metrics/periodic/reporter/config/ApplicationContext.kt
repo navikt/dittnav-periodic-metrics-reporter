@@ -51,7 +51,8 @@ class ApplicationContext {
         beskjedCountConsumer = beskjedCountConsumer,
         innboksCountConsumer = innboksCountConsumer,
         oppgaveCountConsumer = oppgaveCountConsumer,
-        doneCountConsumer = doneCountConsumer
+        doneCountConsumer = doneCountConsumer,
+        environment = environment
     )
     val kafkaEventCounterService = KafkaEventCounterService(
         beskjedCountConsumer = beskjedCountConsumer,

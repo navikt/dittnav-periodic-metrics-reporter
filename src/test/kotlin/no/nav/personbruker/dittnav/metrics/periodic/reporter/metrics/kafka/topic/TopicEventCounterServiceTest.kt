@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.apache.avro.generic.GenericRecord
@@ -19,13 +20,15 @@ internal class TopicEventCounterServiceTest {
     private val oppgaveCountConsumer: KafkaConsumer<Nokkel, GenericRecord> = mockk(relaxed = true)
     private val doneCountConsumer: KafkaConsumer<Nokkel, GenericRecord> = mockk(relaxed = true)
     private val topicMetricsProbe: TopicMetricsProbe = mockk(relaxed = true)
+    private val environment: Environment = mockk(relaxed = true)
 
     private val topicEventCounterService = TopicEventCounterService(
         topicMetricsProbe,
         beskjedCountConsumer,
         innboksCountConsumer,
         oppgaveCountConsumer,
-        doneCountConsumer
+        doneCountConsumer,
+        environment
     )
 
     @Test

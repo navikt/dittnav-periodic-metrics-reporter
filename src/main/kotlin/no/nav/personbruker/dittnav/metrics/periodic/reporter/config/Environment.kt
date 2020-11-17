@@ -14,7 +14,7 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val namespace: String = getEnvVar("NAIS_NAMESPACE"),
                        val sensuHost: String = getEnvVar("SENSU_HOST"),
                        val sensuPort: String = getEnvVar("SENSU_PORT"),
-                       val deltaCountingModeActive: Boolean = (System.getenv("DELTA_COUNTING_MODE")?:"false").toBoolean()
+                       val deltaCountingEnabled: Boolean = (System.getenv("DELTA_COUNTING_MODE")?:"false").toBoolean()
 )
 
 fun getEnvVar(varName: String): String {

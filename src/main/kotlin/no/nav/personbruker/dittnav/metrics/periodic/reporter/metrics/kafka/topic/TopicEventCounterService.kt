@@ -7,6 +7,7 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
@@ -17,15 +18,16 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class TopicEventCounterService(
+class TopicEventCounterService (
     val topicMetricsProbe: TopicMetricsProbe,
     val beskjedCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
     val innboksCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
     val oppgaveCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
-    val doneCountConsumer: KafkaConsumer<Nokkel, GenericRecord>
+    val doneCountConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+    environment: Environment
 ) {
 
-    private val log = LoggerFactory.getLogger(TopicEventCounterService::class.java)
+    private val deltaCountingEnabled = environment.deltaCountingEnabled
 
     suspend fun countAllEventTypesAsync(): CountingMetricsSessions = withContext(Dispatchers.IO) {
         val beskjeder = async {
@@ -46,7 +48,7 @@ class TopicEventCounterService(
         sessions.put(EventType.DONE, done.await())
         sessions.put(EventType.INNBOKS, innboks.await())
         sessions.put(EventType.OPPGAVE, oppgave.await())
-        return@withContext sessions
+        sessions
     }
 
     suspend fun countBeskjeder(): TopicMetricsSession {
@@ -105,7 +107,9 @@ class TopicEventCounterService(
                 records = kafkaConsumer.poll(Duration.of(500, ChronoUnit.MILLIS))
                 countBatch(records, this)
             }
-            kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            if (!deltaCountingEnabled) {
+                kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            }
         }
     }
 
