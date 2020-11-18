@@ -29,7 +29,7 @@ internal class EnvironmentTest {
 
     @Test
     fun `Om DELTA_COUNTING_MODE  er satt som "FALSE" env_var evalueres den til false`() {
-        withEnvironment(envVars + ("DELTA_COUNTING_MODE" to "false")) {
+        withEnvironment(envVars + ("DELTA_COUNTING_ENABLED" to "false")) {
             Environment().deltaCountingEnabled `should be equal to` false
         }
     }
@@ -38,7 +38,7 @@ internal class EnvironmentTest {
 
     @Test
     fun `Om DELTA_COUNTING_MODE er satt som "TRUE" env_var evalueres den til true`() {
-        withEnvironment(envVars + ("DELTA_COUNTING_MODE" to "true")) {
+        withEnvironment(envVars + ("DELTA_COUNTING_ENABLED" to "true")) {
             Environment().deltaCountingEnabled `should be equal to` true
         }
     }
