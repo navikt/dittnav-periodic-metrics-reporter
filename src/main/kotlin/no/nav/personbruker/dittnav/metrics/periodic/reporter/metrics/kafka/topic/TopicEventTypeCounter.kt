@@ -37,7 +37,6 @@ class TopicEventTypeCounter(
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
-
         var records = kafkaConsumer.poll(Duration.of(5000, ChronoUnit.MILLIS))
         countBatch(records, session)
 

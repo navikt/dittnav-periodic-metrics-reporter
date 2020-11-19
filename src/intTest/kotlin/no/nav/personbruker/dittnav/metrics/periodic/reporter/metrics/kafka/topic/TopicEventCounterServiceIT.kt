@@ -44,19 +44,18 @@ class TopicEventCounterServiceIT {
     }
 
     @Test
-    fun `Skal telle korrekt totalantall av eventer og gruppere de som er unike og duplikater`() {
-        val metricsSession = TopicMetricsSession(EventType.BESKJED)
-        val metricsProbe = mockk<TopicMetricsProbe>(relaxed = true)
-        `Sorg for at metrics session trigges`(metricsProbe, metricsSession)
+    fun `Skal telle korrekt total antall av eventer og gruppere de som er unike og duplikater`() {
 
         val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topicen, testEnvironment, true)
-        val oppgaveCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val innboksCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val doneCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer, environment)
 
-        runBlocking {
-            service.countBeskjeder()
+        val topicEventTypeCounter = TopicEventTypeCounter(
+            kafkaConsumer = beskjedCountConsumer,
+            eventType = EventType.BESKJED,
+            deltaCountingEnabled = false
+        )
+
+        val metricsSession = runBlocking {
+            topicEventTypeCounter.countEventsAsync().await()
         }
 
         metricsSession.getDuplicates() `should be equal to` events.size * 2
@@ -68,31 +67,31 @@ class TopicEventCounterServiceIT {
 
     @Test
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
-        val metricsSession = TopicMetricsSession(EventType.BESKJED)
-        val metricsProbe = mockk<TopicMetricsProbe>(relaxed = true)
-        `Sorg for at metrics session trigges`(metricsProbe, metricsSession)
-
         val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topicen, testEnvironment, true)
-        val oppgaveCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val innboksCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val doneCountConsumer = mockk<KafkaConsumer<Nokkel, GenericRecord>>()
-        val service = TopicEventCounterService(metricsProbe, beskjedCountConsumer, innboksCountConsumer, oppgaveCountConsumer, doneCountConsumer, environment)
+        val topicEventTypeCounter = TopicEventTypeCounter(
+            kafkaConsumer = beskjedCountConsumer,
+            eventType = EventType.BESKJED,
+            deltaCountingEnabled = false
+        )
 
-        `tell og verifiser korrekte antall eventer flere ganger paa rad`(service, metricsSession)
+        `tell og verifiser korrekte antall eventer flere ganger paa rad`(topicEventTypeCounter)
 
         beskjedCountConsumer.close()
     }
 
-    private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(service: TopicEventCounterService,
-                                                                                 metricsSession: TopicMetricsSession) {
-        `tell og verifiser korrekt antall eventer`(service, metricsSession)
-        `tell og verifiser korrekt antall eventer`(service, metricsSession)
-        `tell og verifiser korrekt antall eventer`(service, metricsSession)
+    private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(
+        topicEventTypeCounter: TopicEventTypeCounter
+    ) {
+        `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
+        `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
+        `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
     }
 
-    private fun `tell og verifiser korrekt antall eventer`(service: TopicEventCounterService, metricsSession: TopicMetricsSession) {
-        runBlocking {
-            service.countBeskjeder()
+    private fun `tell og verifiser korrekt antall eventer`(
+        topicEventTypeCounter: TopicEventTypeCounter
+    ) {
+        val metricsSession = runBlocking {
+            topicEventTypeCounter.countEventsAsync().await()
         }
 
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
@@ -105,14 +104,6 @@ class TopicEventCounterServiceIT {
             val fikkProduserBatch3 = KafkaTestUtil.produceEvents(testEnvironment, topicen, events)
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
         } `should be equal to` true
-    }
-
-    private fun `Sorg for at metrics session trigges`(metricsProbe: TopicMetricsProbe, metricsSession: TopicMetricsSession) {
-        val slot = slot<suspend TopicMetricsSession.() -> Unit>()
-        coEvery { metricsProbe.runWithMetrics(any(), capture(slot)) } coAnswers {
-            slot.captured.invoke(metricsSession)
-            metricsSession
-        }
     }
 
 }
