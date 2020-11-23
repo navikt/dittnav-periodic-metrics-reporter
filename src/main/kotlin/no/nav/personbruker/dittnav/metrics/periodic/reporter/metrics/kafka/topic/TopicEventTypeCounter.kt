@@ -13,7 +13,6 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
-import java.time.temporal.ChronoUnit
 
 class TopicEventTypeCounter(
         val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
@@ -21,7 +20,12 @@ class TopicEventTypeCounter(
         val deltaCountingEnabled: Boolean
 ) {
 
-    var previousSession: TopicMetricsSession? = null
+    private var previousSession: TopicMetricsSession? = null
+
+    private val timeoutWrapper = TimeoutWrapper(
+            initialTimeout =  Duration.ofMillis(5000),
+            regularTimeut = Duration.ofMillis(500)
+    )
 
     suspend fun countEventsAsync(): Deferred<TopicMetricsSession> = withContext(Dispatchers.IO) {
         async {
@@ -37,11 +41,11 @@ class TopicEventTypeCounter(
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
-        var records = kafkaConsumer.poll(Duration.of(5000, ChronoUnit.MILLIS))
+        var records = kafkaConsumer.poll(timeoutWrapper.pollingTimeout)
         countBatch(records, session)
 
         while (records.foundRecords()) {
-            records = kafkaConsumer.poll(Duration.of(500, ChronoUnit.MILLIS))
+            records = kafkaConsumer.poll(timeoutWrapper.pollingTimeout)
             countBatch(records, session)
         }
 
@@ -61,6 +65,20 @@ class TopicEventTypeCounter(
             records.forEach { record ->
                 val event = UniqueKafkaEventIdentifierTransformer.toInternal(record)
                 metricsSession.countEvent(event)
+            }
+        }
+    }
+
+    private data class TimeoutWrapper(private val initialTimeout: Duration, private val regularTimeut: Duration) {
+
+        private var isFirstInvocation = true
+
+        val pollingTimeout: Duration get() {
+            return if (isFirstInvocation) {
+                isFirstInvocation = false
+                initialTimeout
+            } else {
+                regularTimeut
             }
         }
     }
