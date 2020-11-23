@@ -1,7 +1,5 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import com.squareup.wire.internal.copyOf
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
@@ -83,11 +81,13 @@ class TopicEventCounterServiceIT {
     }
 
 
-    @Disabled
     @Test
     fun `Ved telling etter reset av offset blir resultatet det samme som etter deltatelling `() {
-        val deltaCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
-        val fromScratchCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+        val deltaCountingEnv = testEnvironment.copy(groupIdBase = "delta")
+        val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
+
+        val deltaCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, deltaCountingEnv, true)
+        val fromScratchCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, fromScratchCountingEnv, true)
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
             kafkaConsumer = deltaCountingConsumer,
             eventType = EventType.BESKJED,
