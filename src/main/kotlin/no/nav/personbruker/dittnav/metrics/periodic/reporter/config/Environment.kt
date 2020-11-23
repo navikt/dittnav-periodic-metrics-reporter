@@ -1,5 +1,8 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
+import no.nav.personbruker.dittnav.common.util.config.BooleanEnvVar.getEnvVarAsBoolean
+import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
+
 data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS"),
                        val schemaRegistryUrl: String = getEnvVar("KAFKA_SCHEMAREGISTRY_SERVERS"),
                        val username: String = getEnvVar("SERVICEUSER_USERNAME"),
@@ -14,12 +17,9 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val namespace: String = getEnvVar("NAIS_NAMESPACE"),
                        val sensuHost: String = getEnvVar("SENSU_HOST"),
                        val sensuPort: String = getEnvVar("SENSU_PORT"),
-                       val deltaCountingEnabled: Boolean = (System.getenv("DELTA_COUNTING_ENABLED")?:"false").toBoolean(),
+                       val deltaCountingEnabled: Boolean = getEnvVarAsBoolean("DELTA_COUNTING_ENABLED", false),
                        val groupIdBase: String = "dn-periodic_metrics_reporter"
 )
 
-fun getEnvVar(varName: String): String {
-    return System.getenv(varName)
-            ?: throw IllegalArgumentException("Appen kan ikke starte uten av miljøvariabelen $varName er satt.")
-}
+
 fun isOtherEnvironmentThanProd() = System.getenv("NAIS_CLUSTER_NAME") != "prod-sbs"

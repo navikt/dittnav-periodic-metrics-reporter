@@ -54,6 +54,7 @@ dependencies {
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(Prometheus.logback)
+    implementation(DittNAV.Common.utils)
 
     testImplementation(H2Database.h2)
     testImplementation(Junit.api)
