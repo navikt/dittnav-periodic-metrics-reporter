@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
@@ -149,6 +150,7 @@ class TopicEventCounterServiceIT {
         topicEventTypeCounter: TopicEventTypeCounter
     ) {
         val metricsSession = runBlocking {
+            delay(500)
             topicEventTypeCounter.countEventsAsync().await()
         }
 
