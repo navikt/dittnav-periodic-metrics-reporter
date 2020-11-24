@@ -21,11 +21,4 @@ fun Routing.metricsSubmitterApi(appContext: ApplicationContext) {
         appContext.periodicMetricsSubmitter.stop()
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
-
-    get("/internal/metrics/submit") {
-        appContext.periodicMetricsSubmitter.submitMetrics()
-        val responseText = "Det har blitt trigget rapportering av metrikker både for topics og cache."
-        call.respondText(text = responseText, contentType = ContentType.Text.Plain)
-    }
-
 }
