@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.common.util.config.BooleanEnvVar.getEnvVarAsBoolean
+import no.nav.personbruker.dittnav.common.util.config.LongEnvVar.getEnvVarAsLong
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
 
 data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS"),
@@ -18,7 +19,8 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val sensuHost: String = getEnvVar("SENSU_HOST"),
                        val sensuPort: String = getEnvVar("SENSU_PORT"),
                        val deltaCountingEnabled: Boolean = getEnvVarAsBoolean("DELTA_COUNTING_ENABLED", false),
-                       val groupIdBase: String = "dn-periodic_metrics_reporter"
+                       val groupIdBase: String = "dn-periodic_metrics_reporter",
+                       val countingIntervalMinutes: Long = getEnvVarAsLong("COUNTING_INTERVAL_MINUTES")
 )
 
 

@@ -9,9 +9,6 @@ import io.ktor.routing.routing
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.healthApi
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.cacheCountingApi
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.eventCountingApi
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.kafkaCountingApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.metricsSubmitterApi
 
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
@@ -19,9 +16,6 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     install(DefaultHeaders)
     routing {
         healthApi(appContext.healthService)
-        kafkaCountingApi(appContext.kafkaEventCounterService, appContext.kafkaTopicEventCounterService)
-        cacheCountingApi(appContext.cacheEventCounterService)
-        eventCountingApi(appContext.kafkaEventCounterService, appContext.cacheEventCounterService)
         metricsSubmitterApi(appContext)
     }
 

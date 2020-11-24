@@ -80,7 +80,7 @@ class ApplicationContext {
     }
 
     private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
-        PeriodicMetricsSubmitter(metricsSubmitterService)
+        PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
 
     fun closeAllConsumers() {
         closeConsumer(beskjedCountConsumer)

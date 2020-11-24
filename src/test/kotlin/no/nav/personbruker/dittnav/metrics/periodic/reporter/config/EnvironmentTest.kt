@@ -17,7 +17,8 @@ internal class EnvironmentTest {
         "NAIS_CLUSTER_NAME" to "cluster_name",
         "NAIS_NAMESPACE" to "namespace",
         "SENSU_HOST" to "sensu_host",
-        "SENSU_PORT" to "sensu_port"
+        "SENSU_PORT" to "sensu_port",
+        "COUNTING_INTERVAL_MINUTES" to "1"
     )
 
     @Test
