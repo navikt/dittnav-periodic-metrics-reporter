@@ -15,10 +15,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
-    private val dbEventCounterService: DbEventCounterService,
-    private val topicEventCounterService: TopicEventCounterService,
-    private val dbMetricsReporter: DbMetricsReporter,
-    private val kafkaMetricsReporter: TopicMetricsReporter
+        private val dbEventCounterService: DbEventCounterService,
+        private val topicEventCounterService: TopicEventCounterService,
+        private val dbMetricsReporter: DbMetricsReporter,
+        private val kafkaMetricsReporter: TopicMetricsReporter
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(MetricsSubmitterService::class.java)
@@ -47,9 +47,9 @@ class MetricsSubmitterService(
     }
 
     private suspend fun reportMetricsByEventType(
-        topicSessions: CountingMetricsSessions,
-        dbSessions: CountingMetricsSessions,
-        eventType: EventType
+            topicSessions: CountingMetricsSessions,
+            dbSessions: CountingMetricsSessions,
+            eventType: EventType
     ) {
         val kafkaEventSession = topicSessions.getForType(eventType)
 
@@ -59,7 +59,7 @@ class MetricsSubmitterService(
             kafkaMetricsReporter.report(kafkaEventSession as TopicMetricsSession)
             lastReportedUniqueKafkaEvents[eventType] = kafkaEventSession.getNumberOfUniqueEvents()
 
-        } else {
+        } else if (!currentAndLastCountWasZero(kafkaEventSession, eventType)) {
             val currentCount = kafkaEventSession.getNumberOfUniqueEvents()
             val previousCount = lastReportedUniqueKafkaEvents.getOrDefault(eventType, 0)
             val msg = "Det har oppstått en tellefeil, rapporterer derfor ikke nye $eventType-metrikker. " +
@@ -73,4 +73,8 @@ class MetricsSubmitterService(
         return currentCount > 0 && currentCount >= lastReportedUniqueKafkaEvents.getOrDefault(eventType, 0)
     }
 
+    private fun currentAndLastCountWasZero(session: CountingMetricsSession, eventType: EventType): Boolean {
+        val currentCount = session.getNumberOfUniqueEvents()
+        return currentCount == 0 && lastReportedUniqueKafkaEvents.getOrDefault(eventType, 0) == 0
+    }
 }
