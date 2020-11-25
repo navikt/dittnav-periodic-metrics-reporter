@@ -12,11 +12,12 @@ import kotlin.coroutines.CoroutineContext
 
 class PeriodicMetricsSubmitter(
     private val metricsSubmitterService: MetricsSubmitterService,
+    countingIntervalMinutes: Long,
     private val job: Job = Job()
 ) : CoroutineScope {
 
     private val log: Logger = LoggerFactory.getLogger(PeriodicMetricsSubmitter::class.java)
-    private val minutesToWait = Duration.ofMinutes(10)
+    private val minutesToWait = Duration.ofMinutes(countingIntervalMinutes)
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job

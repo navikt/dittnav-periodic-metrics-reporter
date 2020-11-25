@@ -54,6 +54,7 @@ dependencies {
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(Prometheus.logback)
+    implementation(DittNAV.Common.utils)
 
     testImplementation(H2Database.h2)
     testImplementation(Junit.api)
@@ -64,7 +65,9 @@ dependencies {
     testImplementation(Kafka.Confluent.schemaRegistry)
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
-
+    testImplementation("io.kotest:kotest-runner-junit5:4.3.1")
+    testImplementation("io.kotest:kotest-assertions-core:4.3.1")
+    testImplementation("io.kotest:kotest-extensions:4.3.1")
     intTestImplementation(Junit.engine)
 }
 
@@ -86,6 +89,7 @@ tasks {
         DockerComposeDefaults.environomentVariables.forEach { (name, value) ->
             println("Setting the environment variable $name")
             environment(name, value)
+            environment("COUNTING_INTERVAL_MINUTES", "1")
         }
 
         main = application.mainClassName

@@ -12,7 +12,7 @@ internal class PeriodicMetricsSubmitterTest {
     fun `Should report metrics for both kafka topics and the database cache`() {
         val metricsSubmitterService = mockk<MetricsSubmitterService>(relaxed = true)
 
-        val submitter = PeriodicMetricsSubmitter(metricsSubmitterService)
+        val submitter = PeriodicMetricsSubmitter(metricsSubmitterService, 1)
 
         runBlocking {
             submitter.submitMetrics()

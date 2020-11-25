@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 

@@ -39,7 +39,7 @@ object Kafka {
     }
 
     fun counterConsumerProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
-        val groupIdAndEventType = "dn-periodic_metrics_reporter_" + eventTypeToConsume.eventType
+        val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
         val sixMinutes = 6 * 60 * 1000
         return Properties().apply {
             put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
