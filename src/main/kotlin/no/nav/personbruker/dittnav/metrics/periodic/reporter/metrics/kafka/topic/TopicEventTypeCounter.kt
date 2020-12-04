@@ -13,6 +13,7 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
+import java.time.Instant
 
 class TopicEventTypeCounter(
         val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
@@ -22,9 +23,10 @@ class TopicEventTypeCounter(
 
     private var previousSession: TopicMetricsSession? = null
 
-    private val timeoutWrapper = TimeoutWrapper(
+    private val timeoutConfig = TimeoutConfig(
             initialTimeout =  Duration.ofMillis(5000),
-            regularTimeut = Duration.ofMillis(500)
+            regularTimeut = Duration.ofMillis(250),
+            maxTotalTimeout = Duration.ofMinutes(3)
     )
 
     suspend fun countEventsAsync(): Deferred<TopicMetricsSession> = withContext(Dispatchers.IO) {
@@ -40,12 +42,14 @@ class TopicEventTypeCounter(
 
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
 
+        val startTime = Instant.now()
+
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
-        var records = kafkaConsumer.poll(timeoutWrapper.pollingTimeout)
+        var records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
         countBatch(records, session)
 
-        while (records.foundRecords()) {
-            records = kafkaConsumer.poll(timeoutWrapper.pollingTimeout)
+        while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
+            records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
             countBatch(records, session)
         }
 
@@ -69,7 +73,13 @@ class TopicEventTypeCounter(
         }
     }
 
-    private data class TimeoutWrapper(private val initialTimeout: Duration, private val regularTimeut: Duration) {
+    private fun maxTimeoutExceeded(start: Instant, config: TimeoutConfig): Boolean {
+        return Instant.now() > start.plus(config.maxTotalTimeout)
+    }
+
+    private data class TimeoutConfig(private val initialTimeout: Duration,
+                                     private val regularTimeut: Duration,
+                                     val maxTotalTimeout: Duration) {
 
         private var isFirstInvocation = true
 
@@ -81,5 +91,12 @@ class TopicEventTypeCounter(
                 regularTimeut
             }
         }
+
+        init {
+            require(initialTimeout < maxTotalTimeout) { "maxTotalTimeout må være høyere enn initialTimeout." }
+            require(regularTimeut.toMillis() > 0) { "regularTimeout kan ikke være mindre enn 1 millisekund." }
+        }
+
+
     }
 }
