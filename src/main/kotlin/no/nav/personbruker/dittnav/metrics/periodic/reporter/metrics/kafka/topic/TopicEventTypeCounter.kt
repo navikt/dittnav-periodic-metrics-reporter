@@ -26,7 +26,7 @@ class TopicEventTypeCounter(
     private val timeoutConfig = TimeoutConfig(
             initialTimeout =  Duration.ofMillis(5000),
             regularTimeut = Duration.ofMillis(250),
-                maxTotalTimeout = Duration.ofMinutes(3)
+            maxTotalTimeout = Duration.ofMinutes(3)
     )
 
     suspend fun countEventsAsync(): Deferred<TopicMetricsSession> = withContext(Dispatchers.IO) {
