@@ -8,12 +8,11 @@ class TopicMetricsSession : CountingMetricsSession {
 
     val eventType: EventType
 
-    private val treMillioner = 3000000
 
     private var duplicatesByProdusent: MutableMap<String, Int>
     private var totalNumberOfEventsByProducer: MutableMap<String, Int>
     private val uniqueEventsOnTopicByProducer: MutableMap<String, Int>
-    private val uniqueEventsOnTopic: MutableSet<UniqueKafkaEventIdentifier>
+    private val uniqueEventsOnTopic: UniqueEventsTracker
 
     private val start = System.nanoTime()
     private var processingTime : Long = 0L
@@ -23,7 +22,7 @@ class TopicMetricsSession : CountingMetricsSession {
         this.duplicatesByProdusent = HashMap(50)
         this.totalNumberOfEventsByProducer = HashMap(50)
         this.uniqueEventsOnTopicByProducer = HashMap(50)
-        this.uniqueEventsOnTopic = HashSet(treMillioner)
+        this.uniqueEventsOnTopic = UniqueEventsTracker(expectedEventsPerUserPerProducer = 3)
     }
 
     constructor(previousSession: TopicMetricsSession) {
@@ -37,7 +36,7 @@ class TopicMetricsSession : CountingMetricsSession {
     fun countEvent(event: UniqueKafkaEventIdentifier) {
         val produsent = event.systembruker
         totalNumberOfEventsByProducer[produsent] = totalNumberOfEventsByProducer.getOrDefault(produsent, 0).inc()
-        val wasNewUniqueEvent = uniqueEventsOnTopic.add(event)
+        val wasNewUniqueEvent = uniqueEventsOnTopic.addEvent(event)
         if (wasNewUniqueEvent) {
             uniqueEventsOnTopicByProducer[produsent] = uniqueEventsOnTopicByProducer.getOrDefault(produsent, 0).inc()
         } else {
@@ -46,7 +45,7 @@ class TopicMetricsSession : CountingMetricsSession {
     }
 
     override fun getNumberOfUniqueEvents(): Int {
-        return uniqueEventsOnTopic.size
+        return uniqueEventsOnTopic.uniqueEvents
     }
 
     fun getNumberOfUniqueEvents(produsent: String): Int {
@@ -105,5 +104,4 @@ class TopicMetricsSession : CountingMetricsSession {
     fun getProcessingTime(): Long {
         return processingTime
     }
-
 }
