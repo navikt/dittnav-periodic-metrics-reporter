@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
@@ -26,21 +26,3 @@ class UniqueEventsTracker(private val expectedEventsPerUserPerProducer: Int) {
         }
     }
 }
-
-private class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier, expectedEventsPerUserPerProducer: Int) {
-
-    private val userEventIds = HashSet<UserEventIdEntry>(expectedEventsPerUserPerProducer)
-
-    fun addEvent(uniqueKafkaEventIdentifier: UniqueKafkaEventIdentifier): Boolean {
-        return userEventIds.add(UserEventIdEntry(uniqueKafkaEventIdentifier.fodselsnummer, uniqueKafkaEventIdentifier.eventId))
-    }
-
-    init {
-        userEventIds.add(UserEventIdEntry(initialEntry.fodselsnummer, initialEntry.eventId))
-    }
-}
-
-private data class UserEventIdEntry(
-        val fodselsnummer: String,
-        val eventId: String
-)
