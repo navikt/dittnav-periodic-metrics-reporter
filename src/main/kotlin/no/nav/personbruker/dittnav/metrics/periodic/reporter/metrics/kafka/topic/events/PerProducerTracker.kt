@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.EventIdParser
 
 class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier, expectedEventsPerUserPerProducer: Int) {
 
@@ -17,32 +18,13 @@ class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier, expectedEvent
 
 private data class UserEventIdEntry(
         val fodselsnummer: Fodselsnummer,
-        val eventId: String
+        val eventId: EventId
 ) {
     companion object {
         fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier) =
-                UserEventIdEntry(Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer), uniqueIdentifier.eventId)
-    }
-}
-
-private data class Fodselsnummer (
-        val longValue: Long?,
-        val stringValue: String?
-) {
-
-    companion object {
-
-        fun fromString(fodselsnummerString: String): Fodselsnummer {
-            val longValue = fodselsnummerString.toLongOrNull()
-
-            val stringValue = if (longValue == null) {
-                fodselsnummerString
-            } else {
-                null
-            }
-
-            return Fodselsnummer(longValue, stringValue)
-        }
-
+                UserEventIdEntry(
+                        Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
+                        EventIdParser.parseEventId(uniqueIdentifier.eventId)
+                )
     }
 }
