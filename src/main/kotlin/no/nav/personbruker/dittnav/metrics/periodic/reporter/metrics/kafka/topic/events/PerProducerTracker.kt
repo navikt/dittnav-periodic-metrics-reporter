@@ -2,27 +2,26 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
-class PerProducerTracker(
-        initialEntry: UniqueKafkaEventIdentifier,
-        private val expectedEventsPerUserPerProducer: Int
-) {
+class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier, expectedEventsPerUserPerProducer: Int) {
 
-    private val eventIdsPerUser = HashMap<Fodselsnummer, HashSet<String>>()
+    private val userEventIds = HashSet<UserEventIdEntry>(expectedEventsPerUserPerProducer)
 
     fun addEvent(uniqueKafkaEventIdentifier: UniqueKafkaEventIdentifier): Boolean {
-        val fodselsnummer = Fodselsnummer.fromString(uniqueKafkaEventIdentifier.fodselsnummer)
-
-        return if (eventIdsPerUser.containsKey(fodselsnummer)) {
-            eventIdsPerUser[fodselsnummer]!!.add(uniqueKafkaEventIdentifier.eventId)
-        } else {
-            eventIdsPerUser[fodselsnummer] = HashSet(expectedEventsPerUserPerProducer)
-            eventIdsPerUser[fodselsnummer]!!.add(uniqueKafkaEventIdentifier.eventId)
-            true
-        }
+        return userEventIds.add(UserEventIdEntry.fromUniqueIdentifier(uniqueKafkaEventIdentifier))
     }
 
     init {
-        addEvent(initialEntry)
+        userEventIds.add(UserEventIdEntry.fromUniqueIdentifier(initialEntry))
+    }
+}
+
+private data class UserEventIdEntry(
+        val fodselsnummer: Fodselsnummer,
+        val eventId: String
+) {
+    companion object {
+        fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier) =
+                UserEventIdEntry(Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer), uniqueIdentifier.eventId)
     }
 }
 
