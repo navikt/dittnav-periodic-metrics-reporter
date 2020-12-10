@@ -2,9 +2,9 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
-class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier, expectedEventsPerUserPerProducer: Int) {
+class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier) {
 
-    private val userEventIds = HashSet<UserEventIdEntry>(expectedEventsPerUserPerProducer)
+    private val userEventIds = HashSet<UserEventIdEntry>()
 
     fun addEvent(uniqueKafkaEventIdentifier: UniqueKafkaEventIdentifier): Boolean {
         return userEventIds.add(UserEventIdEntry.fromUniqueIdentifier(uniqueKafkaEventIdentifier))

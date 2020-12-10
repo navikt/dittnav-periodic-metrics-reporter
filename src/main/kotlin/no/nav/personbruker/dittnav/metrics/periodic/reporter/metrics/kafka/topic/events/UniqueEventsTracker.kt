@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 
-class UniqueEventsTracker(private val expectedEventsPerUserPerProducer: Int) {
+class UniqueEventsTracker {
 
     private val perProducerMap = HashMap<String, PerProducerTracker>()
 
@@ -20,7 +20,7 @@ class UniqueEventsTracker(private val expectedEventsPerUserPerProducer: Int) {
 
             isUnique
         } else {
-            perProducerMap[eventIdentifier.systembruker] = PerProducerTracker(eventIdentifier, expectedEventsPerUserPerProducer)
+            perProducerMap[eventIdentifier.systembruker] = PerProducerTracker(eventIdentifier)
             uniqueEventsVar++
             true
         }

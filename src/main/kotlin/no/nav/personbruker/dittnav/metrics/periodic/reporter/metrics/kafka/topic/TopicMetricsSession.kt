@@ -23,7 +23,7 @@ class TopicMetricsSession : CountingMetricsSession {
         this.duplicatesByProdusent = HashMap(50)
         this.totalNumberOfEventsByProducer = HashMap(50)
         this.uniqueEventsOnTopicByProducer = HashMap(50)
-        this.uniqueEventsOnTopic = UniqueEventsTracker(expectedEventsPerUserPerProducer = 3)
+        this.uniqueEventsOnTopic = UniqueEventsTracker()
     }
 
     constructor(previousSession: TopicMetricsSession) {
