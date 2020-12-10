@@ -25,24 +25,22 @@ private data class UserEventIdEntry(
     }
 }
 
-private data class Fodselsnummer (
-        val longValue: Long?,
-        val stringValue: String?
-) {
-
+private interface Fodselsnummer {
     companion object {
 
         fun fromString(fodselsnummerString: String): Fodselsnummer {
             val longValue = fodselsnummerString.toLongOrNull()
 
-            val stringValue = if (longValue == null) {
-                fodselsnummerString
+            return if (longValue != null) {
+                FodselsnummerNumeric(longValue)
             } else {
-                null
+                FodselsnummerString(fodselsnummerString)
             }
-
-            return Fodselsnummer(longValue, stringValue)
         }
 
     }
 }
+
+private data class FodselsnummerString(val stringValue: String): Fodselsnummer
+
+private data class FodselsnummerNumeric(val longValue: Long): Fodselsnummer
