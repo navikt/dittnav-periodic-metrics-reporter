@@ -21,26 +21,9 @@ private data class UserEventIdEntry(
 ) {
     companion object {
         fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier) =
-                UserEventIdEntry(Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer), uniqueIdentifier.eventId)
+                UserEventIdEntry(
+                        fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
+                        eventId =  uniqueIdentifier.eventId
+                )
     }
 }
-
-private interface Fodselsnummer {
-    companion object {
-
-        fun fromString(fodselsnummerString: String): Fodselsnummer {
-            val longValue = fodselsnummerString.toLongOrNull()
-
-            return if (longValue != null) {
-                FodselsnummerNumeric(longValue)
-            } else {
-                FodselsnummerString(fodselsnummerString)
-            }
-        }
-
-    }
-}
-
-private data class FodselsnummerString(val stringValue: String): Fodselsnummer
-
-private data class FodselsnummerNumeric(val longValue: Long): Fodselsnummer
