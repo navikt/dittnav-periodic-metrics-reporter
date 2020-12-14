@@ -12,7 +12,6 @@ interface Fodselsnummer {
                 FodselsnummerString(fodselsnummerString)
             }
         }
-
     }
 }
 
