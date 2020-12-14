@@ -9,12 +9,12 @@ interface Fodselsnummer {
             return if (longValue != null) {
                 FodselsnummerNumeric(longValue)
             } else {
-                FodselsnummerString(fodselsnummerString)
+                FodselsnummerPlainText(fodselsnummerString)
             }
         }
     }
 }
 
-data class FodselsnummerString(val stringValue: String): Fodselsnummer
+data class FodselsnummerPlainText(val stringValue: String): Fodselsnummer
 
 data class FodselsnummerNumeric(val longValue: Long): Fodselsnummer

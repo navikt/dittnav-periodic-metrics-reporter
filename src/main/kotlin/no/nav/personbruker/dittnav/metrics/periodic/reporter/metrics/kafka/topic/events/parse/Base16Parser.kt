@@ -3,16 +3,20 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 import java.lang.RuntimeException
 
 object Base16Parser {
+
     fun parseNumericValueFromBase16(string: String): LongArray {
 
         if (string.isEmpty()) {
             return LongArray(0)
         }
 
+        // In base-16, each character encodes 4 bits
         val numBits = string.length * 4
 
+        // Bytes needed is number of bits divided 8, rounded up
         val numBytes = (numBits + 7)  / 8
 
+        // Each Long is 8 bytes wide. Thus number of longs needed is also number of bytes divided by 8, rounded up
         val cumulativeValue = LongArray((numBytes + 7) / 8)
 
         var currentVal = 0L
@@ -24,7 +28,8 @@ object Base16Parser {
 
             minorIteration++
 
-
+            // Our current long value is saturated when we have handled 16 characters. Thus we need to store our
+            // current result and prepare for calculating our next long value
             if (minorIteration == 16) {
                 cumulativeValue[majorIteration] = currentVal
 
@@ -33,6 +38,8 @@ object Base16Parser {
                 majorIteration++
             }
         }
+
+        // Store current updated value in return array
 
         if (minorIteration > 0) {
             cumulativeValue[majorIteration] = currentVal
