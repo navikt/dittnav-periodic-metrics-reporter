@@ -9,7 +9,7 @@ import java.lang.RuntimeException
 // Returarray-et er formatert slik at siffrene lengst til høyre kommer først i array-et. For å illustrere hvordan
 // dette ser ut, kan du se for deg at vi vil sende tallet 123456789 med et array av variabler som kan holde til og med
 // tallet 99. Dette vil sendes på denne måten: [89, 67, 45, 23, 1]
-// Bemerk at java ikke støtter Unsigned primitives. Dette vil si at tall der bit-en helt til venstre er satt vil,
+// Bemerk at java ikke støtter Unsigned primitives. Dette vil si at tall der bit-en helt til venstre er satt, vil
 // vises som negative. Dette er forventet oppførsel.
 object Base16Parser {
 
