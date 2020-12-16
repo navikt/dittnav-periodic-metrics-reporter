@@ -22,8 +22,8 @@ internal class FodselsnummerTest {
 
         val fodselsnummer = Fodselsnummer.fromString(fodselsnummerText)
 
-        fodselsnummer `should be instance of` FodselsnummerString::class
-        (fodselsnummer as FodselsnummerString).stringValue `should be equal to` fodselsnummerText
+        fodselsnummer `should be instance of` FodselsnummerPlainText::class
+        (fodselsnummer as FodselsnummerPlainText).stringValue `should be equal to` fodselsnummerText
     }
 
     @Test
