@@ -4,6 +4,22 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.Base16Parser.parseNumericValueFromBase16
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.Base32UlidParser.parseNumericValueFromBase32Ulid
 
+// Hensikten med denne parseren er å 'komprimere' eventId-er ved å konvertere dem til numeriske verdier.
+// Dette er mulig fordi vi ser at de aller fleste eventId-er bruker en form for UUID (og på sikt ULID).
+// UUID-er og ULID-er er 128-bits data representert i string-format i henholdsvis Base-16 og Base-32.
+// Dette betyr at UUID-er og ULID-er fritt kan konverteres 1:1 fram og tilbake til andre 128-bits dataformat
+// uten å tape data. Per i dag finnes det native 128-bits primitiver i Java, men dersom vi håndterer den ekstra
+// logikken selv, kan vi i stedet bruke to 64-bits Long verdier.
+//
+// Grunnen til at dette bruker mindre minne er at vi har mindre ubrukte bits. For å illustrere effekten av dette
+// kan man regne på antal bytes brukt for å holde på samme informasjon før og etter 'komprimering' (Dette er
+// noe forenklet, og tar ikke med overhead per String objekt):
+//
+// UUID: 36 heksadesimaletegn + 4 bindestreker = 40 tegn. 2 bytes per bokstav i java -> 40 * 2 = 80 bytes
+// ULID: 26 tegn i base-32. 2 bytes per bokstav i java -> 26 * 2 = 52 bytes
+// 2 Longs: 8 bytes per Long i java -> 8 * 2 = 16 bytes
+//
+// Vi sparer dermed minst 64 (80 - 16) eller 36 (52 - 16) bytes per eventId som lar seg konvertere på denne måten.
 object EventIdParser {
     private const val BASE_16 = "[0-9a-fA-F]"
 

@@ -2,6 +2,18 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import java.lang.RuntimeException
 
+// Denne parser et base-32 tall representert som en String om til sin numeriske verdi. Som klassenavnet indikerer
+// støtter denne kun ULID-standarden for base-32. Det vi si at i stedet for å bruke 0-9 og alle bokstaver fom. A tom. V,
+// bruker vi bokstaver fom. A tom. Z, men hopper over I, L, O, og U.
+//
+// Fordi vi likevel ønsker å sitte igjen med Long variabler, har vi valgt å gjøre en liten optimalisering ved å
+// implementere offsett-logikken selv i stedet for å f. eks. bruke en BigInteger.
+//
+// Returarray-et er formatert slik at siffrene lengst til høyre kommer først i array-et. For å illustrere hvordan
+// dette ser ut, kan du se for deg at vi vil sende tallet 123456789 med et array av variabler som kan holde til og med
+// tallet 99. Dette vil sendes på denne måten: [89, 67, 45, 23, 1]
+// Bemerk at java ikke støtter Unsigned primitives. Dette vil si at tall der bit-en helt til venstre er satt vil,
+// vises som negative. Dette er forventet oppførsel.
 object Base32UlidParser {
 
     fun parseNumericValueFromBase32Ulid(string: String): LongArray {
