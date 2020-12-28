@@ -17,7 +17,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-private val log = LoggerFactory.getLogger(KafkaEventCounterService::class.java)
+private val log = LoggerFactory.getLogger(object{}::class.java.`package`.name)
 
 fun <T> createCountConsumer(eventType: EventType, topic: String, environment: Environment): KafkaConsumer<Nokkel, T> {
     val kafkaProps = Kafka.counterConsumerProps(environment, eventType)
@@ -87,16 +87,6 @@ fun <T> closeConsumer(consumer: KafkaConsumer<Nokkel, T>) {
         log.error("Det skjedde en uventet feil ved lukking av en kafka-counter-consumer", e)
     }
 }
-
-fun getDefaultTopicName(eventType: EventType): String {
-    return when (eventType) {
-        EventType.BESKJED -> Kafka.beskjedTopicName
-        EventType.OPPGAVE -> Kafka.oppgaveTopicName
-        EventType.INNBOKS -> Kafka.innboksTopicName
-        EventType.DONE -> Kafka.doneTopicName
-    }
-}
-
 
 private fun logTimeUsed(start: Instant, counter: Long, eventType: EventType) {
     val end = Instant.now()
