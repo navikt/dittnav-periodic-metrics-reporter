@@ -6,7 +6,6 @@ plugins {
     kotlin("jvm").version(Kotlin.version)
     kotlin("plugin.allopen").version(Kotlin.version)
 
-    id(Flyway.pluginId) version (Flyway.version)
     id(Shadow.pluginId) version (Shadow.version)
 
     // Apply the application plugin to add support for building a CLI application.
@@ -40,7 +39,6 @@ configurations["intTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.
 dependencies {
     implementation(Brukernotifikasjon.schemas)
     implementation(DittNAV.Common.utils)
-    implementation(Flyway.core)
     implementation(Hikari.cp)
     implementation(Influxdb.java)
     implementation(Kafka.Apache.clients)
