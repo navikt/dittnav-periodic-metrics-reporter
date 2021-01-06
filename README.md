@@ -1,6 +1,6 @@
-# DittNAV periodic metrics repotert
+# DittNAV periodic metrics reporter
 
-Denne appen samker periodisk inn metrikker for DittNAV sine apper, og tilgjengeliggjør disse via Influx og Prometheus.
+Denne appen samler periodisk inn metrikker for DittNAV sine apper, og tilgjengeliggjør disse via Influx og Prometheus.
 
 # Kom i gang
 1. Bygge dittnav-periodic-metrics-reporter:
