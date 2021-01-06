@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import kotlinx.coroutines.withTimeoutOrNull
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.JAAS_PLAIN_LOGIN
@@ -30,7 +30,7 @@ object KafkaProducerUtil {
                             set(ProducerConfig.CLIENT_ID_CONFIG, "funKafkaAvroProduce")
                             set(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroSerializer")
                             set(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroSerializer")
-                            set(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)
+                            set(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)
                             set(ProducerConfig.ACKS_CONFIG, "all")
                             set(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
                             set(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 500)
