@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.netty.util.NetUtil.getHostname
-import no.nav.personbruker.dittnav.common.util.kafka.serializer.SwallowSerializationErrorsAvroDeserializer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.SwallowSerializationErrorsAvroDeserializer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ConfigUtil.isCurrentlyRunningOnNais
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig

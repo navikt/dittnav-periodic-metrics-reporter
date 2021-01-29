@@ -39,6 +39,7 @@ configurations["intTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.
 dependencies {
     implementation(Brukernotifikasjon.schemas)
     implementation(DittNAV.Common.utils)
+    implementation(DittNAV.Common.influx)
     implementation(Hikari.cp)
     implementation(Influxdb.java)
     implementation(Kafka.Apache.clients)

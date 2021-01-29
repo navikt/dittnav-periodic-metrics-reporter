@@ -46,7 +46,7 @@ object KafkaTestUtil {
                 clusterName = "clusterNameIkkeIBrukHer",
                 namespace = "namespaceIkkeIBrukHer",
                 sensuHost = "sensuHostIkkeIBrukHer",
-                sensuPort = "sensuPortIkkeIBrukHer",
+                sensuPort = 0,
                 countingIntervalMinutes = 1
         )
     }
