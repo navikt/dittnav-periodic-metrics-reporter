@@ -3,15 +3,15 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 import io.mockk.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.common.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.MetricsReportingException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_COUNT_PROCESSING_TIME
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DB_COUNT_PROCESSING_TIME
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Test
 
@@ -20,12 +20,12 @@ import org.junit.jupiter.api.BeforeEach
 internal class DbMetricsReporterTest {
 
     private val metricsReporter = mockk<MetricsReporter>(relaxed = true)
-    private val prometheusCollector = mockkObject(PrometheusMetricsCollector)
     private val producerNameResolver = mockk<ProducerNameResolver>(relaxed = true)
+    private val prometheusCollector = mockkObject(PrometheusMetricsCollector)
 
     private val nameScrubber = ProducerNameScrubber(producerNameResolver)
     private val dbMetricsReporter = DbMetricsReporter(metricsReporter, nameScrubber)
-    
+
     @BeforeEach
     fun cleanup() {
         clearAllMocks()

@@ -1,15 +1,13 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
+import no.nav.personbruker.dittnav.common.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.MetricsReportingException
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.*
 import org.slf4j.LoggerFactory
 
 class TopicMetricsReporter(
-    private val metricsReporter: MetricsReporter,
-    private val nameScrubber: ProducerNameScrubber
+        private val metricsReporter: MetricsReporter,
+        private val nameScrubber: ProducerNameScrubber
 ) {
 
     private val log = LoggerFactory.getLogger(TopicMetricsReporter::class.java)

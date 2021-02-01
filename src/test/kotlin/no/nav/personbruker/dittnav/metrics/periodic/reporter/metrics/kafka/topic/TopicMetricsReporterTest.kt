@@ -3,14 +3,11 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 import io.mockk.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.common.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.MetricsReportingException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.*
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.*
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.amshove.kluent.*
 import org.junit.jupiter.api.BeforeEach
@@ -19,8 +16,8 @@ import org.junit.jupiter.api.Test
 internal class TopicMetricsReporterTest {
 
     private val metricsReporter = mockk<MetricsReporter>(relaxed = true)
-    private val prometheusCollector = mockkObject(PrometheusMetricsCollector)
     private val producerNameResolver = mockk<ProducerNameResolver>(relaxed = true)
+    private val prometheusCollector = mockkObject(PrometheusMetricsCollector)
 
     private val nameScrubber = ProducerNameScrubber(producerNameResolver)
     private val topicMetricsReporter = TopicMetricsReporter(metricsReporter, nameScrubber)
