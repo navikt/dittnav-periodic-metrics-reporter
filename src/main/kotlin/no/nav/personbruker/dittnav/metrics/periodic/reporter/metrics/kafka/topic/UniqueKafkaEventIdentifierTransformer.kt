@@ -32,7 +32,7 @@ object UniqueKafkaEventIdentifierTransformer {
                 return UniqueKafkaEventIdentifier(
                     nokkel.getEventId(),
                     nokkel.getSystembruker(),
-                    record.get("fodselsnummer").toString()
+                    record.get("fodselsnummer").toString() //?
                 )
             }
         }

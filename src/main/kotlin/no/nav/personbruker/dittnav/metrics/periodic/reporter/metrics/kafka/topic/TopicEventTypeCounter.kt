@@ -1,11 +1,9 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
@@ -16,7 +14,8 @@ import java.time.Duration
 import java.time.Instant
 
 class TopicEventTypeCounter(
-        val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+        val consumer: Consumer<GenericRecord>,
+        //val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
         val eventType: EventType,
         val deltaCountingEnabled: Boolean
 ) {
@@ -45,18 +44,19 @@ class TopicEventTypeCounter(
         val startTime = Instant.now()
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
-        var records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+
+        var records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
         countBatch(records, session)
 
         while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
-            records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+            records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
             countBatch(records, session)
         }
 
         if (deltaCountingEnabled) {
             previousSession = session
         } else {
-            kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
         }
 
         session.calculateProcessingTime()
