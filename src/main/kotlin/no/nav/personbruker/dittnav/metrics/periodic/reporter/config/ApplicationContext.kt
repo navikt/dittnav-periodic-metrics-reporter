@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerPollingCheck
-//import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
@@ -50,15 +49,6 @@ class ApplicationContext {
     var oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
     var doneCountConsumer = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicName)
 
-    /* var innboksCountConsumer = initializeInnboksConsumer()
-    var oppgaveCountConsumer = initializeOppgaveConsumer()
-    var doneCountConsumer = initializeDoneConsumer()
-
-    val besCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, Kafka.beskjedTopicName, environment)
-    val innboksCountConsumer = createCountConsumer<GenericRecord>(EventType.INNBOKS, Kafka.innboksTopicName, environment)
-    val oppgaveCountConsumer = createCountConsumer<GenericRecord>(EventType.OPPGAVE, Kafka.oppgaveTopicName, environment)
-    val doneCountConsumer = createCountConsumer<GenericRecord>(EventType.DONE, Kafka.doneTopicName, environment)
-    */
     val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
     val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
     val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
@@ -77,6 +67,7 @@ class ApplicationContext {
             dbMetricsReporter,
             kafkaMetricsReporter
     )
+
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()
     var periodicConsumerPollingCheck = initializePeriodicConsumerPollingCheck()
 
@@ -86,21 +77,6 @@ class ApplicationContext {
     private fun initializeCountConsumer(kafkaProps: Properties, topic: String) =
             KafkaConsumerSetup.setupCountConsumer<GenericRecord>(kafkaProps, topic)
 
-
-    private fun initializeBeskjedConsumer() =
-           KafkaConsumerSetup.setupConsumerForTheBeskjedTopic(beskjedKafkaProps)
-   /*
-    private fun initializeOppgaveConsumer() =
-           KafkaConsumerSetup.setupConsumerForTheOppgaveTopic<GenericRecord>(oppgaveKafkaProps)
-
-    private fun initializeInnboksConsumer() =
-           KafkaConsumerSetup.setupConsumerForTheInnboksTopic<GenericRecord>(innboksKafkaProps)
-
-    private fun initializeDoneConsumer() =
-           KafkaConsumerSetup.setupConsumerForTheDoneTopic<GenericRecord>(doneKafkaProps)
-
-
-    */
     fun reinitializePeriodicMetricsSubmitter() {
         if (periodicMetricsSubmitter.isCompleted()) {
             periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()
@@ -122,7 +98,6 @@ class ApplicationContext {
     fun reinitializeConsumers() {
         if (beskjedCountConsumer.isCompleted()) {
             beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
-            //beskjedCountConsumer = initializeBeskjedConsumer()
             log.info("beskjedConsumer har blitt reinstansiert.")
         } else {
             log.warn("beskjedConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
@@ -130,7 +105,7 @@ class ApplicationContext {
 
         if (oppgaveCountConsumer.isCompleted()) {
             oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
-                    log.info("oppgaveConsumer har blitt reinstansiert.")
+            log.info("oppgaveConsumer har blitt reinstansiert.")
         } else {
             log.warn("oppgaveConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
@@ -152,12 +127,5 @@ class ApplicationContext {
 
     private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
             PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
-
-/* fun closeAllConsumers() {
-   closeConsumer(beskjedCountConsumer)
-   closeConsumer(innboksCountConsumer)
-   closeConsumer(oppgaveCountConsumer)
-   closeConsumer(doneCountConsumer)
-} */
 
 }

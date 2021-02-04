@@ -1,6 +1,9 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
@@ -9,13 +12,11 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetT
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 import java.time.Instant
 
 class TopicEventTypeCounter(
         val consumer: Consumer<GenericRecord>,
-        //val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
         val eventType: EventType,
         val deltaCountingEnabled: Boolean
 ) {
@@ -23,7 +24,7 @@ class TopicEventTypeCounter(
     private var previousSession: TopicMetricsSession? = null
 
     private val timeoutConfig = TimeoutConfig(
-            initialTimeout =  Duration.ofMillis(5000),
+            initialTimeout = Duration.ofMillis(5000),
             regularTimeut = Duration.ofMillis(250),
             maxTotalTimeout = Duration.ofMinutes(3)
     )
@@ -84,13 +85,13 @@ class TopicEventTypeCounter(
         private var isFirstInvocation = true
 
         val pollingTimeout: Duration get() {
-            return if (isFirstInvocation) {
-                isFirstInvocation = false
-                initialTimeout
-            } else {
-                regularTimeut
+                return if (isFirstInvocation) {
+                    isFirstInvocation = false
+                    initialTimeout
+                } else {
+                    regularTimeut
+                }
             }
-        }
 
         init {
             require(initialTimeout < maxTotalTimeout) { "maxTotalTimeout må være høyere enn initialTimeout." }

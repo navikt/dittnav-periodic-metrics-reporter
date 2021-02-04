@@ -2,28 +2,24 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup
-//import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupConsumerForTheBeskjedTopic
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
-import org.junit.jupiter.api.*
-import java.time.Duration
-import java.time.temporal.ChronoUnit
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class TopicEventCounterServiceIT {
 
     private val topic = "topic"
-    private lateinit var embeddedEnv : KafkaEnvironment
+    private lateinit var embeddedEnv: KafkaEnvironment
     private lateinit var testEnvironment: Environment
 
     private val events = (1..5).map { createNokkel(it) to AvroBeskjedObjectMother.createBeskjed(it) }.toMap()
@@ -46,46 +42,36 @@ class TopicEventCounterServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
 
         val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic) //createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
-        beskjedCountConsumer.startPolling()
-
-        val maxPollTimeout: Long = 100L
-
-        val status = runBlocking { beskjedCountConsumer.status() }
-        var records = beskjedCountConsumer.kafkaConsumer.poll(Duration.of(maxPollTimeout, ChronoUnit.MILLIS))
+        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
-            consumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         val metricsSession = runBlocking {
             topicEventTypeCounter.countEventsAsync().await()
         }
 
-        runBlocking { val status = beskjedCountConsumer.status() }
-
         metricsSession.getDuplicates() `should be equal to` events.size * 2
         metricsSession.getTotalNumber() `should be equal to` events.size * 3
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
 
-        //runBlocking { beskjedCountConsumer.stopPolling() }
-
+        runBlocking { beskjedCountConsumer.stop() }
     }
-
 
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
-        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED)
+        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
         val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
-        beskjedCountConsumer.startPolling()
-        //val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+        beskjedCountConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
-            consumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = true
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = true
         )
         `Produser det samme settet av eventer tre ganger`(topic)
         runBlocking {
@@ -101,35 +87,31 @@ class TopicEventCounterServiceIT {
         metricsSession.getTotalNumber() `should be equal to` events.size * 6
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
 
-        runBlocking { beskjedCountConsumer.stopPolling() }
+        runBlocking { beskjedCountConsumer.stop() }
     }
-
 
     @Test
     fun `Ved telling etter reset av offset blir resultatet det samme som etter deltatelling `() {
         val deltaCountingEnv = testEnvironment.copy(groupIdBase = "delta")
         val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
 
-        val kafkaPropsDeltaCounting = Kafka.counterConsumerProps(deltaCountingEnv, EventType.BESKJED)
+        val kafkaPropsDeltaCounting = Kafka.counterConsumerProps(deltaCountingEnv, EventType.BESKJED, true)
         val deltaCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
-        deltaCountingConsumer.startPolling()
+        deltaCountingConsumer.startSubscription()
 
-        val kafkaPropsFromScratchCountingEnv = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED)
+        val kafkaPropsFromScratchCountingEnv = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED, true)
         val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCountingEnv, topic)
-        fromScratchCountingConsumer.startPolling()
-
-        //val deltaCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, deltaCountingEnv, true)
-        //val fromScratchCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, fromScratchCountingEnv, true)
+        fromScratchCountingConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
-            consumer = deltaCountingConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = true
+                consumer = deltaCountingConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = true
         )
         val fromScratchTopicEventTypeCounter = TopicEventTypeCounter(
-            consumer = fromScratchCountingConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = fromScratchCountingConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         `Produser det samme settet av eventer tre ganger`(topic)
@@ -139,8 +121,6 @@ class TopicEventCounterServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
         val deltaMetricsSession = runBlocking {
             deltaTopicEventTypeCounter.countEventsAsync().await()
-
-
         }
 
         val fromScratchMetricsSession = runBlocking {
@@ -152,8 +132,8 @@ class TopicEventCounterServiceIT {
         deltaMetricsSession.getNumberOfUniqueEvents() `should be equal to` fromScratchMetricsSession.getNumberOfUniqueEvents()
 
         runBlocking {
-            deltaCountingConsumer.stopPolling()
-            fromScratchCountingConsumer.stopPolling()
+            deltaCountingConsumer.stop()
+            fromScratchCountingConsumer.stop()
         }
 
     }
@@ -161,23 +141,23 @@ class TopicEventCounterServiceIT {
     @Test
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
-        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED)
+        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
         val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
-        beskjedCountConsumer.startPolling()
-        //val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+        beskjedCountConsumer.startSubscription()
+
         val topicEventTypeCounter = TopicEventTypeCounter(
-            consumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         `tell og verifiser korrekte antall eventer flere ganger paa rad`(topicEventTypeCounter)
 
-        runBlocking { beskjedCountConsumer.stopPolling() }
+        runBlocking { beskjedCountConsumer.stop() }
     }
 
     private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(
-        topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter
     ) {
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
@@ -185,7 +165,7 @@ class TopicEventCounterServiceIT {
     }
 
     private fun `tell og verifiser korrekt antall eventer`(
-        topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter
     ) {
         val metricsSession = runBlocking {
             delay(500)
@@ -203,7 +183,5 @@ class TopicEventCounterServiceIT {
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
         } `should be equal to` true
     }
-
-
 
 }

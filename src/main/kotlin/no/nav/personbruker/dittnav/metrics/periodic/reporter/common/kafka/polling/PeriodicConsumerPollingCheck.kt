@@ -56,7 +56,7 @@ class PeriodicConsumerPollingCheck(
 
     suspend fun restartPolling(stoppedConsumers: MutableList<EventType>) {
         log.warn("Følgende konsumere hadde stoppet ${stoppedConsumers}, de(n) vil bli restartet.")
-        KafkaConsumerSetup.restartPolling(appContext)
+        KafkaConsumerSetup.restartConsumers(appContext)
         log.info("$stoppedConsumers konsumern(e) har blitt restartet.")
     }
 

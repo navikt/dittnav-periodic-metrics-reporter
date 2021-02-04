@@ -1,38 +1,30 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
-import org.apache.avro.generic.GenericRecord
-import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.errors.RetriableException
-import org.apache.kafka.common.errors.TopicAuthorizationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.Duration
-import java.time.temporal.ChronoUnit
 import kotlin.coroutines.CoroutineContext
 
 class Consumer<T>(
         val topic: String,
         val kafkaConsumer: KafkaConsumer<Nokkel, T>,
         val job: Job = Job(),
-        val maxPollTimeout: Long = 100L
 ) : CoroutineScope, HealthCheck {
 
     private val log: Logger = LoggerFactory.getLogger(Consumer::class.java)
 
-    companion object {
-        private const val ONE_MINUTE_IN_MS = 60000L
-    }
-
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job
 
-    suspend fun stopPolling() {
+    suspend fun stop() {
         job.cancelAndJoin()
     }
 
@@ -54,12 +46,8 @@ class Consumer<T>(
         }
     }
 
-    fun startPolling() {
-        launch {
-            log.info("Starter en coroutine for polling på topic-en $topic.")
-            kafkaConsumer.use { consumer ->
-                consumer.subscribe(listOf(topic))
-            }
-        }
+    fun startSubscription() {
+        log.info("Starter en subscription på topic: $topic.")
+        kafkaConsumer.subscribe(listOf(topic))
     }
 }

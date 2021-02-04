@@ -2,14 +2,9 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import no.nav.brukernotifikasjon.schemas.Beskjed
-import no.nav.brukernotifikasjon.schemas.Done
-import no.nav.brukernotifikasjon.schemas.Innboks
-import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
-import org.apache.avro.generic.GenericRecord
 
 class TopicEventCounterService(
         val beskjedCounter: TopicEventTypeCounter,

@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling
 
-import io.ktor.application.call
-import io.ktor.http.ContentType
-import io.ktor.response.respondText
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ApplicationContext
@@ -12,7 +12,7 @@ fun Routing.pollingApi(appContext: ApplicationContext) {
 
     get("/internal/polling/start") {
         val responseText = "Polling etter eventer har blitt startet."
-        KafkaConsumerSetup.restartPolling(appContext)
+        KafkaConsumerSetup.restartConsumers(appContext)
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 
