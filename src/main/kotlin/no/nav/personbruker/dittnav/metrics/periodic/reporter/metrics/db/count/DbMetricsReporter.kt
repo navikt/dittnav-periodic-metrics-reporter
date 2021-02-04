@@ -1,17 +1,17 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
+import no.nav.personbruker.dittnav.common.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.MetricsReportingException
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.MetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.PrometheusMetricsCollector
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_COUNT_PROCESSING_TIME
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.influx.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DB_COUNT_PROCESSING_TIME
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DB_TOTAL_EVENTS_IN_CACHE
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DB_TOTAL_EVENTS_IN_CACHE_BY_PRODUCER
 import org.slf4j.LoggerFactory
 
 class DbMetricsReporter(
-    private val metricsReporter: MetricsReporter,
-    private val nameScrubber: ProducerNameScrubber
+        private val metricsReporter: MetricsReporter,
+        private val nameScrubber: ProducerNameScrubber
 ) {
 
     private val log = LoggerFactory.getLogger(DbMetricsReporter::class.java)
