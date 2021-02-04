@@ -8,30 +8,30 @@ import io.ktor.routing.get
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ApplicationContext
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup
 
-fun Routing.pollingApi(appContext: ApplicationContext) {
+fun Routing.consumerApi(appContext: ApplicationContext) {
 
-    get("/internal/polling/start") {
-        val responseText = "Polling etter eventer har blitt startet."
+    get("/internal/consumer/start") {
+        val responseText = "Konsumerne har blitt restartet."
         KafkaConsumerSetup.restartConsumers(appContext)
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 
-    get("/internal/polling/stop") {
-        val responseText = "All polling etter eventer har blitt stoppet."
+    get("/internal/consumer/stop") {
+        val responseText = "Stoppet alle konsumenter."
         KafkaConsumerSetup.stopAllKafkaConsumers(appContext)
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 
-    get("/internal/polling/checker/start") {
+    get("/internal/consumer/checker/start") {
         val responseText = "Startet jobben som sjekker om konsumerne kjører."
-        appContext.reinitializePeriodicConsumerPollingCheck()
-        appContext.periodicConsumerPollingCheck.start()
+        appContext.reinitializePeriodicConsumerCheck()
+        appContext.periodicConsumerCheck.start()
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 
-    get("/internal/polling/checker/stop") {
+    get("/internal/consumer/checker/stop") {
         val responseText = "Stoppet jobben som sjekker om konsumerne kjører."
-        appContext.periodicConsumerPollingCheck.stop()
+        appContext.periodicConsumerCheck.stop()
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 

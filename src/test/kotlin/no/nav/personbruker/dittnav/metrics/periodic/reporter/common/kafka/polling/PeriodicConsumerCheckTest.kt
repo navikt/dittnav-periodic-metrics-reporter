@@ -11,10 +11,10 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class PeriodicConsumerPollingCheckTest {
+class PeriodicConsumerCheckTest {
 
     private val appContext = mockk<ApplicationContext>(relaxed = true)
-    private val periodicConsumerPollingCheck = PeriodicConsumerPollingCheck(appContext)
+    private val periodicConsumerCheck = PeriodicConsumerCheck(appContext)
 
     @BeforeEach
     fun resetMocks() {
@@ -37,7 +37,7 @@ class PeriodicConsumerPollingCheckTest {
         coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerPollingCheck.getConsumersThatHaveStopped().size `should be equal to` 2
+            periodicConsumerCheck.getConsumersThatHaveStopped().size `should be equal to` 2
         }
     }
 
@@ -48,18 +48,18 @@ class PeriodicConsumerPollingCheckTest {
         coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerPollingCheck.getConsumersThatHaveStopped().`should be empty`()
+            periodicConsumerCheck.getConsumersThatHaveStopped().`should be empty`()
         }
     }
 
     @Test
-    fun `Skal kalle paa restartPolling hvis en eller flere konsumere har sluttet aa kjore`() {
+    fun `Skal kalle paa restartConsumers hvis en eller flere konsumere har sluttet aa kjore`() {
         coEvery { appContext.beskjedCountConsumer.isStopped() } returns true
         coEvery { appContext.doneCountConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountConsumer.isStopped() } returns true
 
         runBlocking {
-            periodicConsumerPollingCheck.checkIfConsumersAreRunningAndRestartIfNot()
+            periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
 
         coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumers(appContext) }
@@ -67,13 +67,13 @@ class PeriodicConsumerPollingCheckTest {
     }
 
     @Test
-    fun `Skal ikke restarte polling hvis alle konsumere kjorer`() {
+    fun `Skal ikke restarte konsumer hvis alle kafka-konsumerne kjorer`() {
         coEvery { appContext.beskjedCountConsumer.isStopped() } returns false
         coEvery { appContext.doneCountConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerPollingCheck.checkIfConsumersAreRunningAndRestartIfNot()
+            periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
 
         coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumers(appContext) }

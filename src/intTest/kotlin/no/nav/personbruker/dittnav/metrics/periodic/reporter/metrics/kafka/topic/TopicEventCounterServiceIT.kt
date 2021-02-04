@@ -99,8 +99,8 @@ class TopicEventCounterServiceIT {
         val deltaCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
         deltaCountingConsumer.startSubscription()
 
-        val kafkaPropsFromScratchCountingEnv = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED, true)
-        val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCountingEnv, topic)
+        val kafkaPropsFromScratchCounting = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED, true)
+        val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(

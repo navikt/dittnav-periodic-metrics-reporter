@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerPollingCheck
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
@@ -44,7 +44,7 @@ class ApplicationContext {
     val innboksKafkaProps = Kafka.counterConsumerProps(environment, EventType.INNBOKS)
     val doneKafkaProps = Kafka.counterConsumerProps(environment, EventType.DONE)
 
-    var beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName) //initializeBeskjedConsumer()
+    var beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
     var innboksCountConsumer = initializeCountConsumer(innboksKafkaProps, Kafka.innboksTopicName)
     var oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
     var doneCountConsumer = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicName)
@@ -69,13 +69,16 @@ class ApplicationContext {
     )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()
-    var periodicConsumerPollingCheck = initializePeriodicConsumerPollingCheck()
+    var periodicConsumerCheck = initializePeriodicConsumerCheck()
 
-    private fun initializePeriodicConsumerPollingCheck() =
-            PeriodicConsumerPollingCheck(this)
+    private fun initializePeriodicConsumerCheck() =
+            PeriodicConsumerCheck(this)
 
     private fun initializeCountConsumer(kafkaProps: Properties, topic: String) =
             KafkaConsumerSetup.setupCountConsumer<GenericRecord>(kafkaProps, topic)
+
+    private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
+            PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
 
     fun reinitializePeriodicMetricsSubmitter() {
         if (periodicMetricsSubmitter.isCompleted()) {
@@ -86,35 +89,35 @@ class ApplicationContext {
         }
     }
 
-    fun reinitializePeriodicConsumerPollingCheck() {
-        if (periodicConsumerPollingCheck.isCompleted()) {
-            periodicConsumerPollingCheck = initializePeriodicConsumerPollingCheck()
-            log.info("periodicConsumerPollingCheck har blitt reinstansiert.")
+    fun reinitializePeriodicConsumerCheck() {
+        if (periodicConsumerCheck.isCompleted()) {
+            periodicConsumerCheck = initializePeriodicConsumerCheck()
+            log.info("periodicConsumerCheck har blitt reinstansiert.")
         } else {
-            log.warn("periodicConsumerPollingCheck kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+            log.warn("periodicConsumerCheck kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
     }
 
     fun reinitializeConsumers() {
         if (beskjedCountConsumer.isCompleted()) {
             beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
-            log.info("beskjedConsumer har blitt reinstansiert.")
+            log.info("beskjedCountConsumer har blitt reinstansiert.")
         } else {
-            log.warn("beskjedConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+            log.warn("beskjedCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (oppgaveCountConsumer.isCompleted()) {
             oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
-            log.info("oppgaveConsumer har blitt reinstansiert.")
+            log.info("oppgaveCountConsumer har blitt reinstansiert.")
         } else {
-            log.warn("oppgaveConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+            log.warn("oppgaveCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (innboksCountConsumer.isCompleted()) {
             innboksCountConsumer = initializeCountConsumer(innboksKafkaProps, Kafka.innboksTopicName)
-            log.info("innboksConsumer har blitt reinstansiert.")
+            log.info("innboksCountConsumer har blitt reinstansiert.")
         } else {
-            log.warn("innboksConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+            log.warn("innboksCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (doneCountConsumer.isCompleted()) {
@@ -124,8 +127,4 @@ class ApplicationContext {
             log.warn("doneConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
     }
-
-    private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
-            PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
-
 }

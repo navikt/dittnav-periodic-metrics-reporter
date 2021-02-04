@@ -12,18 +12,18 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 
-class PeriodicConsumerPollingCheck(
+class PeriodicConsumerCheck(
         private val appContext: ApplicationContext,
         private val job: Job = Job()) : CoroutineScope {
 
-    private val log: Logger = LoggerFactory.getLogger(PeriodicConsumerPollingCheck::class.java)
+    private val log: Logger = LoggerFactory.getLogger(PeriodicConsumerCheck::class.java)
     private val minutesToWait = Duration.ofMinutes(30)
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job
 
     fun start() {
-        log.info("Periodisk sjekking av at konsumerne kjører har blitt aktivert, første sjekk skjer om $minutesToWait minutter.")
+        log.info("Periodisk sjekking at konsumerne kjører, første sjekk skjer om $minutesToWait minutter.")
         launch {
             while (job.isActive) {
                 delay(minutesToWait)
@@ -35,7 +35,7 @@ class PeriodicConsumerPollingCheck(
     suspend fun checkIfConsumersAreRunningAndRestartIfNot() {
         val stoppedConsumers = getConsumersThatHaveStopped()
         if (stoppedConsumers.isNotEmpty()) {
-            restartPolling(stoppedConsumers)
+            restartConsumers(stoppedConsumers)
         }
     }
 
@@ -54,7 +54,7 @@ class PeriodicConsumerPollingCheck(
         return stoppedConsumers
     }
 
-    suspend fun restartPolling(stoppedConsumers: MutableList<EventType>) {
+    suspend fun restartConsumers(stoppedConsumers: MutableList<EventType>) {
         log.warn("Følgende konsumere hadde stoppet ${stoppedConsumers}, de(n) vil bli restartet.")
         KafkaConsumerSetup.restartConsumers(appContext)
         log.info("$stoppedConsumers konsumern(e) har blitt restartet.")
