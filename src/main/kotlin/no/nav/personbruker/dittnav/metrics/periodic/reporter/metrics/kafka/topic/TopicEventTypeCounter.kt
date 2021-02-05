@@ -6,17 +6,17 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 import java.time.Instant
 
 class TopicEventTypeCounter(
-        val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord>,
+        val consumer: Consumer<GenericRecord>,
         val eventType: EventType,
         val deltaCountingEnabled: Boolean
 ) {
@@ -24,7 +24,7 @@ class TopicEventTypeCounter(
     private var previousSession: TopicMetricsSession? = null
 
     private val timeoutConfig = TimeoutConfig(
-            initialTimeout =  Duration.ofMillis(5000),
+            initialTimeout = Duration.ofMillis(5000),
             regularTimeut = Duration.ofMillis(250),
             maxTotalTimeout = Duration.ofMinutes(3)
     )
@@ -45,18 +45,19 @@ class TopicEventTypeCounter(
         val startTime = Instant.now()
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
-        var records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+
+        var records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
         countBatch(records, session)
 
         while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
-            records = kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+            records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
             countBatch(records, session)
         }
 
         if (deltaCountingEnabled) {
             previousSession = session
         } else {
-            kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
         }
 
         session.calculateProcessingTime()
@@ -84,13 +85,13 @@ class TopicEventTypeCounter(
         private var isFirstInvocation = true
 
         val pollingTimeout: Duration get() {
-            return if (isFirstInvocation) {
-                isFirstInvocation = false
-                initialTimeout
-            } else {
-                regularTimeut
+                return if (isFirstInvocation) {
+                    isFirstInvocation = false
+                    initialTimeout
+                } else {
+                    regularTimeut
+                }
             }
-        }
 
         init {
             require(initialTimeout < maxTotalTimeout) { "maxTotalTimeout må være høyere enn initialTimeout." }

@@ -7,10 +7,10 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvir
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 
 class TopicEventCounterService(
-    val beskjedCounter: TopicEventTypeCounter,
-    val innboksCounter: TopicEventTypeCounter,
-    val oppgaveCounter: TopicEventTypeCounter,
-    val doneCounter: TopicEventTypeCounter
+        val beskjedCounter: TopicEventTypeCounter,
+        val innboksCounter: TopicEventTypeCounter,
+        val oppgaveCounter: TopicEventTypeCounter,
+        val doneCounter: TopicEventTypeCounter
 ) {
 
     suspend fun countAllEventTypesAsync(): CountingMetricsSessions = coroutineScope {

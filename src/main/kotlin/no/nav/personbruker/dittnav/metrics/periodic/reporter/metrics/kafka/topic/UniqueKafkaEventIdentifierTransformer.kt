@@ -22,17 +22,17 @@ object UniqueKafkaEventIdentifierTransformer {
             }
             record == null -> {
                 val eventWithoutActualFnr = UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
-                    nokkel.getEventId(),
-                    nokkel.getSystembruker()
+                        nokkel.getEventId(),
+                        nokkel.getSystembruker()
                 )
                 log.warn("Kan ikke telle eventet, fordi kafka-value (Record) er null. Transformerer til et event med et dummy fødselsnummer: $eventWithoutActualFnr.")
                 return eventWithoutActualFnr
             }
             else -> {
                 return UniqueKafkaEventIdentifier(
-                    nokkel.getEventId(),
-                    nokkel.getSystembruker(),
-                    record.get("fodselsnummer").toString()
+                        nokkel.getEventId(),
+                        nokkel.getSystembruker(),
+                        record.get("fodselsnummer").toString()
                 )
             }
         }

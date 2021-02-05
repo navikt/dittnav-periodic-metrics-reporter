@@ -7,16 +7,19 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjed
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.createCountConsumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class TopicEventCounterServiceIT {
 
     private val topic = "topic"
-    private lateinit var embeddedEnv : KafkaEnvironment
+    private lateinit var embeddedEnv: KafkaEnvironment
     private lateinit var testEnvironment: Environment
 
     private val events = (1..5).map { createNokkel(it) to AvroBeskjedObjectMother.createBeskjed(it) }.toMap()
@@ -37,11 +40,15 @@ class TopicEventCounterServiceIT {
     @Test
     fun `Skal telle korrekt total antall av eventer og gruppere de som er unike og duplikater`() {
         `Produser det samme settet av eventer tre ganger`(topic)
-        val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+
+        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        beskjedCountConsumer.startSubscription()
+
         val topicEventTypeCounter = TopicEventTypeCounter(
-            kafkaConsumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         val metricsSession = runBlocking {
@@ -52,17 +59,19 @@ class TopicEventCounterServiceIT {
         metricsSession.getTotalNumber() `should be equal to` events.size * 3
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
 
-        beskjedCountConsumer.close()
+        runBlocking { beskjedCountConsumer.stop() }
     }
-
 
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
-        val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        beskjedCountConsumer.startSubscription()
+
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
-            kafkaConsumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = true
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = true
         )
         `Produser det samme settet av eventer tre ganger`(topic)
         runBlocking {
@@ -78,26 +87,31 @@ class TopicEventCounterServiceIT {
         metricsSession.getTotalNumber() `should be equal to` events.size * 6
         metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
 
-        beskjedCountConsumer.close()
+        runBlocking { beskjedCountConsumer.stop() }
     }
-
 
     @Test
     fun `Ved telling etter reset av offset blir resultatet det samme som etter deltatelling `() {
         val deltaCountingEnv = testEnvironment.copy(groupIdBase = "delta")
         val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
 
-        val deltaCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, deltaCountingEnv, true)
-        val fromScratchCountingConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, fromScratchCountingEnv, true)
+        val kafkaPropsDeltaCounting = Kafka.counterConsumerProps(deltaCountingEnv, EventType.BESKJED, true)
+        val deltaCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
+        deltaCountingConsumer.startSubscription()
+
+        val kafkaPropsFromScratchCounting = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED, true)
+        val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
+        fromScratchCountingConsumer.startSubscription()
+
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
-            kafkaConsumer = deltaCountingConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = true
+                consumer = deltaCountingConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = true
         )
         val fromScratchTopicEventTypeCounter = TopicEventTypeCounter(
-            kafkaConsumer = fromScratchCountingConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = fromScratchCountingConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         `Produser det samme settet av eventer tre ganger`(topic)
@@ -107,8 +121,6 @@ class TopicEventCounterServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
         val deltaMetricsSession = runBlocking {
             deltaTopicEventTypeCounter.countEventsAsync().await()
-
-
         }
 
         val fromScratchMetricsSession = runBlocking {
@@ -119,27 +131,33 @@ class TopicEventCounterServiceIT {
         deltaMetricsSession.getTotalNumber() `should be equal to` fromScratchMetricsSession.getTotalNumber()
         deltaMetricsSession.getNumberOfUniqueEvents() `should be equal to` fromScratchMetricsSession.getNumberOfUniqueEvents()
 
-        deltaCountingConsumer.close()
-        fromScratchCountingConsumer.close()
+        runBlocking {
+            deltaCountingConsumer.stop()
+            fromScratchCountingConsumer.stop()
+        }
+
     }
 
     @Test
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
-        val beskjedCountConsumer = createCountConsumer<GenericRecord>(EventType.BESKJED, topic, testEnvironment, true)
+        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        beskjedCountConsumer.startSubscription()
+
         val topicEventTypeCounter = TopicEventTypeCounter(
-            kafkaConsumer = beskjedCountConsumer,
-            eventType = EventType.BESKJED,
-            deltaCountingEnabled = false
+                consumer = beskjedCountConsumer,
+                eventType = EventType.BESKJED,
+                deltaCountingEnabled = false
         )
 
         `tell og verifiser korrekte antall eventer flere ganger paa rad`(topicEventTypeCounter)
 
-        beskjedCountConsumer.close()
+        runBlocking { beskjedCountConsumer.stop() }
     }
 
     private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(
-        topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter
     ) {
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
@@ -147,7 +165,7 @@ class TopicEventCounterServiceIT {
     }
 
     private fun `tell og verifiser korrekt antall eventer`(
-        topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter
     ) {
         val metricsSession = runBlocking {
             delay(500)
@@ -165,7 +183,5 @@ class TopicEventCounterServiceIT {
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
         } `should be equal to` true
     }
-
-
 
 }

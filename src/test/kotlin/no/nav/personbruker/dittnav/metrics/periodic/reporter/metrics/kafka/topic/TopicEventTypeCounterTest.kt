@@ -7,12 +7,12 @@ import io.mockk.slot
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.amshove.kluent.`should be greater than`
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.junit.jupiter.api.Test
 import java.time.Duration
 
@@ -25,13 +25,12 @@ internal class TopicEventTypeCounterTest {
         mockkObject(TopicEventTypeCounter)
 
         val polledEvents: ConsumerRecords<Nokkel, GenericRecord> = mockk()
-        val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord> = mockk()
-
+        val consumer: Consumer<GenericRecord> = mockk()
 
         val deltaCountingEnabled = true
-        val counter = TopicEventTypeCounter(kafkaConsumer, EventType.BESKJED, deltaCountingEnabled)
+        val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled)
 
-        every { kafkaConsumer.poll(any<Duration>()) } returns polledEvents
+        every { consumer.kafkaConsumer.poll(any<Duration>()) } returns polledEvents
         every { polledEvents.isEmpty } returns true
 
         val sessionSlot = slot<TopicMetricsSession>()
@@ -50,6 +49,6 @@ internal class TopicEventTypeCounterTest {
             counter.countEventsAsync().await()
         }
 
-        session.getProcessingTime () `should be greater than` minimumProcessingTimeInNs
+        session.getProcessingTime() `should be greater than` minimumProcessingTimeInNs
     }
 }

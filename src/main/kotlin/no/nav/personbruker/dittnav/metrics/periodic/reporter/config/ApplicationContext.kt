@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
@@ -8,8 +9,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.Db
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.closeConsumer
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.createCountConsumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventTypeCounter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
@@ -18,6 +17,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.M
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.PeriodicMetricsSubmitter
 import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
+import java.util.*
 
 class ApplicationContext {
 
@@ -39,34 +39,46 @@ class ApplicationContext {
 
     val kafkaMetricsReporter = TopicMetricsReporter(metricsReporter, nameScrubber)
 
-    val beskjedCountConsumer =
-        createCountConsumer<GenericRecord>(EventType.BESKJED, Kafka.beskjedTopicName, environment)
-    val innboksCountConsumer =
-        createCountConsumer<GenericRecord>(EventType.INNBOKS, Kafka.innboksTopicName, environment)
-    val oppgaveCountConsumer =
-        createCountConsumer<GenericRecord>(EventType.OPPGAVE, Kafka.oppgaveTopicName, environment)
-    val doneCountConsumer = createCountConsumer<GenericRecord>(EventType.DONE, Kafka.doneTopicName, environment)
-    val beskjedCounter =
-        TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
-    val innboksCounter =
-        TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
-    val oppgaveCounter =
-        TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
+    val beskjedKafkaProps = Kafka.counterConsumerProps(environment, EventType.BESKJED)
+    val oppgaveKafkaProps = Kafka.counterConsumerProps(environment, EventType.OPPGAVE)
+    val innboksKafkaProps = Kafka.counterConsumerProps(environment, EventType.INNBOKS)
+    val doneKafkaProps = Kafka.counterConsumerProps(environment, EventType.DONE)
+
+    var beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
+    var innboksCountConsumer = initializeCountConsumer(innboksKafkaProps, Kafka.innboksTopicName)
+    var oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
+    var doneCountConsumer = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicName)
+
+    val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
+    val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
+    val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
     val doneCounter = TopicEventTypeCounter(doneCountConsumer, EventType.DONE, environment.deltaCountingEnabled)
+
     val topicEventCounterService = TopicEventCounterService(
-        beskjedCounter = beskjedCounter,
-        innboksCounter = innboksCounter,
-        oppgaveCounter = oppgaveCounter,
-        doneCounter = doneCounter
+            beskjedCounter = beskjedCounter,
+            innboksCounter = innboksCounter,
+            oppgaveCounter = oppgaveCounter,
+            doneCounter = doneCounter
     )
 
     val metricsSubmitterService = MetricsSubmitterService(
-        dbEventCounterService,
-        topicEventCounterService,
-        dbMetricsReporter,
-        kafkaMetricsReporter
+            dbEventCounterService,
+            topicEventCounterService,
+            dbMetricsReporter,
+            kafkaMetricsReporter
     )
+
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()
+    var periodicConsumerCheck = initializePeriodicConsumerCheck()
+
+    private fun initializePeriodicConsumerCheck() =
+            PeriodicConsumerCheck(this)
+
+    private fun initializeCountConsumer(kafkaProps: Properties, topic: String) =
+            KafkaConsumerSetup.setupCountConsumer<GenericRecord>(kafkaProps, topic)
+
+    private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
+            PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
 
     fun reinitializePeriodicMetricsSubmitter() {
         if (periodicMetricsSubmitter.isCompleted()) {
@@ -77,14 +89,42 @@ class ApplicationContext {
         }
     }
 
-    private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
-        PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
-
-    fun closeAllConsumers() {
-        closeConsumer(beskjedCountConsumer)
-        closeConsumer(innboksCountConsumer)
-        closeConsumer(oppgaveCountConsumer)
-        closeConsumer(doneCountConsumer)
+    fun reinitializePeriodicConsumerCheck() {
+        if (periodicConsumerCheck.isCompleted()) {
+            periodicConsumerCheck = initializePeriodicConsumerCheck()
+            log.info("periodicConsumerCheck har blitt reinstansiert.")
+        } else {
+            log.warn("periodicConsumerCheck kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
     }
 
+    fun reinitializeConsumers() {
+        if (beskjedCountConsumer.isCompleted()) {
+            beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
+            log.info("beskjedCountConsumer har blitt reinstansiert.")
+        } else {
+            log.warn("beskjedCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+
+        if (oppgaveCountConsumer.isCompleted()) {
+            oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
+            log.info("oppgaveCountConsumer har blitt reinstansiert.")
+        } else {
+            log.warn("oppgaveCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+
+        if (innboksCountConsumer.isCompleted()) {
+            innboksCountConsumer = initializeCountConsumer(innboksKafkaProps, Kafka.innboksTopicName)
+            log.info("innboksCountConsumer har blitt reinstansiert.")
+        } else {
+            log.warn("innboksCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+
+        if (doneCountConsumer.isCompleted()) {
+            doneCountConsumer = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicName)
+            log.info("doneConsumer har blitt reinstansiert.")
+        } else {
+            log.warn("doneConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+    }
 }
