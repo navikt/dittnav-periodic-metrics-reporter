@@ -20,6 +20,7 @@ class Consumer<T>(
 ) : CoroutineScope, HealthCheck {
 
     private val log: Logger = LoggerFactory.getLogger(Consumer::class.java)
+    private var numberOfFailedCounts = 0
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job
@@ -49,5 +50,17 @@ class Consumer<T>(
     fun startSubscription() {
         log.info("Starter en subscription på topic: $topic.")
         kafkaConsumer.subscribe(listOf(topic))
+    }
+
+    fun getNumberOfFailedCounts(): Int {
+        return numberOfFailedCounts
+    }
+
+    fun countNumberOfFailedCounts() {
+        numberOfFailedCounts++
+    }
+
+    fun resetNumberOfFailedCounts() {
+        numberOfFailedCounts = 0
     }
 }

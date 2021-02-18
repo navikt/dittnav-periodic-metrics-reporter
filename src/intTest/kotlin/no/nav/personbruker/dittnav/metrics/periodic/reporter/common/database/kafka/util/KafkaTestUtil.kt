@@ -47,7 +47,8 @@ object KafkaTestUtil {
                 namespace = "namespaceIkkeIBrukHer",
                 sensuHost = "sensuHostIkkeIBrukHer",
                 sensuPort = 0,
-                countingIntervalMinutes = 1
+                countingIntervalMinutes = 1,
+                maxFailedCounts = 5
         )
     }
 

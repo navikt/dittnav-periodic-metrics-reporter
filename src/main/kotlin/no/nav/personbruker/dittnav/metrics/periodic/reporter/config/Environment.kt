@@ -22,7 +22,8 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val sensuPort: Int = getEnvVarAsInt("SENSU_PORT"),
                        val deltaCountingEnabled: Boolean = getEnvVarAsBoolean("DELTA_COUNTING_ENABLED", false),
                        val groupIdBase: String = "dn-periodic_metrics_reporter",
-                       val countingIntervalMinutes: Long = getEnvVarAsLong("COUNTING_INTERVAL_MINUTES")
+                       val countingIntervalMinutes: Long = getEnvVarAsLong("COUNTING_INTERVAL_MINUTES"),
+                       val maxFailedCounts: Int = getEnvVarAsInt("MAX_FAILED_COUNTS")
 )
 
 
