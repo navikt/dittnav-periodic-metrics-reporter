@@ -24,8 +24,8 @@ class TopicEventTypeCounter(
     private var previousSession: TopicMetricsSession? = null
 
     private val timeoutConfig = TimeoutConfig(
-            initialTimeout = Duration.ofMillis(5000),
-            regularTimeut = Duration.ofMillis(250),
+            initialTimeout = Duration.ofMillis(9000),
+            regularTimeut = Duration.ofMillis(1000),
             maxTotalTimeout = Duration.ofMinutes(3)
     )
 
