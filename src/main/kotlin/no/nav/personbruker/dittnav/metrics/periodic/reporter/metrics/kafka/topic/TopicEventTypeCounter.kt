@@ -34,7 +34,10 @@ class TopicEventTypeCounter(
             try {
                 pollAndCountEvents(eventType)
             } catch (e: Exception) {
-                throw CountException("Klarte ikke å telle antall ${eventType.eventType}-eventer", e)
+                if (!consumer.isStopped()) {
+                    consumer.stop()
+                }
+                throw CountException("Klarte ikke å telle antall ${eventType.eventType}-eventer. Konsumer er stoppet..", e)
             }
         }
 
