@@ -42,13 +42,13 @@ class PeriodicConsumerCheck(
     fun getConsumersThatHaveStopped(): MutableList<EventType> {
         val stoppedConsumers = mutableListOf<EventType>()
 
-        if (appContext.beskjedCountConsumer.isStopped()) {
+        if (appContext.beskjedCountConsumerOnPrem.isStopped()) {
             stoppedConsumers.add(EventType.BESKJED)
         }
-        if (appContext.doneCountConsumer.isStopped()) {
+        if (appContext.doneCountConsumerOnPrem.isStopped()) {
             stoppedConsumers.add(EventType.DONE)
         }
-        if (appContext.oppgaveCountConsumer.isStopped()) {
+        if (appContext.oppgaveCountConsumerOnPrem.isStopped()) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
         return stoppedConsumers

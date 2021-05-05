@@ -21,7 +21,8 @@ class PeriodicConsumerCheckTest {
         mockkObject(KafkaConsumerSetup)
         coEvery { KafkaConsumerSetup.restartConsumers(appContext) } returns Unit
         coEvery { KafkaConsumerSetup.stopAllKafkaConsumers(appContext) } returns Unit
-        coEvery { appContext.reinitializeConsumers() } returns Unit
+        coEvery { appContext.reinitializeConsumersOnPrem() } returns Unit
+        coEvery { appContext.reinitializeConsumersGCP() } returns Unit
         coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumers(appContext) } returns Unit
     }
 
@@ -32,9 +33,9 @@ class PeriodicConsumerCheckTest {
 
     @Test
     fun `Skal returnere en liste med konsumenter som har stoppet aa polle`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns true
-        coEvery { appContext.doneCountConsumer.isStopped() } returns true
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+        coEvery { appContext.beskjedCountConsumerOnPrem.isStopped() } returns true
+        coEvery { appContext.doneCountConsumerOnPrem.isStopped() } returns true
+        coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStopped().size `should be equal to` 2
@@ -43,9 +44,9 @@ class PeriodicConsumerCheckTest {
 
     @Test
     fun `Skal returnere en tom liste hvis alle konsumenter kjorer som normalt`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns false
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+        coEvery { appContext.beskjedCountConsumerOnPrem.isStopped() } returns false
+        coEvery { appContext.doneCountConsumerOnPrem.isStopped() } returns false
+        coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStopped().`should be empty`()
@@ -54,9 +55,9 @@ class PeriodicConsumerCheckTest {
 
     @Test
     fun `Skal kalle paa restartConsumers hvis en eller flere konsumere har sluttet aa kjore`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns true
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns true
+        coEvery { appContext.beskjedCountConsumerOnPrem.isStopped() } returns true
+        coEvery { appContext.doneCountConsumerOnPrem.isStopped() } returns false
+        coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns true
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
@@ -68,9 +69,9 @@ class PeriodicConsumerCheckTest {
 
     @Test
     fun `Skal ikke restarte konsumer hvis alle kafka-konsumerne kjorer`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns false
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+        coEvery { appContext.beskjedCountConsumerOnPrem.isStopped() } returns false
+        coEvery { appContext.doneCountConsumerOnPrem.isStopped() } returns false
+        coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()

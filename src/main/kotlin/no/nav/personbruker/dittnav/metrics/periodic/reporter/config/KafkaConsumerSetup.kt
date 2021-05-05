@@ -17,11 +17,11 @@ object KafkaConsumerSetup {
     }
 
     fun startSubscriptionOnAllKafkaConsumers(appContext: ApplicationContext) {
-        appContext.beskjedCountConsumer.startSubscription()
-        appContext.oppgaveCountConsumer.startSubscription()
-        appContext.doneCountConsumer.startSubscription()
+        appContext.beskjedCountConsumerOnPrem.startSubscription()
+        appContext.oppgaveCountConsumerOnPrem.startSubscription()
+        appContext.doneCountConsumerOnPrem.startSubscription()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountConsumer.startSubscription()
+            appContext.innboksCountConsumerOnPrem.startSubscription()
         } else {
             log.info("Er i produksjonsmiljø, unnlater å starte innboksconsumer.")
         }
@@ -29,18 +29,19 @@ object KafkaConsumerSetup {
 
     suspend fun stopAllKafkaConsumers(appContext: ApplicationContext) {
         log.info("Begynner å stoppe kafka-pollerne...")
-        appContext.beskjedCountConsumer.stop()
-        appContext.oppgaveCountConsumer.stop()
-        appContext.doneCountConsumer.stop()
+        appContext.beskjedCountConsumerOnPrem.stop()
+        appContext.oppgaveCountConsumerOnPrem.stop()
+        appContext.doneCountConsumerOnPrem.stop()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountConsumer.stop()
+            appContext.innboksCountConsumerOnPrem.stop()
         }
         log.info("...ferdig med å stoppe kafka-pollerne.")
     }
 
     suspend fun restartConsumers(appContext: ApplicationContext) {
         stopAllKafkaConsumers(appContext)
-        appContext.reinitializeConsumers()
+        appContext.reinitializeConsumersOnPrem()
+        appContext.reinitializeConsumersGCP()
         startSubscriptionOnAllKafkaConsumers(appContext)
     }
 

@@ -37,6 +37,6 @@ private fun Application.configureShutdownHook(appContext: ApplicationContext) {
             appContext.periodicMetricsSubmitter.stop()
             KafkaConsumerSetup.stopAllKafkaConsumers(appContext)
         }
-        appContext.database.dataSource.close()
+        appContext.databaseOnPrem.dataSource.close()
     }
 }

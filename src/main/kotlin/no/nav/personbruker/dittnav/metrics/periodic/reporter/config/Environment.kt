@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.personbruker.dittnav.common.util.config.BooleanEnvVar.getEnvVarAsBoolean
-import no.nav.personbruker.dittnav.common.util.config.IntEnvVar
 import no.nav.personbruker.dittnav.common.util.config.IntEnvVar.getEnvVarAsInt
 import no.nav.personbruker.dittnav.common.util.config.LongEnvVar.getEnvVarAsLong
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
@@ -10,11 +9,11 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val schemaRegistryUrl: String = getEnvVar("KAFKA_SCHEMAREGISTRY_SERVERS"),
                        val username: String = getEnvVar("SERVICEUSER_USERNAME"),
                        val password: String = getEnvVar("SERVICEUSER_PASSWORD"),
-                       val dbHost: String = getEnvVar("DB_HOST"),
+                       val dbHostOnPrem: String = getEnvVar("DB_HOST_ONPREM"),
                        val dbName: String = getEnvVar("DB_NAME"),
-                       val dbUser: String = getEnvVar("DB_NAME") + "-user",
-                       val dbReadOnlyUser: String = getEnvVar("DB_NAME") + "-readonly",
-                       val dbUrl: String = "jdbc:postgresql://$dbHost/$dbName",
+                       val dbUserOnPrem: String = getEnvVar("DB_NAME") + "-user",
+                       val dbReadOnlyUserOnPrem: String = getEnvVar("DB_NAME") + "-readonly",
+                       val dbUrlOnPrem: String = "jdbc:postgresql://$dbHostOnPrem/$dbName",
                        val dbMountPath: String = getEnvVar("DB_MOUNT_PATH"),
                        val clusterName: String = getEnvVar("NAIS_CLUSTER_NAME"),
                        val namespace: String = getEnvVar("NAIS_NAMESPACE"),

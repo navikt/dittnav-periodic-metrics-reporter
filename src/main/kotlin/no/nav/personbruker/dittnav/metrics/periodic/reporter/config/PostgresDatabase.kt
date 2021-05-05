@@ -25,11 +25,11 @@ class PostgresDatabase(env: Environment) : Database {
     }
 
     private fun createConnectionForLocalDbWithDbUser(env: Environment): HikariDataSource {
-        return hikariFromLocalDb(env, env.dbUser)
+        return hikariFromLocalDb(env, env.dbUserOnPrem)
     }
 
     private fun createConnectionViaVaultWithDbUser(env: Environment): HikariDataSource {
-        return hikariDatasourceViaVault(env, env.dbReadOnlyUser)
+        return hikariDatasourceViaVault(env, env.dbReadOnlyUserOnPrem)
     }
 
     companion object {
@@ -53,7 +53,7 @@ class PostgresDatabase(env: Environment) : Database {
         private fun hikariCommonConfig(env: Environment): HikariConfig {
             val config = HikariConfig().apply {
                 driverClassName = "org.postgresql.Driver"
-                jdbcUrl = env.dbUrl
+                jdbcUrl = env.dbUrlOnPrem
                 minimumIdle = 1
                 maxLifetime = 30001
                 maximumPoolSize = 5
