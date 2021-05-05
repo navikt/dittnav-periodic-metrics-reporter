@@ -90,10 +90,12 @@ class ApplicationContext {
     )
 
     val metricsSubmitterService = MetricsSubmitterService(
-            dbEventCounterServiceOnPrem,
-            topicEventCounterServiceOnPrem,
-            dbMetricsReporter,
-            kafkaMetricsReporter
+        dbEventCounterServiceOnPrem = dbEventCounterServiceOnPrem,
+        dbEventCounterServiceGCP = dbEventCounterServiceGCP,
+        topicEventCounterServiceOnPrem = topicEventCounterServiceOnPrem,
+        topicEventCounterServiceGCP = topicEventCounterServiceGCP,
+        dbMetricsReporter = dbMetricsReporter,
+        kafkaMetricsReporter = kafkaMetricsReporter
     )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()

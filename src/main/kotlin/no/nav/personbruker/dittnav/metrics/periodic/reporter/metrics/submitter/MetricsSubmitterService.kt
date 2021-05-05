@@ -15,10 +15,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
-        private val dbEventCounterService: DbEventCounterService,
-        private val topicEventCounterService: TopicEventCounterService,
-        private val dbMetricsReporter: DbMetricsReporter,
-        private val kafkaMetricsReporter: TopicMetricsReporter
+    private val dbEventCounterServiceOnPrem: DbEventCounterService,
+    private val dbEventCounterServiceGCP: DbEventCounterService,
+    private val topicEventCounterServiceOnPrem: TopicEventCounterService,
+    private val topicEventCounterServiceGCP: TopicEventCounterService,
+    private val dbMetricsReporter: DbMetricsReporter,
+    private val kafkaMetricsReporter: TopicMetricsReporter
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(MetricsSubmitterService::class.java)
@@ -27,12 +29,20 @@ class MetricsSubmitterService(
 
     suspend fun submitMetrics() {
         try {
-            val topicSessions = topicEventCounterService.countAllEventTypesAsync()
-            val dbSessions = dbEventCounterService.countAllEventTypesAsync()
-            val sessionComparator = SessionComparator(topicSessions, dbSessions)
+            val topicSessionsOnPrem = topicEventCounterServiceOnPrem.countAllEventTypesAsync()
+            val topicSessionsGCP = topicEventCounterServiceGCP.countAllEventTypesAsync()
+            val dbSessionsOnPrem = dbEventCounterServiceOnPrem.countAllEventTypesAsync()
+            val dbSessionsGCP = dbEventCounterServiceGCP.countAllEventTypesAsync()
 
-            sessionComparator.eventTypesWithSessionFromBothSources().forEach { eventType ->
-                reportMetricsByEventType(topicSessions, dbSessions, eventType)
+            val sessionComparatorOnPrem = SessionComparator(topicSessionsOnPrem, dbSessionsOnPrem)
+            val sessionComparatorGCP = SessionComparator(topicSessionsGCP, dbSessionsGCP)
+
+            sessionComparatorOnPrem.eventTypesWithSessionFromBothSources().forEach { eventType ->
+                reportMetricsByEventType(topicSessionsOnPrem, dbSessionsOnPrem, eventType)
+            }
+
+            sessionComparatorGCP.eventTypesWithSessionFromBothSources().forEach { eventType ->
+                reportMetricsByEventType(topicSessionsGCP, dbSessionsGCP, eventType)
             }
 
         } catch (e: CountException) {
