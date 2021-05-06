@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
 class innboksQueriesTest {
-    
+
     private val database = H2Database()
 
     private val fodselsnummer1 = "12345"

@@ -41,8 +41,8 @@ class DoneQueriesTest {
 
     @Test
     fun `skal slette spesifikke done-eventer`() {
-        val doneEvent1 = DoneObjectMother.giveMeDone("111", "dummySystembruker", "123")
-        val doneEvent2 = DoneObjectMother.giveMeDone("222", "dummySystembruker", "123")
+        val doneEvent1 = DoneObjectMother.giveMeDone("111", "dummySystembruker", "12345678901")
+        val doneEvent2 = DoneObjectMother.giveMeDone("222", "dummySystembruker", "12345678901")
         val doneEventsToInsertAndThenDelete = listOf(doneEvent1, doneEvent2)
 
         runBlocking {

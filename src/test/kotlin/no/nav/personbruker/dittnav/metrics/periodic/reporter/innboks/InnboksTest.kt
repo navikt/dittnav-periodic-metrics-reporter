@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks
 
+import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.FieldValidationException
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking

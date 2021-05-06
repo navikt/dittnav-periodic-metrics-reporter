@@ -53,7 +53,7 @@ class oppgaveQueriesTest {
     fun `Skal telle det totale antall oppgaver`() {
         runBlocking {
             database.dbQuery {
-                countTotalNumberOfEvents(EventType.INNBOKS)
+                countTotalNumberOfEvents(EventType.OPPGAVE)
             }
         } `should be equal to` allEvents.size.toLong()
     }
@@ -62,7 +62,7 @@ class oppgaveQueriesTest {
     fun `Skal telle det totale antall aktive oppgaver`() {
         runBlocking {
             database.dbQuery {
-                countTotalNumberOfEventsByActiveStatus(EventType.INNBOKS, true)
+                countTotalNumberOfEventsByActiveStatus(EventType.OPPGAVE, true)
             }
         } `should be equal to` allEvents.size.toLong()
     }
@@ -71,7 +71,7 @@ class oppgaveQueriesTest {
     fun `Skal telle det totale antall inaktive oppgaver`() {
         runBlocking {
             database.dbQuery {
-                countTotalNumberOfEventsByActiveStatus(EventType.INNBOKS, false)
+                countTotalNumberOfEventsByActiveStatus(EventType.OPPGAVE, false)
             }
         } `should be equal to` 0
     }
