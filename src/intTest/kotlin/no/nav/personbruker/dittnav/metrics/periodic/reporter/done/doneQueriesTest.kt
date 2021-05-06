@@ -7,7 +7,7 @@ import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
-class DoneQueriesTest {
+class doneQueriesTest {
 
     private val database = H2Database()
     private val done1 = DoneObjectMother.giveMeDone("1")

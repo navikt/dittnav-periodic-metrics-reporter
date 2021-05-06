@@ -21,14 +21,12 @@ class oppgaveQueriesTest {
     private val oppgave3: Oppgave
 
     private val allEvents: List<Oppgave>
-    private val allEventsForSingleUser: List<Oppgave>
 
     init {
         oppgave1 = createOppgave("1", fodselsnummer1)
         oppgave2 = createOppgave("2", fodselsnummer2)
         oppgave3 = createOppgave("3", fodselsnummer1)
         allEvents = listOf(oppgave1, oppgave2, oppgave3)
-        allEventsForSingleUser = listOf(oppgave1, oppgave3)
     }
 
     private fun createOppgave(eventId: String, fodselsnummer: String): Oppgave {

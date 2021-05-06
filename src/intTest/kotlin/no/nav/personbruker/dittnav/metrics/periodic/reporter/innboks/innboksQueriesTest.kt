@@ -20,16 +20,14 @@ class innboksQueriesTest {
     private val innboks2: Innboks
     private val innboks3: Innboks
 
-    private val allInnboks: List<Innboks>
-    private val allInnboksForAktor1: List<Innboks>
+    private val allEvents: List<Innboks>
 
     init {
         innboks1 = createInnboks("1", fodselsnummer1)
         innboks2 = createInnboks("2", fodselsnummer2)
         innboks3 = createInnboks("3", fodselsnummer1)
 
-        allInnboks = listOf(innboks1, innboks2, innboks3)
-        allInnboksForAktor1 = listOf(innboks1, innboks3)
+        allEvents = listOf(innboks1, innboks2, innboks3)
     }
 
     private fun createInnboks(eventId: String, fodselsnummer: String): Innboks {
@@ -60,7 +58,7 @@ class innboksQueriesTest {
             database.dbQuery {
                 countTotalNumberOfEvents(EventType.INNBOKS)
             }
-        } `should be equal to` allInnboks.size.toLong()
+        } `should be equal to` allEvents.size.toLong()
     }
 
     @Test
@@ -69,7 +67,7 @@ class innboksQueriesTest {
             database.dbQuery {
                 countTotalNumberOfEventsByActiveStatus(EventType.INNBOKS, true)
             }
-        } `should be equal to` allInnboks.size.toLong()
+        } `should be equal to` allEvents.size.toLong()
     }
 
     @Test

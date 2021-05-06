@@ -19,7 +19,6 @@ class beskjedQueriesTest {
     private val beskjed4: Beskjed
 
     private val allEvents: List<Beskjed>
-    private val allEventsForSingleUser: List<Beskjed>
 
     init {
         beskjed1 = createBeskjed("1", "12345")
@@ -27,7 +26,6 @@ class beskjedQueriesTest {
         beskjed3 = createBeskjed("3", "12345")
         beskjed4 = createBeskjed("4", "6789")
         allEvents = listOf(beskjed1, beskjed2, beskjed3, beskjed4)
-        allEventsForSingleUser = listOf(beskjed1, beskjed2, beskjed3)
     }
 
     private fun createBeskjed(eventId: String, fodselsnummer: String): Beskjed {
