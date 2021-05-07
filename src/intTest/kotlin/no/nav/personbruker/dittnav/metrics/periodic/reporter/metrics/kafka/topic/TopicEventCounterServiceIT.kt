@@ -55,9 +55,9 @@ class TopicEventCounterServiceIT {
             topicEventTypeCounter.countEventsAsync().await()
         }
 
-        metricsSession.getDuplicates() `should be equal to` events.size * 2
-        metricsSession.getTotalNumber() `should be equal to` events.size * 3
-        metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
+        metricsSession!!.getDuplicates() `should be equal to` events.size * 2
+        metricsSession!!.getTotalNumber() `should be equal to` events.size * 3
+        metricsSession!!.getNumberOfUniqueEvents() `should be equal to` events.size
 
         runBlocking { beskjedCountConsumer.stop() }
     }
@@ -83,9 +83,9 @@ class TopicEventCounterServiceIT {
             deltaTopicEventTypeCounter.countEventsAsync().await()
         }
 
-        metricsSession.getDuplicates() `should be equal to` events.size * 5
-        metricsSession.getTotalNumber() `should be equal to` events.size * 6
-        metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
+        metricsSession!!.getDuplicates() `should be equal to` events.size * 5
+        metricsSession!!.getTotalNumber() `should be equal to` events.size * 6
+        metricsSession!!.getNumberOfUniqueEvents() `should be equal to` events.size
 
         runBlocking { beskjedCountConsumer.stop() }
     }
@@ -127,9 +127,9 @@ class TopicEventCounterServiceIT {
             fromScratchTopicEventTypeCounter.countEventsAsync().await()
         }
 
-        deltaMetricsSession.getDuplicates() `should be equal to` fromScratchMetricsSession.getDuplicates()
-        deltaMetricsSession.getTotalNumber() `should be equal to` fromScratchMetricsSession.getTotalNumber()
-        deltaMetricsSession.getNumberOfUniqueEvents() `should be equal to` fromScratchMetricsSession.getNumberOfUniqueEvents()
+        deltaMetricsSession!!.getDuplicates() `should be equal to` fromScratchMetricsSession!!.getDuplicates()
+        deltaMetricsSession!!.getTotalNumber() `should be equal to` fromScratchMetricsSession!!.getTotalNumber()
+        deltaMetricsSession!!.getNumberOfUniqueEvents() `should be equal to` fromScratchMetricsSession!!.getNumberOfUniqueEvents()
 
         runBlocking {
             deltaCountingConsumer.stop()
@@ -172,7 +172,7 @@ class TopicEventCounterServiceIT {
             topicEventTypeCounter.countEventsAsync().await()
         }
 
-        metricsSession.getNumberOfUniqueEvents() `should be equal to` events.size
+        metricsSession!!.getNumberOfUniqueEvents() `should be equal to` events.size
     }
 
     private fun `Produser det samme settet av eventer tre ganger`(topic: String) {

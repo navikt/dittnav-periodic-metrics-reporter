@@ -42,20 +42,20 @@ class PeriodicConsumerCheck(
     fun getConsumersThatHaveStopped(): MutableList<EventType> {
         val stoppedConsumers = mutableListOf<EventType>()
 
-        if (appContext.beskjedCountConsumer.isStopped()) {
+        if (appContext.beskjedCountConsumer.isStopped() || appContext.beskjedCountConsumer.getNumberOfFailedCounts() > appContext.environment.maxFailedCounts) {
             stoppedConsumers.add(EventType.BESKJED)
         }
-        if (appContext.doneCountConsumer.isStopped()) {
+        if (appContext.doneCountConsumer.isStopped() || appContext.doneCountConsumer.getNumberOfFailedCounts() > appContext.environment.maxFailedCounts) {
             stoppedConsumers.add(EventType.DONE)
         }
-        if (appContext.oppgaveCountConsumer.isStopped()) {
+        if (appContext.oppgaveCountConsumer.isStopped() || appContext.oppgaveCountConsumer.getNumberOfFailedCounts() > appContext.environment.maxFailedCounts) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
         return stoppedConsumers
     }
 
     suspend fun restartConsumers(stoppedConsumers: MutableList<EventType>) {
-        log.warn("Følgende konsumere hadde stoppet ${stoppedConsumers}, de(n) vil bli restartet.")
+        log.warn("Følgende konsumere hadde stoppet eller klarte ikke å telle eventer: ${stoppedConsumers}, de(n) vil bli restartet.")
         KafkaConsumerSetup.restartConsumers(appContext)
         log.info("$stoppedConsumers konsumern(e) har blitt restartet.")
     }

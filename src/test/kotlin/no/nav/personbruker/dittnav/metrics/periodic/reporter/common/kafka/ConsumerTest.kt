@@ -19,6 +19,7 @@ import java.time.Duration
 class ConsumerTest {
 
     private val kafkaConsumer = mockk<KafkaConsumer<Nokkel, Beskjed>>(relaxUnitFun = true)
+    private val topic = "dummyTopic"
 
     companion object {
         private val defaultMaxPollTimeout = Duration.ofMillis(5000)
@@ -46,5 +47,27 @@ class ConsumerTest {
             consumer.status().status `should be equal to` Status.OK
             consumer.stop()
         }
+    }
+
+    @Test
+    fun `Skal telle antall ganger konsumer ikke klarte aa telle eventer`() {
+        val consumer: Consumer<Beskjed> = Consumer(topic, kafkaConsumer)
+
+        consumer.countNumberOfFailedCounts()
+        consumer.countNumberOfFailedCounts()
+
+        consumer.getNumberOfFailedCounts() `should be equal to` 2
+    }
+
+    @Test
+    fun `Skal resette antall ganger konsumer ikke klarte aa telle eventer`() {
+        val consumer: Consumer<Beskjed> = Consumer(topic, kafkaConsumer)
+
+        consumer.countNumberOfFailedCounts()
+        consumer.countNumberOfFailedCounts()
+
+        consumer.resetNumberOfFailedCounts()
+
+        consumer.getNumberOfFailedCounts() `should be equal to` 0
     }
 }

@@ -29,15 +29,19 @@ class TopicEventTypeCounter(
             maxTotalTimeout = Duration.ofMinutes(3)
     )
 
-    suspend fun countEventsAsync(): Deferred<TopicMetricsSession> = withContext(Dispatchers.IO) {
+    suspend fun countEventsAsync(): Deferred<TopicMetricsSession?> = withContext(Dispatchers.IO) {
         async {
             try {
-                pollAndCountEvents(eventType)
+                if (consumer.isStopped()) {
+                    null
+                } else {
+                    pollAndCountEvents(eventType)
+                }
             } catch (e: Exception) {
-                throw CountException("Klarte ikke å telle antall ${eventType.eventType}-eventer", e)
+                consumer.stop()
+                throw CountException("Klarte ikke å telle antall ${eventType.eventType}-eventer. Stopper ${eventType.eventType}-konsumer.", e)
             }
         }
-
     }
 
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
@@ -47,6 +51,7 @@ class TopicEventTypeCounter(
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
 
         var records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+        countOrResetFailedAttemptsToCountEvents(records)
         countBatch(records, session)
 
         while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
@@ -97,7 +102,13 @@ class TopicEventTypeCounter(
             require(initialTimeout < maxTotalTimeout) { "maxTotalTimeout må være høyere enn initialTimeout." }
             require(regularTimeut.toMillis() > 0) { "regularTimeout kan ikke være mindre enn 1 millisekund." }
         }
+    }
 
-
+    private fun countOrResetFailedAttemptsToCountEvents(records: ConsumerRecords<Nokkel, GenericRecord>) {
+        if (!records.foundRecords()) {
+            consumer.countNumberOfFailedCounts()
+        } else {
+            consumer.resetNumberOfFailedCounts()
+        }
     }
 }

@@ -1,9 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.slot
+import io.mockk.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
@@ -30,6 +27,11 @@ internal class TopicEventTypeCounterTest {
         val deltaCountingEnabled = true
         val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled)
 
+        coEvery { consumer.isStopped() } returns false
+        coEvery { consumer.stop() } returns Unit
+        coEvery { consumer.countNumberOfFailedCounts() } returns Unit
+        coEvery { consumer.getNumberOfFailedCounts() } returns 0
+        coEvery { consumer.resetNumberOfFailedCounts() } returns Unit
         every { consumer.kafkaConsumer.poll(any<Duration>()) } returns polledEvents
         every { polledEvents.isEmpty } returns true
 
@@ -49,6 +51,6 @@ internal class TopicEventTypeCounterTest {
             counter.countEventsAsync().await()
         }
 
-        session.getProcessingTime() `should be greater than` minimumProcessingTimeInNs
+        session!!.getProcessingTime() `should be greater than` minimumProcessingTimeInNs
     }
 }

@@ -6,8 +6,10 @@ class CountingMetricsSessions {
 
     private val sessions = mutableMapOf<EventType, CountingMetricsSession>()
 
-    fun put(eventType: EventType, session: CountingMetricsSession) {
-        sessions[eventType] = session
+    fun put(eventType: EventType, session: CountingMetricsSession?) {
+        if (session != null) {
+            sessions[eventType] = session
+        }
     }
 
     fun totalUniqueEvents(): Int {

@@ -18,7 +18,8 @@ internal class EnvironmentTest {
         "NAIS_NAMESPACE" to "namespace",
         "SENSU_HOST" to "sensu_host",
         "SENSU_PORT" to "1",
-        "COUNTING_INTERVAL_MINUTES" to "1"
+        "COUNTING_INTERVAL_MINUTES" to "1",
+        "MAX_FAILED_COUNTS" to "1"
     )
 
     @Test
