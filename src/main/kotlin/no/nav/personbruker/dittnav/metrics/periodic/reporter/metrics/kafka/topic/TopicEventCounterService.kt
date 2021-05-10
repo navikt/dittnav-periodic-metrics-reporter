@@ -10,6 +10,7 @@ class TopicEventCounterService(
         val beskjedCounter: TopicEventTypeCounter,
         val innboksCounter: TopicEventTypeCounter,
         val oppgaveCounter: TopicEventTypeCounter,
+        val statusoppdateringCounter: TopicEventTypeCounter,
         val doneCounter: TopicEventTypeCounter
 ) {
 
@@ -17,6 +18,7 @@ class TopicEventCounterService(
 
         val beskjeder = beskjedCounter.countEventsAsync()
         val oppgaver = oppgaveCounter.countEventsAsync()
+        val statusoppdateringer = statusoppdateringCounter.countEventsAsync()
         val done = doneCounter.countEventsAsync()
 
         val innboks = if (isOtherEnvironmentThanProd()) {
@@ -31,6 +33,7 @@ class TopicEventCounterService(
         sessions.put(EventType.DONE, done.await())
         sessions.put(EventType.INNBOKS, innboks.await())
         sessions.put(EventType.OPPGAVE, oppgaver.await())
+        sessions.put(EventType.STATUSOPPDATERING, statusoppdateringer.await())
 
         sessions
     }

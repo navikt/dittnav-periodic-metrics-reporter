@@ -5,19 +5,26 @@ import java.time.ZoneId
 
 object StatusoppdateringObjectMother {
 
-    fun giveMeeAktivStatusoppdatering(eventId: String, fodselsnummer: String): Statusoppdatering {
+    fun giveMeStatusoppdatering(eventId: String, fodselsnummer: String): Statusoppdatering {
+        return giveMeStatusoppdatering(eventId = eventId, fodselsnummer = fodselsnummer, systembruker = "dummySystembruker", link = "https://nav.no/systemX/$eventId")
+    }
+
+    fun giveMeStatusoppdateringWithLink(link: String): Statusoppdatering {
+        return giveMeStatusoppdatering(eventId = "s-1", fodselsnummer = "1234", systembruker = "dummySystemUser", link = link)
+    }
+
+    fun giveMeStatusoppdatering(eventId: String, fodselsnummer: String, systembruker: String, link: String): Statusoppdatering {
         return Statusoppdatering(
-            systembruker = "dummySystembruker",
+            systembruker = systembruker,
             eventId = eventId,
             eventTidspunkt = LocalDateTime.now(ZoneId.of("UTC")),
             fodselsnummer = fodselsnummer,
-            grupperingsId = "Dok12345",
-            link = "https://nav.no/systemX/",
+            grupperingsId = "systemA010",
+            link = link,
             sikkerhetsnivaa = 4,
             sistOppdatert = LocalDateTime.now(ZoneId.of("UTC")),
             statusGlobal = "SENDT",
             statusIntern = "dummyStatusIntern",
-            sakstema = "dummySakstema"
-        )
+            sakstema = "dummySakstema")
     }
 }

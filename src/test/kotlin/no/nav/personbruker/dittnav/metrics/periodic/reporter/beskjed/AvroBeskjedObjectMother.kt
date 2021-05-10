@@ -10,16 +10,8 @@ object AvroBeskjedObjectMother {
     private val defaultText = "Dette er Beskjed til brukeren"
     private val defaultEksternVarsling = false
 
-    fun createBeskjedWithText(text: String): Beskjed {
-        return createBeskjed(defaultLopenummer, defaultFodselsnr, text)
-    }
-
     fun createBeskjed(lopenummer: Int): Beskjed {
         return createBeskjed(lopenummer, defaultFodselsnr, defaultText)
-    }
-
-    fun createBeskjedWithFodselsnummer(fodselsnummer: String): Beskjed {
-        return createBeskjed(defaultLopenummer, fodselsnummer, defaultText)
     }
 
     fun createBeskjed(lopenummer: Int, fodselsnummer: String, text: String): Beskjed {
@@ -45,5 +37,4 @@ object AvroBeskjedObjectMother {
                 4,
                 defaultEksternVarsling)
     }
-
 }

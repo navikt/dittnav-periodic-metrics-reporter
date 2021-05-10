@@ -31,7 +31,7 @@ class statusoppdateringQueriesTest {
     }
 
     private fun createStatusoppdatering(eventId: String, fodselsnummer: String): Statusoppdatering {
-        var statusoppdatering = StatusoppdateringObjectMother.giveMeeAktivStatusoppdatering(eventId, fodselsnummer)
+        var statusoppdatering = StatusoppdateringObjectMother.giveMeStatusoppdatering(eventId, fodselsnummer)
         runBlocking {
             database.dbQuery {
                 val generatedId = createStatusoppdatering(statusoppdatering).entityId
@@ -49,7 +49,7 @@ class statusoppdateringQueriesTest {
     }
 
     @Test
-    fun `Skal telle det totale antall statusoppdatering`() {
+    fun `Skal telle det totale antall statusoppdateringer`() {
         runBlocking {
             database.dbQuery {
                 countTotalNumberOfEvents(EventType.STATUSOPPDATERING)

@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.schema.AvroDon
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboksObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.AvroOppgaveObjectMother
-import org.amshove.kluent.`should be equal to`
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.statusoppdatering.AvroStatusoppdateringObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldNotBeNull
 import org.apache.avro.generic.GenericRecord
@@ -59,6 +59,20 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
     }
 
     @Test
+    fun `Should transform external statusoppdatering to internal`() {
+        val nokkel = Nokkel("sysBruker3", "1")
+        val statusoppdateringEvent = AvroStatusoppdateringObjectMother.createStatusoppdateringWithStatusGlobal("SENDT")
+        val original: ConsumerRecord<Nokkel, GenericRecord> =
+            ConsumerRecordsObjectMother.createConsumerRecord(nokkel, statusoppdateringEvent)
+
+        val transformed = UniqueKafkaEventIdentifierTransformer.toInternal(original)
+
+        transformed.eventId `should be equal to` nokkel.getEventId()
+        transformed.systembruker `should be equal to` nokkel.getSystembruker()
+        transformed.fodselsnummer `should be equal to` statusoppdateringEvent.getFodselsnummer()
+    }
+
+    @Test
     fun `Should transform external done-event to internal`() {
         val nokkel = Nokkel("sysBruker3", "3")
         val done = AvroDoneObjectMother.createDone("4", "12345")
@@ -95,5 +109,4 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
             nokkel.getSystembruker()
         )
     }
-
 }
