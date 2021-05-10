@@ -1,8 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed
 
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateMaxLength
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateNonNullFieldMaxLength
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateSikkerhetsnivaa
+import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.*
 import java.time.LocalDateTime
 
 data class Beskjed(
@@ -72,5 +70,4 @@ data class Beskjed(
                 "synligFremTil=$synligFremTil, " +
                 "aktiv=$aktiv"
     }
-
 }

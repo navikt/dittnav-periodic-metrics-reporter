@@ -5,10 +5,6 @@ import java.time.ZoneId
 
 object OppgaveObjectMother {
 
-    fun giveMeAktivOppgave(): Oppgave {
-        return giveMeAktivOppgave("o-1", "123")
-    }
-
     fun giveMeAktivOppgave(eventId: String, fodselsnummer: String): Oppgave {
         return giveMeAktivOppgave(eventId, fodselsnummer, "dummySystembruker")
     }

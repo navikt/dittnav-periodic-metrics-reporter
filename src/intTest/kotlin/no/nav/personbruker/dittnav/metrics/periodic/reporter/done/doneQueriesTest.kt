@@ -7,7 +7,7 @@ import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
-class DoneQueriesTest {
+class doneQueriesTest {
 
     private val database = H2Database()
     private val done1 = DoneObjectMother.giveMeDone("1")
@@ -41,8 +41,8 @@ class DoneQueriesTest {
 
     @Test
     fun `skal slette spesifikke done-eventer`() {
-        val doneEvent1 = DoneObjectMother.giveMeDone("111", "dummySystembruker", "123")
-        val doneEvent2 = DoneObjectMother.giveMeDone("222", "dummySystembruker", "123")
+        val doneEvent1 = DoneObjectMother.giveMeDone("111", "dummySystembruker", "12345678901")
+        val doneEvent2 = DoneObjectMother.giveMeDone("222", "dummySystembruker", "12345678901")
         val doneEventsToInsertAndThenDelete = listOf(doneEvent1, doneEvent2)
 
         runBlocking {

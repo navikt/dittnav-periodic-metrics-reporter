@@ -7,15 +7,6 @@ object AvroInnboksObjectMother {
 
     private val defaultLopenummer = 1
     private val defaultFodselsnummer = "12345"
-    private val defaultText = "Dette er innboksnotifikasjon til brukeren"
-
-    fun createInnboks(lopenummer: Int): Innboks {
-        return createInnboks(lopenummer, defaultFodselsnummer)
-    }
-
-    fun createInnboks(lopenummer: Int, fodselsnummer: String): Innboks {
-        return createInnboks(lopenummer, fodselsnummer, defaultText)
-    }
 
     fun createInnboksWithText(text: String): Innboks {
         return createInnboks(defaultLopenummer, defaultFodselsnummer, text)

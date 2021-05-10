@@ -159,7 +159,7 @@ class ApplicationContext {
 
         if (doneCountConsumerOnPrem.isCompleted()) {
             doneCountConsumerOnPrem = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicNameOnPrem)
-            log.info("doneConsumer on-prem har blitt reinstansiert.")
+            log.info("doneConsumer har blitt reinstansiert.")
         } else {
             log.warn("doneConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }

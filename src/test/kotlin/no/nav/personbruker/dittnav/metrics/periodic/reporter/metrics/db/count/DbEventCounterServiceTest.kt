@@ -13,7 +13,7 @@ internal class DbEventCounterServiceTest {
 
     private val metricsProbe : DbCountingMetricsProbe = mockk(relaxed = true)
     private val repository : MetricsRepository = mockk(relaxed = true)
-    
+
     private val dbEventCounterService = DbEventCounterService(metricsProbe, repository)
 
     @Test
@@ -44,6 +44,12 @@ internal class DbEventCounterServiceTest {
                 dbEventCounterService.countOppgaver()
             }
         } `should throw` CountException::class `with message containing` "oppgave"
+
+        invoking {
+            runBlocking {
+                dbEventCounterService.countStatusoppdateringer()
+            }
+        } `should throw` CountException::class `with message containing` "statusoppdatering"
 
     }
 
