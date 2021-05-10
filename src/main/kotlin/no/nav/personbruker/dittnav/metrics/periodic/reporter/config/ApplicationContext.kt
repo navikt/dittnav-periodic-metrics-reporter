@@ -42,22 +42,26 @@ class ApplicationContext {
     val beskjedKafkaProps = Kafka.counterConsumerProps(environment, EventType.BESKJED)
     val oppgaveKafkaProps = Kafka.counterConsumerProps(environment, EventType.OPPGAVE)
     val innboksKafkaProps = Kafka.counterConsumerProps(environment, EventType.INNBOKS)
+    val statusoppdateringKafkaProps = Kafka.counterConsumerProps(environment, EventType.STATUSOPPDATERING)
     val doneKafkaProps = Kafka.counterConsumerProps(environment, EventType.DONE)
 
     var beskjedCountConsumer = initializeCountConsumer(beskjedKafkaProps, Kafka.beskjedTopicName)
     var innboksCountConsumer = initializeCountConsumer(innboksKafkaProps, Kafka.innboksTopicName)
     var oppgaveCountConsumer = initializeCountConsumer(oppgaveKafkaProps, Kafka.oppgaveTopicName)
+    var statusoppdateringCountConsumer = initializeCountConsumer(statusoppdateringKafkaProps, Kafka.statusoppdateringTopicName)
     var doneCountConsumer = initializeCountConsumer(doneKafkaProps, Kafka.doneTopicName)
 
     val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
     val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
     val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
+    val statusoppdateringCounter = TopicEventTypeCounter(statusoppdateringCountConsumer, EventType.STATUSOPPDATERING, environment.deltaCountingEnabled)
     val doneCounter = TopicEventTypeCounter(doneCountConsumer, EventType.DONE, environment.deltaCountingEnabled)
 
     val topicEventCounterService = TopicEventCounterService(
             beskjedCounter = beskjedCounter,
             innboksCounter = innboksCounter,
             oppgaveCounter = oppgaveCounter,
+            statusoppdateringCounter = statusoppdateringCounter,
             doneCounter = doneCounter
     )
 
@@ -118,6 +122,13 @@ class ApplicationContext {
             log.info("innboksCountConsumer har blitt reinstansiert.")
         } else {
             log.warn("innboksCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+
+        if (statusoppdateringCountConsumer.isCompleted()) {
+            statusoppdateringCountConsumer = initializeCountConsumer(statusoppdateringKafkaProps, Kafka.statusoppdateringTopicName)
+            log.info("statusoppdateringCountConsumer har blitt reinstansiert.")
+        } else {
+            log.warn("statusoppdateringCountConsumer kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (doneCountConsumer.isCompleted()) {

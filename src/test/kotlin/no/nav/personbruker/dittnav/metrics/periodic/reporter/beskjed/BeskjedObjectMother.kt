@@ -6,17 +6,6 @@ import kotlin.random.Random
 
 object BeskjedObjectMother {
 
-    fun giveMeTwoAktiveBeskjeder(): List<Beskjed> {
-        return listOf(
-                giveMeAktivBeskjed("b-1", "123"),
-                giveMeAktivBeskjed("b-2", "123")
-        )
-    }
-
-    fun giveMeAktivBeskjed(): Beskjed {
-        return giveMeAktivBeskjed("b-1", "123")
-    }
-
     fun giveMeAktivBeskjed(eventId: String, fodselsnummer: String): Beskjed {
         val systembruker = "dummySystembruker"
         return giveMeAktivBeskjed(eventId, fodselsnummer, systembruker)

@@ -5,10 +5,6 @@ import java.time.ZoneId
 
 object InnboksObjectMother {
 
-    fun giveMeAktivInnboks(): Innboks {
-        return giveMeAktivInnboks("i-1", "123")
-    }
-
     fun giveMeAktivInnboks(eventId: String, fodselsnummer: String): Innboks {
         return giveMeAktivInnboks(eventId, fodselsnummer, "dummySystembruker")
     }

@@ -7,12 +7,12 @@ object DoneObjectMother {
 
     fun giveMeDone(eventId: String): Done {
         val systembruker = "dummySystembruker"
-        val fodselsnummer = "12345"
+        val fodselsnummer = "12345678901"
         return giveMeDone(eventId, systembruker, fodselsnummer)
     }
 
     fun giveMeDone(eventId: String, systembruker: String): Done {
-        val fodselsnummer = "12345"
+        val fodselsnummer = "12345678901"
         return giveMeDone(eventId, systembruker, fodselsnummer)
     }
 

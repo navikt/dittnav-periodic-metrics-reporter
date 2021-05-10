@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateFodselsnummer
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.validation.validateNonNullFieldMaxLength
+import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateFodselsnummer
+import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import java.time.LocalDateTime
 
 data class Done(
@@ -50,5 +50,4 @@ data class Done(
         result = 31 * result + grupperingsId.hashCode()
         return result
     }
-
 }
