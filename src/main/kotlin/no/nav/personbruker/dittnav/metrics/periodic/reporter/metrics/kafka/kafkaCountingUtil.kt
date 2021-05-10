@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit
 private val log = LoggerFactory.getLogger(object{}::class.java.`package`.name)
 
 fun <T> createCountConsumer(eventType: EventType, topic: String, environment: Environment): KafkaConsumer<Nokkel, T> {
-    val kafkaProps = Kafka.counterConsumerProps(environment, eventType)
+    val kafkaProps = Kafka.counterConsumerPropsOnPrem(environment, eventType)
     val consumer = KafkaConsumer<Nokkel, T>(kafkaProps)
     consumer.subscribe(listOf(topic))
     return consumer

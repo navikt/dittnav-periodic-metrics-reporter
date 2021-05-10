@@ -41,7 +41,7 @@ object KafkaConsumerSetup {
     suspend fun restartConsumers(appContext: ApplicationContext) {
         stopAllKafkaConsumers(appContext)
         appContext.reinitializeConsumersOnPrem()
-        appContext.reinitializeConsumersGCP()
+        appContext.reinitializeConsumersAiven()
         startSubscriptionOnAllKafkaConsumers(appContext)
     }
 

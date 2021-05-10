@@ -22,7 +22,7 @@ class PeriodicConsumerCheckTest {
         coEvery { KafkaConsumerSetup.restartConsumers(appContext) } returns Unit
         coEvery { KafkaConsumerSetup.stopAllKafkaConsumers(appContext) } returns Unit
         coEvery { appContext.reinitializeConsumersOnPrem() } returns Unit
-        coEvery { appContext.reinitializeConsumersGCP() } returns Unit
+        coEvery { appContext.reinitializeConsumersAiven() } returns Unit
         coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumers(appContext) } returns Unit
     }
 

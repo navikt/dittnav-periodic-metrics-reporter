@@ -41,7 +41,7 @@ class TopicEventCounterServiceIT {
     fun `Skal telle korrekt total antall av eventer og gruppere de som er unike og duplikater`() {
         `Produser det samme settet av eventer tre ganger`(topic)
 
-        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
         val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
@@ -64,7 +64,7 @@ class TopicEventCounterServiceIT {
 
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
-        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
         val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
@@ -95,11 +95,11 @@ class TopicEventCounterServiceIT {
         val deltaCountingEnv = testEnvironment.copy(groupIdBase = "delta")
         val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
 
-        val kafkaPropsDeltaCounting = Kafka.counterConsumerProps(deltaCountingEnv, EventType.BESKJED, true)
+        val kafkaPropsDeltaCounting = Kafka.counterConsumerPropsOnPrem(deltaCountingEnv, EventType.BESKJED, true)
         val deltaCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
         deltaCountingConsumer.startSubscription()
 
-        val kafkaPropsFromScratchCounting = Kafka.counterConsumerProps(fromScratchCountingEnv, EventType.BESKJED, true)
+        val kafkaPropsFromScratchCounting = Kafka.counterConsumerPropsOnPrem(fromScratchCountingEnv, EventType.BESKJED, true)
         val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
@@ -141,7 +141,7 @@ class TopicEventCounterServiceIT {
     @Test
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
-        val kafkaProps = Kafka.counterConsumerProps(testEnvironment, EventType.BESKJED, true)
+        val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
         val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 

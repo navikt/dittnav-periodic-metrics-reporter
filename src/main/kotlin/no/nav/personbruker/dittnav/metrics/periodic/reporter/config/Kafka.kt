@@ -1,11 +1,13 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import io.netty.util.NetUtil.getHostname
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.SwallowSerializationErrorsAvroDeserializer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ConfigUtil.isCurrentlyRunningOnNais
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.slf4j.Logger
@@ -24,13 +26,13 @@ object Kafka {
     val oppgaveTopicNameOnPrem = "aapen-brukernotifikasjon-nyOppgave-v1"
     val statusoppdateringTopicNameOnPrem = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
 
-    val doneTopicNameGCP= "aapen-brukernotifikasjon-done-v1"
-    val beskjedTopicNameGCP = "aapen-brukernotifikasjon-nyBeskjed-v1"
-    val innboksTopicNameGCP = "aapen-brukernotifikasjon-nyInnboks-v1"
-    val oppgaveTopicNameGCP = "aapen-brukernotifikasjon-nyOppgave-v1"
-    val statusoppdateringTopicNameGCP = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+    val doneTopicNameAiven= "aapen-brukernotifikasjon-done-v1"
+    val beskjedTopicNameAiven = "aapen-brukernotifikasjon-nyBeskjed-v1"
+    val innboksTopicNameAiven = "aapen-brukernotifikasjon-nyInnboks-v1"
+    val oppgaveTopicNameAiven = "aapen-brukernotifikasjon-nyOppgave-v1"
+    val statusoppdateringTopicNameAiven = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
 
-    private fun credentialProps(env: Environment): Properties {
+    private fun credentialPropsOnPrem(env: Environment): Properties {
         return Properties().apply {
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")
             put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
@@ -45,28 +47,58 @@ object Kafka {
         }
     }
 
-    fun counterConsumerProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
-        val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
-        val sixMinutes = 6 * 60 * 1000
+    private fun credentialPropsAiven(env: Environment): Properties {
         return Properties().apply {
-            put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
-            put(ConsumerConfig.CLIENT_ID_CONFIG, groupIdAndEventType + getHostname(InetSocketAddress(0)))
-            commonProps(env, enableSecurity)
-            put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, sixMinutes)
+            put(SaslConfigs.SASL_MECHANISM, "PLAIN")
+            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL")
+            put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "jks")
+            put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "PKCS12")
+            put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, env.aivenTruststorePath)
+            put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, env.aivenCredstorePassword)
+            put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, env.aivenKeystorePath)
+            put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, env.aivenCredstorePassword)
+            put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, env.aivenCredstorePassword)
+            put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
+            put(ProducerConfig.ACKS_CONFIG, "all")
+            put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true")
         }
     }
 
-    private fun Properties.commonProps(env: Environment, enableSecurity: Boolean) {
-        put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServers)
-        put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
+
+    fun counterConsumerPropsOnPrem(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
+        return Properties().apply {
+            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServers)
+            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
+            if (enableSecurity) {
+                putAll(credentialPropsOnPrem(env))
+            }
+        }
+    }
+
+    fun counterConsumerPropsAiven(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
+        return Properties().apply {
+            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.aivenBrokers)
+            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.aivenSchemaRegistry)
+            put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "${env.aivenSchemaRegistryUser}:${env.aivenSchemaRegistryPassword}")
+            put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO")
+            if (enableSecurity) {
+                putAll(credentialPropsAiven(env))
+            }
+        }
+    }
+
+
+    private fun Properties.commonProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean) {
+        val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
+        val sixMinutes = 6 * 60 * 1000
+        put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
+        put(ConsumerConfig.CLIENT_ID_CONFIG, groupIdAndEventType + getHostname(InetSocketAddress(0)))
+        put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, sixMinutes)
         put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false)
         put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, SwallowSerializationErrorsAvroDeserializer::class.java)
         put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SwallowSerializationErrorsAvroDeserializer::class.java)
         put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-        if (enableSecurity) {
-            putAll(credentialProps(env))
-        }
     }
 
 }
