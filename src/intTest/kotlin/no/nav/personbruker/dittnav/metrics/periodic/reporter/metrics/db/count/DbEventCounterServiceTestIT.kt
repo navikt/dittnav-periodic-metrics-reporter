@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
+import createStatusoppdateringer
+import deleteAllStatusoppdatering
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.slot
@@ -22,6 +24,8 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.Oppgave
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.createOppgaver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.deleteAllOppgave
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.statusoppdatering.Statusoppdatering
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.statusoppdatering.StatusoppdateringObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be null`
 import org.junit.jupiter.api.AfterEach
@@ -40,6 +44,7 @@ internal class DbEventCounterServiceTestIT {
                 deleteAllInnboks()
                 deleteAllOppgave()
                 deleteAllDone()
+                deleteAllStatusoppdatering()
             }
         }
     }
@@ -49,6 +54,7 @@ internal class DbEventCounterServiceTestIT {
         val beskjeder = createBeskjedEventer()
         val innboksEventer = createInnboksEventer()
         val oppgaver = createOppgaveEventer()
+        val statusoppdateringer = createStatusoppdateringEventer()
         createDoneEventInWaitingTable()
 
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
@@ -56,6 +62,7 @@ internal class DbEventCounterServiceTestIT {
         initMetricsSession(metricsProbe, EventType.INNBOKS)
         initMetricsSession(metricsProbe, EventType.OPPGAVE)
         initMetricsSession(metricsProbe, EventType.DONE)
+        initMetricsSession(metricsProbe, EventType.STATUSOPPDATERING)
         val service = DbEventCounterService(metricsProbe, repository)
 
         val countingMetricsSessions = runBlocking {
@@ -66,6 +73,7 @@ internal class DbEventCounterServiceTestIT {
         countingMetricsSessions.getForType(EventType.BESKJED).getNumberOfUniqueEvents() `should be equal to` beskjeder.size
         countingMetricsSessions.getForType(EventType.INNBOKS).getNumberOfUniqueEvents() `should be equal to` innboksEventer.size
         countingMetricsSessions.getForType(EventType.OPPGAVE).getNumberOfUniqueEvents() `should be equal to` oppgaver.size
+        countingMetricsSessions.getForType(EventType.STATUSOPPDATERING).getNumberOfUniqueEvents() `should be equal to` statusoppdateringer.size
         countingMetricsSessions.getForType(EventType.DONE).getNumberOfUniqueEvents() `should be equal to` 4
     }
 
@@ -195,6 +203,19 @@ internal class DbEventCounterServiceTestIT {
             }
         }
         return oppgaver
+    }
+
+    private fun createStatusoppdateringEventer(): List<Statusoppdatering> {
+        val statusoppdateringer = listOf(
+            StatusoppdateringObjectMother.giveMeStatusoppdatering("132", "789"),
+            StatusoppdateringObjectMother.giveMeStatusoppdatering("321", "789")
+        )
+        runBlocking {
+            database.dbQuery {
+                createStatusoppdateringer(statusoppdateringer)
+            }
+        }
+        return statusoppdateringer
     }
 
     private fun createDoneEventInWaitingTable(): List<Done> {

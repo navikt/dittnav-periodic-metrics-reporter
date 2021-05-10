@@ -1,5 +1,7 @@
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistActionResult
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.executeBatchPersistQuery
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.executePersistQuery
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.toBatchPersistResult
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.statusoppdatering.Statusoppdatering
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -12,6 +14,14 @@ fun Connection.createStatusoppdatering(statusoppdatering: Statusoppdatering): Pe
     executePersistQuery(createQuery) {
         buildStatementForSingleRow(statusoppdatering)
     }
+
+fun Connection.createStatusoppdateringer(statusoppdateringer: List<Statusoppdatering>) =
+    executeBatchPersistQuery(createQuery) {
+        statusoppdateringer.forEach { statusoppdatering ->
+            buildStatementForSingleRow(statusoppdatering)
+            addBatch()
+        }
+    }.toBatchPersistResult(statusoppdateringer)
 
 private fun PreparedStatement.buildStatementForSingleRow(statusoppdatering: Statusoppdatering) {
     setString(1, statusoppdatering.systembruker)

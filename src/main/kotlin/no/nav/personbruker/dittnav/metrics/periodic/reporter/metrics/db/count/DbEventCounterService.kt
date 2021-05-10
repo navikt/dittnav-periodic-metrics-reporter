@@ -26,6 +26,9 @@ class DbEventCounterService(
         val oppgave = async {
             countOppgaver()
         }
+        val statusoppdatering = async {
+            countStatusoppdateringer()
+        }
         val done = async {
             countDoneEvents()
         }
@@ -35,6 +38,7 @@ class DbEventCounterService(
         sessions.put(EventType.DONE, done.await())
         sessions.put(EventType.INNBOKS, innboks.await())
         sessions.put(EventType.OPPGAVE, oppgave.await())
+        sessions.put(EventType.STATUSOPPDATERING, statusoppdatering.await())
         return@withContext sessions
     }
 
@@ -62,6 +66,23 @@ class DbEventCounterService(
 
             } catch (e: Exception) {
                 throw CountException("Klarte ikke å telle antall innboks-eventer i cache-en", e)
+            }
+        } else {
+            DbCountingMetricsSession(eventType)
+        }
+    }
+
+    suspend fun countStatusoppdateringer(): DbCountingMetricsSession {
+        val eventType = EventType.STATUSOPPDATERING
+        return if (isOtherEnvironmentThanProd()) {
+            try {
+                metricsProbe.runWithMetrics(eventType) {
+                    val grupperPerProdusent = repository.getNumberOfStatusoppdateringEventsGroupedByProdusent()
+                    addEventsByProducer(grupperPerProdusent)
+                }
+
+            } catch (e: Exception) {
+                throw CountException("Klarte ikke å telle antall statusoppdatering-eventer i cache-en", e)
             }
         } else {
             DbCountingMetricsSession(eventType)

@@ -57,6 +57,12 @@ class MetricsRepository(private val database: Database) {
         }
     }
 
+    suspend fun getNumberOfStatusoppdateringEventsGroupedByProdusent(): Map<String, Int> {
+        return database.queryWithExceptionTranslation {
+            countTotalNumberOfEventsGroupedBySystembruker(EventType.STATUSOPPDATERING)
+        }
+    }
+
     suspend fun getNumberOfActiveOppgaveEvents(): Long {
         return database.queryWithExceptionTranslation {
             countTotalNumberOfEventsByActiveStatus(EventType.OPPGAVE, true)
