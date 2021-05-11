@@ -20,17 +20,6 @@ object KafkaTestUtil {
         )
     }
 
-    fun createKafkaEmbeddedInstanceWithNumPartitions(topics: List<String>, partitions: Int): KafkaEnvironment {
-        val topicInfos = topics.map { KafkaEnvironment.TopicInfo(it, partitions = partitions) }
-
-        return KafkaEnvironment(
-                topicInfos = topicInfos,
-                withSecurity = true,
-                withSchemaRegistry = true,
-                users = listOf(JAASCredential(username, password))
-        )
-    }
-
     fun createEnvironmentForEmbeddedKafka(embeddedEnv: KafkaEnvironment): Environment {
         return Environment(
                 bootstrapServers = embeddedEnv.brokersURL.substringAfterLast("/"),
@@ -47,7 +36,14 @@ object KafkaTestUtil {
                 namespace = "namespaceIkkeIBrukHer",
                 sensuHost = "sensuHostIkkeIBrukHer",
                 sensuPort = 0,
-                countingIntervalMinutes = 1
+                countingIntervalMinutes = 1,
+                aivenBrokers = "aivenBrokersIkkeIBrukHer",
+                aivenTruststorePath = "aivenTruststorePathIkkeIBrukHer",
+                aivenKeystorePath = "aivenKeystorePathIkkeIBrukHer",
+                aivenCredstorePassword = "aivenCredstorePasswordIkkeIBrukHer",
+                aivenSchemaRegistry = "aivenSchemaRegistryIkkeIBrukHer",
+                aivenSchemaRegistryUser = "aivenSchemaRegistryUser",
+                aivenSchemaRegistryPassword = "aivenSchemaRegistryPassword"
         )
     }
 

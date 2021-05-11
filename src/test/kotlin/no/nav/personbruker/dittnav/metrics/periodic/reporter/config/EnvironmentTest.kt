@@ -18,7 +18,14 @@ internal class EnvironmentTest {
         "NAIS_NAMESPACE" to "namespace",
         "SENSU_HOST" to "sensu_host",
         "SENSU_PORT" to "1",
-        "COUNTING_INTERVAL_MINUTES" to "1"
+        "COUNTING_INTERVAL_MINUTES" to "1",
+        "KAFKA_BROKERS" to "kafka_brokers",
+        "KAFKA_TRUSTSTORE_PATH" to "kafka_truststore_path",
+        "KAFKA_KEYSTORE_PATH" to "kafka_keystore_path",
+        "KAFKA_CREDSTORE_PASSWORD" to "kafka_credstore_password",
+        "KAFKA_SCHEMA_REGISTRY" to "kafka_schema_registry",
+        "KAFKA_SCHEMA_REGISTRY_USER" to "kafka_schema_registry_user",
+        "KAFKA_SCHEMA_REGISTRY_PASSWORD" to "kafka_shchema_registry_password"
     )
 
     @Test

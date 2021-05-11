@@ -32,12 +32,36 @@ object Kafka {
     val oppgaveTopicNameAiven = "aapen-brukernotifikasjon-nyOppgave-v1"
     val statusoppdateringTopicNameAiven = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
 
+    fun counterConsumerPropsOnPrem(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
+        return Properties().apply {
+            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServers)
+            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
+            commonProps(env, eventTypeToConsume)
+            if (enableSecurity) {
+                putAll(credentialPropsOnPrem(env))
+            }
+        }
+    }
+
+    fun counterConsumerPropsAiven(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
+        return Properties().apply {
+            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.aivenBrokers)
+            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.aivenSchemaRegistry)
+            put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "${env.aivenSchemaRegistryUser}:${env.aivenSchemaRegistryPassword}")
+            put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO")
+            commonProps(env, eventTypeToConsume)
+            if (enableSecurity) {
+                putAll(credentialPropsAiven(env))
+            }
+        }
+    }
+
     private fun credentialPropsOnPrem(env: Environment): Properties {
         return Properties().apply {
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")
             put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
             put(SaslConfigs.SASL_JAAS_CONFIG,
-                    """org.apache.kafka.common.security.plain.PlainLoginModule required username="${env.username}" password="${env.password}";""")
+                """org.apache.kafka.common.security.plain.PlainLoginModule required username="${env.username}" password="${env.password}";""")
             System.getenv("NAV_TRUSTSTORE_PATH")?.let {
                 put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
                 put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, File(it).absolutePath)
@@ -64,31 +88,7 @@ object Kafka {
         }
     }
 
-
-    fun counterConsumerPropsOnPrem(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
-        return Properties().apply {
-            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServers)
-            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
-            if (enableSecurity) {
-                putAll(credentialPropsOnPrem(env))
-            }
-        }
-    }
-
-    fun counterConsumerPropsAiven(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
-        return Properties().apply {
-            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.aivenBrokers)
-            put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.aivenSchemaRegistry)
-            put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "${env.aivenSchemaRegistryUser}:${env.aivenSchemaRegistryPassword}")
-            put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO")
-            if (enableSecurity) {
-                putAll(credentialPropsAiven(env))
-            }
-        }
-    }
-
-
-    private fun Properties.commonProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean) {
+    private fun Properties.commonProps(env: Environment, eventTypeToConsume: EventType) {
         val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
         val sixMinutes = 6 * 60 * 1000
         put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
