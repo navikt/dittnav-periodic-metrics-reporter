@@ -16,9 +16,8 @@ import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
     private val dbEventCounterServiceOnPrem: DbEventCounterService,
-    private val dbEventCounterServiceGCP: DbEventCounterService,
     private val topicEventCounterServiceOnPrem: TopicEventCounterService,
-    private val topicEventCounterServiceGCP: TopicEventCounterService,
+    private val topicEventCounterServiceAiven: TopicEventCounterService,
     private val dbMetricsReporter: DbMetricsReporter,
     private val kafkaMetricsReporter: TopicMetricsReporter
 ) {
@@ -30,19 +29,18 @@ class MetricsSubmitterService(
     suspend fun submitMetrics() {
         try {
             val topicSessionsOnPrem = topicEventCounterServiceOnPrem.countAllEventTypesAsync()
-            val topicSessionsGCP = topicEventCounterServiceGCP.countAllEventTypesAsync()
+            val topicSessionsAiven = topicEventCounterServiceAiven.countAllEventTypesAsync()
             val dbSessionsOnPrem = dbEventCounterServiceOnPrem.countAllEventTypesAsync()
-            val dbSessionsGCP = dbEventCounterServiceGCP.countAllEventTypesAsync()
 
             val sessionComparatorOnPrem = SessionComparator(topicSessionsOnPrem, dbSessionsOnPrem)
-            val sessionComparatorGCP = SessionComparator(topicSessionsGCP, dbSessionsGCP)
+            val sessionComparatorAiven = SessionComparator(topicSessionsAiven, dbSessionsOnPrem)
 
             sessionComparatorOnPrem.eventTypesWithSessionFromBothSources().forEach { eventType ->
                 reportMetricsByEventType(topicSessionsOnPrem, dbSessionsOnPrem, eventType)
             }
 
-            sessionComparatorGCP.eventTypesWithSessionFromBothSources().forEach { eventType ->
-                reportMetricsByEventType(topicSessionsGCP, dbSessionsGCP, eventType)
+            sessionComparatorAiven.eventTypesWithSessionFromBothSources().forEach { eventType ->
+                reportMetricsByEventType(topicSessionsAiven, dbSessionsOnPrem, eventType)
             }
 
         } catch (e: CountException) {

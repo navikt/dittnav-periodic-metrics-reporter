@@ -26,11 +26,11 @@ object Kafka {
     val oppgaveTopicNameOnPrem = "aapen-brukernotifikasjon-nyOppgave-v1"
     val statusoppdateringTopicNameOnPrem = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
 
-    val doneTopicNameAiven= "aapen-brukernotifikasjon-done-v1"
-    val beskjedTopicNameAiven = "aapen-brukernotifikasjon-nyBeskjed-v1"
-    val innboksTopicNameAiven = "aapen-brukernotifikasjon-nyInnboks-v1"
-    val oppgaveTopicNameAiven = "aapen-brukernotifikasjon-nyOppgave-v1"
-    val statusoppdateringTopicNameAiven = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+    val doneTopicNameAiven= "min-side.privat-brukernotifikasjon-done-v1"
+    val beskjedTopicNameAiven = "min-side.privat-brukernotifikasjon-beskjed-v1"
+    val innboksTopicNameAiven = "min-side.privat-brukernotifikasjon-innboks-v1"
+    val oppgaveTopicNameAiven = "min-side.privat-brukernotifikasjon-oppgave-v1"
+    val statusoppdateringTopicNameAiven = "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
 
     fun counterConsumerPropsOnPrem(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
         return Properties().apply {

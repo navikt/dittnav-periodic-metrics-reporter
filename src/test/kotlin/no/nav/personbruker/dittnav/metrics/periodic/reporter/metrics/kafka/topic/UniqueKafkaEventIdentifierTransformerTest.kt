@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.schema.AvroDoneObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.AvroDoneObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboksObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.oppgave.AvroOppgaveObjectMother

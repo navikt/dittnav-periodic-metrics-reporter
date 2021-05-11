@@ -7,7 +7,6 @@ class HealthService(private val applicationContext: ApplicationContext) {
     suspend fun getHealthChecks(): List<HealthStatus> {
         return listOf(
                 applicationContext.databaseOnPrem.status(),
-                applicationContext.databaseGCP.status(),
                 applicationContext.periodicMetricsSubmitter.status(),
                 applicationContext.periodicConsumerCheck.status(),
                 applicationContext.beskjedCountConsumerOnPrem.status(),

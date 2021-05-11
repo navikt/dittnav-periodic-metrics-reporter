@@ -5,7 +5,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Per
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.PersistFailureReason
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import java.sql.*
-import java.time.LocalDateTime
 
 const val countResultColumnIndex = 1
 
@@ -23,17 +22,6 @@ fun <T> ResultSet.list(result: ResultSet.() -> T): List<T> =
             }
         }
 
-fun ResultSet.getUtcDateTime(columnLabel: String): LocalDateTime = getTimestamp(columnLabel).toLocalDateTime()
-
-fun Connection.executeBatchUpdateQuery(sql: String, paramInit: PreparedStatement.() -> Unit) {
-    autoCommit = false
-    prepareStatement(sql).use { statement ->
-        statement.paramInit()
-        statement.executeBatch()
-    }
-    commit()
-}
-
 fun Connection.executeBatchPersistQuery(sql: String, paramInit: PreparedStatement.() -> Unit): IntArray {
     autoCommit = false
     val result = prepareStatement("""$sql ON CONFLICT DO NOTHING""").use { statement ->
@@ -46,13 +34,6 @@ fun Connection.executeBatchPersistQuery(sql: String, paramInit: PreparedStatemen
 
 fun <T> IntArray.toBatchPersistResult(paramList: List<T>) = ListPersistActionResult.mapParamListToResultArray(paramList, this)
 
-inline fun <T> List<T>.persistEachIndividuallyAndAggregateResults(persistAction: (T) -> PersistActionResult): ListPersistActionResult<T> {
-    return map { entity ->
-        entity to persistAction(entity).persistOutcome
-    }.let { aggregate ->
-        ListPersistActionResult.mapListOfIndividualResults(aggregate)
-    }
-}
 
 fun Connection.executePersistQuery(sql: String, paramInit: PreparedStatement.() -> Unit): PersistActionResult =
         prepareStatement("""$sql ON CONFLICT DO NOTHING""", Statement.RETURN_GENERATED_KEYS).use {
@@ -66,10 +47,6 @@ fun Connection.executePersistQuery(sql: String, paramInit: PreparedStatement.() 
                 PersistActionResult.failure(PersistFailureReason.CONFLICTING_KEYS)
             }
         }
-
-fun ResultSet.getEpochTimeInSeconds(label: String): Long {
-    return getTimestamp(label).toInstant().epochSecond
-}
 
 fun Connection.countTotalNumberOfEvents(eventType: EventType): Long {
     val numberOfEvents = prepareStatement("SELECT count(*) from $eventType",

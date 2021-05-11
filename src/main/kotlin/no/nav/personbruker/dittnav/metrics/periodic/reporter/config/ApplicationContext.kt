@@ -32,10 +32,6 @@ class ApplicationContext {
     val metricsRepositoryOnPrem = MetricsRepository(databaseOnPrem)
     val dbEventCounterServiceOnPrem = DbEventCounterService(dbEventCountingMetricsProbe, metricsRepositoryOnPrem)
 
-    val databaseGCP: Database = PostgresDatabase(environment)
-    val metricsRepositoryGCP = MetricsRepository(databaseGCP)
-    val dbEventCounterServiceGCP = DbEventCounterService(dbEventCountingMetricsProbe, metricsRepositoryGCP)
-
     val nameResolver = ProducerNameResolver(databaseOnPrem)
     val nameScrubber = ProducerNameScrubber(nameResolver)
     val healthService = HealthService(this)
@@ -86,7 +82,7 @@ class ApplicationContext {
         doneCounter = doneCounterOnPrem
     )
 
-    val topicEventCounterServiceGCP = TopicEventCounterService(
+    val topicEventCounterServiceAiven = TopicEventCounterService(
         beskjedCounter = beskjedCounterAiven,
         innboksCounter = innboksCounterAiven,
         oppgaveCounter = oppgaveCounterAiven,
@@ -96,9 +92,8 @@ class ApplicationContext {
 
     val metricsSubmitterService = MetricsSubmitterService(
         dbEventCounterServiceOnPrem = dbEventCounterServiceOnPrem,
-        dbEventCounterServiceGCP = dbEventCounterServiceGCP,
         topicEventCounterServiceOnPrem = topicEventCounterServiceOnPrem,
-        topicEventCounterServiceGCP = topicEventCounterServiceGCP,
+        topicEventCounterServiceAiven = topicEventCounterServiceAiven,
         dbMetricsReporter = dbMetricsReporter,
         kafkaMetricsReporter = kafkaMetricsReporter
     )

@@ -2,8 +2,9 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.done
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.H2Database
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.util.countTotalNumberOfEvents
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
@@ -31,30 +32,11 @@ class doneQueriesTest {
     }
 
     @Test
-    fun `Finner alle cachede Done-eventer`() {
+    fun `Skal telle det totale antall done-eventer`() {
         runBlocking {
-            val result = database.dbQuery { getAllDoneEvent() }
-            result.size `should be equal to` 3
-            result `should contain all` allEvents
-        }
+            database.dbQuery {
+                countTotalNumberOfEvents(EventType.DONE)
+            }
+        } `should be equal to` allEvents.size.toLong()
     }
-
-    @Test
-    fun `skal slette spesifikke done-eventer`() {
-        val doneEvent1 = DoneObjectMother.giveMeDone("111", "dummySystembruker", "12345678901")
-        val doneEvent2 = DoneObjectMother.giveMeDone("222", "dummySystembruker", "12345678901")
-        val doneEventsToInsertAndThenDelete = listOf(doneEvent1, doneEvent2)
-
-        runBlocking {
-            database.dbQuery { createDoneEvents(doneEventsToInsertAndThenDelete) }
-            val antallDoneEventerForSletting = database.dbQuery { getAllDoneEvent() }
-            val expectedAntallDoneEventerEtterSletting = antallDoneEventerForSletting.size - doneEventsToInsertAndThenDelete.size
-
-            database.dbQuery { deleteDoneEvents(doneEventsToInsertAndThenDelete) }
-
-            val antallDoneEventerEtterSletting = database.dbQuery { getAllDoneEvent() }
-            antallDoneEventerEtterSletting.size `should be equal to` expectedAntallDoneEventerEtterSletting
-        }
-    }
-
 }
