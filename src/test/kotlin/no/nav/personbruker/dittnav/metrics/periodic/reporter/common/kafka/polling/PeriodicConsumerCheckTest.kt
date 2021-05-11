@@ -19,11 +19,11 @@ class PeriodicConsumerCheckTest {
     @BeforeEach
     fun resetMocks() {
         mockkObject(KafkaConsumerSetup)
-        coEvery { KafkaConsumerSetup.restartConsumers(appContext) } returns Unit
-        coEvery { KafkaConsumerSetup.stopAllKafkaConsumers(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.restartConsumersOnPrem(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.stopAllKafkaConsumersOnPrem(appContext) } returns Unit
         coEvery { appContext.reinitializeConsumersOnPrem() } returns Unit
         coEvery { appContext.reinitializeConsumersAiven() } returns Unit
-        coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumers(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumersOnPrem(appContext) } returns Unit
     }
 
     @AfterAll
@@ -38,7 +38,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerCheck.getConsumersThatHaveStopped().size `should be equal to` 2
+            periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().size `should be equal to` 2
         }
     }
 
@@ -49,7 +49,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.oppgaveCountConsumerOnPrem.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerCheck.getConsumersThatHaveStopped().`should be empty`()
+            periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().`should be empty`()
         }
     }
 
@@ -63,7 +63,7 @@ class PeriodicConsumerCheckTest {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
 
-        coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumers(appContext) }
+        coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumersOnPrem(appContext) }
         confirmVerified(KafkaConsumerSetup)
     }
 
@@ -77,7 +77,7 @@ class PeriodicConsumerCheckTest {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
 
-        coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumers(appContext) }
+        coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumersOnPrem(appContext) }
         confirmVerified(KafkaConsumerSetup)
     }
 }
