@@ -4,7 +4,7 @@ metadata:
   name: dittnav-periodic-metrics-reporter
   namespace: {{namespace}}
   labels:
-    team: min-side
+    team: personbruker
 spec:
   image: {{version}}
   port: 8080
