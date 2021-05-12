@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
@@ -15,10 +16,10 @@ import java.time.Duration
 
 internal class TopicEventCounterServiceTest {
 
-    private val beskjedCountConsumer: Consumer<GenericRecord> = mockk(relaxed = true)
-    private val innboksCountConsumer: Consumer<GenericRecord> = mockk(relaxed = true)
-    private val oppgaveCountConsumer: Consumer<GenericRecord> = mockk(relaxed = true)
-    private val doneCountConsumer: Consumer<GenericRecord> = mockk(relaxed = true)
+    private val beskjedCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
+    private val innboksCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
+    private val oppgaveCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
+    private val doneCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
     private val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, false)
     private val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, false)
     private val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, false)

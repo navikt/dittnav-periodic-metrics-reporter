@@ -41,36 +41,36 @@ class ApplicationContext {
 
     val beskjedKafkaPropsOnPrem = Kafka.counterConsumerPropsOnPrem(environment, EventType.BESKJED)
     val beskjedKafkaPropsAiven = Kafka.counterConsumerPropsAiven(environment, EventType.BESKJED)
-    var beskjedCountConsumerOnPrem = initializeCountConsumer(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
-    var beskjedCountConsumerAiven = initializeCountConsumer(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
+    var beskjedCountConsumerOnPrem = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
+    var beskjedCountConsumerAiven = initializeCountConsumerAiven(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
     val beskjedCounterOnPrem = TopicEventTypeCounter(beskjedCountConsumerOnPrem, EventType.BESKJED, environment.deltaCountingEnabled)
     val beskjedCounterAiven = TopicEventTypeCounter(beskjedCountConsumerAiven, EventType.BESKJED, environment.deltaCountingEnabled)
 
     val oppgaveKafkaPropsOnPrem = Kafka.counterConsumerPropsOnPrem(environment, EventType.OPPGAVE)
     val oppgaveKafkaPropsAiven = Kafka.counterConsumerPropsAiven(environment, EventType.OPPGAVE)
-    var oppgaveCountConsumerOnPrem = initializeCountConsumer(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
-    var oppgaveCountConsumerAiven = initializeCountConsumer(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
+    var oppgaveCountConsumerOnPrem = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
+    var oppgaveCountConsumerAiven = initializeCountConsumerAiven(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
     val oppgaveCounterOnPrem = TopicEventTypeCounter(oppgaveCountConsumerOnPrem, EventType.OPPGAVE, environment.deltaCountingEnabled)
     val oppgaveCounterAiven = TopicEventTypeCounter(oppgaveCountConsumerAiven, EventType.OPPGAVE, environment.deltaCountingEnabled)
 
     val innboksKafkaPropsOnPrem = Kafka.counterConsumerPropsOnPrem(environment, EventType.INNBOKS)
     val innboksKafkaPropsAiven = Kafka.counterConsumerPropsAiven(environment, EventType.INNBOKS)
-    var innboksCountConsumerOnPrem = initializeCountConsumer(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
-    var innboksCountConsumerAiven = initializeCountConsumer(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
+    var innboksCountConsumerOnPrem = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
+    var innboksCountConsumerAiven = initializeCountConsumerAiven(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
     val innboksCounterOnPrem = TopicEventTypeCounter(innboksCountConsumerOnPrem, EventType.INNBOKS, environment.deltaCountingEnabled)
     val innboksCounterAiven = TopicEventTypeCounter(innboksCountConsumerAiven, EventType.INNBOKS, environment.deltaCountingEnabled)
 
     val statusoppdateringKafkaPropsOnPrem = Kafka.counterConsumerPropsOnPrem(environment, EventType.STATUSOPPDATERING)
     val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerPropsOnPrem(environment, EventType.STATUSOPPDATERING)
-    var statusoppdateringCountConsumerOnPrem = initializeCountConsumer(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
-    var statusoppdateringCountConsumerAiven = initializeCountConsumer(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
+    var statusoppdateringCountConsumerOnPrem = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
+    var statusoppdateringCountConsumerAiven = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
     val statusoppdateringCounterOnPrem = TopicEventTypeCounter(statusoppdateringCountConsumerOnPrem, EventType.STATUSOPPDATERING, environment.deltaCountingEnabled)
     val statusoppdateringCounterAiven = TopicEventTypeCounter(statusoppdateringCountConsumerAiven, EventType.STATUSOPPDATERING, environment.deltaCountingEnabled)
 
     val doneKafkaPropsOnPrem = Kafka.counterConsumerPropsOnPrem(environment, EventType.DONE)
     val doneKafkaPropsAiven = Kafka.counterConsumerPropsAiven(environment, EventType.DONE)
-    var doneCountConsumerOnPrem = initializeCountConsumer(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
-    var doneCountConsumerAiven = initializeCountConsumer(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
+    var doneCountConsumerOnPrem = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
+    var doneCountConsumerAiven = initializeCountConsumerAiven(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
     val doneCounterOnPrem = TopicEventTypeCounter(doneCountConsumerOnPrem, EventType.DONE, environment.deltaCountingEnabled)
     val doneCounterAiven = TopicEventTypeCounter(doneCountConsumerAiven, EventType.DONE, environment.deltaCountingEnabled)
 
@@ -104,8 +104,11 @@ class ApplicationContext {
     private fun initializePeriodicConsumerCheck() =
             PeriodicConsumerCheck(this)
 
-    private fun initializeCountConsumer(kafkaProps: Properties, topic: String) =
-            KafkaConsumerSetup.setupCountConsumer<GenericRecord>(kafkaProps, topic)
+    private fun initializeCountConsumerOnPrem(kafkaProps: Properties, topic: String) =
+            KafkaConsumerSetup.setupCountConsumerOnPrem<GenericRecord>(kafkaProps, topic)
+
+    private fun initializeCountConsumerAiven(kafkaProps: Properties, topic: String) =
+            KafkaConsumerSetup.setupCountConsumerAiven<GenericRecord>(kafkaProps, topic)
 
     private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
             PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
@@ -130,35 +133,35 @@ class ApplicationContext {
 
     fun reinitializeConsumersOnPrem() {
         if (beskjedCountConsumerOnPrem.isCompleted()) {
-            beskjedCountConsumerOnPrem = initializeCountConsumer(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
+            beskjedCountConsumerOnPrem = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
             log.info("beskjedCountConsumer on-prem har blitt reinstansiert.")
         } else {
             log.warn("beskjedCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (oppgaveCountConsumerOnPrem.isCompleted()) {
-            oppgaveCountConsumerOnPrem = initializeCountConsumer(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
+            oppgaveCountConsumerOnPrem = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
             log.info("oppgaveCountConsumer on-prem har blitt reinstansiert.")
         } else {
             log.warn("oppgaveCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (innboksCountConsumerOnPrem.isCompleted()) {
-            innboksCountConsumerOnPrem = initializeCountConsumer(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
+            innboksCountConsumerOnPrem = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
             log.info("innboksCountConsumer on-prem har blitt reinstansiert.")
         } else {
             log.warn("innboksCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (statusoppdateringCountConsumerOnPrem.isCompleted()) {
-            statusoppdateringCountConsumerOnPrem = initializeCountConsumer(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
+            statusoppdateringCountConsumerOnPrem = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
             log.info("statusoppdateringCountConsumer on-prem har blitt reinstansiert.")
         } else {
             log.warn("statusoppdateringCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (doneCountConsumerOnPrem.isCompleted()) {
-            doneCountConsumerOnPrem = initializeCountConsumer(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
+            doneCountConsumerOnPrem = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
             log.info("doneConsumer har blitt reinstansiert.")
         } else {
             log.warn("doneConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
@@ -167,35 +170,35 @@ class ApplicationContext {
 
     fun reinitializeConsumersAiven() {
         if (beskjedCountConsumerAiven.isCompleted()) {
-            beskjedCountConsumerAiven = initializeCountConsumer(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameAiven)
+            beskjedCountConsumerAiven = initializeCountConsumerAiven(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameAiven)
             log.info("beskjedCountConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("beskjedCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (oppgaveCountConsumerAiven.isCompleted()) {
-            oppgaveCountConsumerAiven = initializeCountConsumer(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameAiven)
+            oppgaveCountConsumerAiven = initializeCountConsumerAiven(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameAiven)
             log.info("oppgaveCountConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("oppgaveCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (innboksCountConsumerAiven.isCompleted()) {
-            innboksCountConsumerAiven = initializeCountConsumer(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameAiven)
+            innboksCountConsumerAiven = initializeCountConsumerAiven(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameAiven)
             log.info("innboksCountConsumer på Aiven blitt reinstansiert.")
         } else {
             log.warn("innboksCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (statusoppdateringCountConsumerAiven.isCompleted()) {
-            statusoppdateringCountConsumerAiven = initializeCountConsumer(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameAiven)
+            statusoppdateringCountConsumerAiven = initializeCountConsumerAiven(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameAiven)
             log.info("statusoppdateringCountConsumer på Aiven blitt reinstansiert.")
         } else {
             log.warn("statusoppdateringCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (doneCountConsumerAiven.isCompleted()) {
-            doneCountConsumerAiven = initializeCountConsumer(doneKafkaPropsOnPrem, Kafka.doneTopicNameAiven)
+            doneCountConsumerAiven = initializeCountConsumerAiven(doneKafkaPropsOnPrem, Kafka.doneTopicNameAiven)
             log.info("doneConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("doneConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")

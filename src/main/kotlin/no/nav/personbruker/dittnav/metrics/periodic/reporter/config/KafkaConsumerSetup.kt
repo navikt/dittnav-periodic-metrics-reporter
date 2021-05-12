@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
 import no.nav.brukernotifikasjon.schemas.*
+import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.slf4j.Logger
@@ -11,8 +12,13 @@ object KafkaConsumerSetup {
 
     private val log: Logger = LoggerFactory.getLogger(KafkaConsumerSetup::class.java)
 
-    fun <T> setupCountConsumer(kafkaProps: Properties, topic: String): Consumer<T> {
+    fun <T> setupCountConsumerOnPrem(kafkaProps: Properties, topic: String): Consumer<Nokkel, T> {
         val kafkaConsumer = KafkaConsumer<Nokkel, T>(kafkaProps)
+        return Consumer(topic, kafkaConsumer)
+    }
+
+    fun <T> setupCountConsumerAiven(kafkaProps: Properties, topic: String): Consumer<NokkelIntern, T> {
+        val kafkaConsumer = KafkaConsumer<NokkelIntern, T>(kafkaProps)
         return Consumer(topic, kafkaConsumer)
     }
 

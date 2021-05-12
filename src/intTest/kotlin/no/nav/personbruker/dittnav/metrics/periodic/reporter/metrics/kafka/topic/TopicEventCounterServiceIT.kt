@@ -2,14 +2,15 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util.KafkaTestUtil
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupCountConsumer
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.createNokkel
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupCountConsumerOnPrem
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.AvroNokkelObjectMother.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
 import org.junit.jupiter.api.AfterEach
@@ -42,7 +43,7 @@ class TopicEventCounterServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
 
         val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = setupCountConsumerOnPrem<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
@@ -65,7 +66,7 @@ class TopicEventCounterServiceIT {
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
         val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = setupCountConsumerOnPrem<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -96,11 +97,11 @@ class TopicEventCounterServiceIT {
         val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
 
         val kafkaPropsDeltaCounting = Kafka.counterConsumerPropsOnPrem(deltaCountingEnv, EventType.BESKJED, true)
-        val deltaCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
+        val deltaCountingConsumer = setupCountConsumerOnPrem<GenericRecord>(kafkaPropsDeltaCounting, topic)
         deltaCountingConsumer.startSubscription()
 
         val kafkaPropsFromScratchCounting = Kafka.counterConsumerPropsOnPrem(fromScratchCountingEnv, EventType.BESKJED, true)
-        val fromScratchCountingConsumer = setupCountConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
+        val fromScratchCountingConsumer = setupCountConsumerOnPrem<GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -135,14 +136,13 @@ class TopicEventCounterServiceIT {
             deltaCountingConsumer.stop()
             fromScratchCountingConsumer.stop()
         }
-
     }
 
     @Test
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
         val kafkaProps = Kafka.counterConsumerPropsOnPrem(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = setupCountConsumerOnPrem<GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
@@ -157,7 +157,7 @@ class TopicEventCounterServiceIT {
     }
 
     private fun `tell og verifiser korrekte antall eventer flere ganger paa rad`(
-            topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter<Nokkel>
     ) {
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
         `tell og verifiser korrekt antall eventer`(topicEventTypeCounter)
@@ -165,7 +165,7 @@ class TopicEventCounterServiceIT {
     }
 
     private fun `tell og verifiser korrekt antall eventer`(
-            topicEventTypeCounter: TopicEventTypeCounter
+            topicEventTypeCounter: TopicEventTypeCounter<Nokkel>
     ) {
         val metricsSession = runBlocking {
             delay(500)

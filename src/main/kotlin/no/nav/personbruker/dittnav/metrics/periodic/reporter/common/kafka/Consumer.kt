@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
-import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthStatus
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.Status
@@ -13,9 +12,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
-class Consumer<T>(
+class Consumer<K, V>(
         val topic: String,
-        val kafkaConsumer: KafkaConsumer<Nokkel, T>,
+        val kafkaConsumer: KafkaConsumer<K, V>,
         val job: Job = Job(),
 ) : CoroutineScope, HealthCheck {
 

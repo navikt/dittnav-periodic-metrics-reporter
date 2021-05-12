@@ -35,7 +35,7 @@ class ConsumerTest {
         val records: ConsumerRecords<Nokkel, Beskjed>
         every { kafkaConsumer.poll(any<Duration>()) } returns ConsumerRecordsObjectMother.giveMeANumberOfBeskjedRecords(1, topic)
 
-        val consumer: Consumer<Beskjed> = Consumer(topic, kafkaConsumer)
+        val consumer: Consumer<Nokkel, Beskjed> = Consumer(topic, kafkaConsumer)
 
         runBlocking {
             consumer.startSubscription()

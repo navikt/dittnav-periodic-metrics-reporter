@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter
 
+import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.MetricsReportingException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
@@ -16,8 +18,8 @@ import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
     private val dbEventCounterServiceOnPrem: DbEventCounterService,
-    private val topicEventCounterServiceOnPrem: TopicEventCounterService,
-    private val topicEventCounterServiceAiven: TopicEventCounterService,
+    private val topicEventCounterServiceOnPrem: TopicEventCounterService<Nokkel>,
+    private val topicEventCounterServiceAiven: TopicEventCounterService<NokkelIntern>,
     private val dbMetricsReporter: DbMetricsReporter,
     private val kafkaMetricsReporter: TopicMetricsReporter
 ) {
