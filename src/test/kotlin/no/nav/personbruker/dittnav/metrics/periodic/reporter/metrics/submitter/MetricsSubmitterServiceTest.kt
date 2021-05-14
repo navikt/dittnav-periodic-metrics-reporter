@@ -9,12 +9,12 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMet
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsSession
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`
-import org.apache.avro.generic.GenericRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -23,8 +23,8 @@ internal class MetricsSubmitterServiceTest {
     private val dbMetricsReporter: DbMetricsReporter = mockk(relaxed = true)
     private val kafkaMetricsReporter: TopicMetricsReporter = mockk(relaxed = true)
     private val dbEventCounterServiceOnPrem: DbEventCounterService = mockk(relaxed = true)
-    private val topicEventCounterServiceOnPrem: TopicEventCounterService<Nokkel> = mockk(relaxed = true)
-    private val topicEventCounterServiceAiven: TopicEventCounterService<NokkelIntern> = mockk(relaxed = true)
+    private val topicEventCounterServiceOnPrem: TopicEventCounterOnPremService<Nokkel> = mockk(relaxed = true)
+    private val topicEventCounterServiceAiven: TopicEventCounterAivenService<NokkelIntern> = mockk(relaxed = true)
 
 
     private val submitter = MetricsSubmitterService(

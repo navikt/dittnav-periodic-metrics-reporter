@@ -9,7 +9,8 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.Db
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventTypeCounter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.resolveMetricsReporter
@@ -74,7 +75,7 @@ class ApplicationContext {
     val doneCounterOnPrem = TopicEventTypeCounter(doneCountConsumerOnPrem, EventType.DONE, environment.deltaCountingEnabled)
     val doneCounterAiven = TopicEventTypeCounter(doneCountConsumerAiven, EventType.DONE_INTERN, environment.deltaCountingEnabled)
 
-    val topicEventCounterServiceOnPrem = TopicEventCounterService(
+    val topicEventCounterServiceOnPrem = TopicEventCounterOnPremService(
         beskjedCounter = beskjedCounterOnPrem,
         innboksCounter = innboksCounterOnPrem,
         oppgaveCounter = oppgaveCounterOnPrem,
@@ -82,7 +83,7 @@ class ApplicationContext {
         doneCounter = doneCounterOnPrem
     )
 
-    val topicEventCounterServiceAiven = TopicEventCounterService(
+    val topicEventCounterServiceAiven = TopicEventCounterAivenService(
         beskjedCounter = beskjedCounterAiven,
         innboksCounter = innboksCounterAiven,
         oppgaveCounter = oppgaveCounterAiven,

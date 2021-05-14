@@ -10,7 +10,8 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMet
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsSession
 import org.slf4j.Logger
@@ -18,8 +19,8 @@ import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
     private val dbEventCounterServiceOnPrem: DbEventCounterService,
-    private val topicEventCounterServiceOnPrem: TopicEventCounterService<Nokkel>,
-    private val topicEventCounterServiceAiven: TopicEventCounterService<NokkelIntern>,
+    private val topicEventCounterServiceOnPrem: TopicEventCounterOnPremService<Nokkel>,
+    private val topicEventCounterServiceAiven: TopicEventCounterAivenService<NokkelIntern>,
     private val dbMetricsReporter: DbMetricsReporter,
     private val kafkaMetricsReporter: TopicMetricsReporter
 ) {
