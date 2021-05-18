@@ -32,7 +32,7 @@ class TopicMetricsReporter(
             reportTimeUsed(session)
 
         } else {
-            log.info("Ingen eventer ble funnet for ${session.eventType}.")
+            log.info("Ingen eventer ble funnet på topic for ${session.eventType}.")
         }
     }
 

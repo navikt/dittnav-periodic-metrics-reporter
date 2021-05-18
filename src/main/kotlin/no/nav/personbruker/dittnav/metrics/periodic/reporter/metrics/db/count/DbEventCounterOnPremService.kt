@@ -9,12 +9,12 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvir
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.slf4j.LoggerFactory
 
-class DbEventCounterService(
+class DbEventCounterOnPremService(
     private val metricsProbe: DbCountingMetricsProbe,
     private val repository: MetricsRepository
 ) {
 
-    private val log = LoggerFactory.getLogger(DbEventCounterService::class.java)
+    private val log = LoggerFactory.getLogger(DbEventCounterOnPremService::class.java)
 
     suspend fun countAllEventTypesAsync() : CountingMetricsSessions = withContext(Dispatchers.IO) {
         val beskjeder = async {

@@ -12,6 +12,17 @@ object CountingMetricsSessionsObjectMother {
             put(EventType.DONE, DbCountingMetricsSessionObjectMother.giveMeDoneSessionWithTwoCountedEvents())
             put(EventType.INNBOKS, DbCountingMetricsSessionObjectMother.giveMeInnboksSessionWithThreeCountedEvents())
             put(EventType.OPPGAVE, DbCountingMetricsSessionObjectMother.giveMeOppgaveSessionWithFourCountedEvents())
+            put(EventType.STATUSOPPDATERING, DbCountingMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFourCountedEvents())
+        }
+    }
+
+    fun giveMeDatabaseSessionsForAllInternalEventTypes(): CountingMetricsSessions {
+        return CountingMetricsSessions().apply {
+            put(EventType.BESKJED_INTERN, DbCountingMetricsSessionObjectMother.giveMeBeskjedInternSessionWithOneCountedEvent())
+            put(EventType.DONE_INTERN, DbCountingMetricsSessionObjectMother.giveMeDoneInternSessionWithTwoCountedEvents())
+            put(EventType.INNBOKS_INTERN, DbCountingMetricsSessionObjectMother.giveMeInnboksInternSessionWithThreeCountedEvents())
+            put(EventType.OPPGAVE_INTERN, DbCountingMetricsSessionObjectMother.giveMeOppgaveInternSessionWithFourCountedEvents())
+            put(EventType.STATUSOPPDATERING_INTERN, DbCountingMetricsSessionObjectMother.giveMeStatusoppdateringInternSessionWithFourCountedEvents())
         }
     }
 

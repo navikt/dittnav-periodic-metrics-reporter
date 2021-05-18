@@ -31,7 +31,7 @@ import org.amshove.kluent.`should not be null`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-internal class DbEventCounterServiceTestIT {
+internal class DbEventCounterOnPremServiceTestIT {
 
     private val database = H2Database()
     private val repository = MetricsRepository(database)
@@ -63,7 +63,7 @@ internal class DbEventCounterServiceTestIT {
         initMetricsSession(metricsProbe, EventType.OPPGAVE)
         initMetricsSession(metricsProbe, EventType.DONE)
         initMetricsSession(metricsProbe, EventType.STATUSOPPDATERING)
-        val service = DbEventCounterService(metricsProbe, repository)
+        val service = DbEventCounterOnPremService(metricsProbe, repository)
 
         val countingMetricsSessions = runBlocking {
             service.countAllEventTypesAsync()
@@ -82,7 +82,7 @@ internal class DbEventCounterServiceTestIT {
         val beskjeder = createBeskjedEventer()
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
         val metricsSession = initMetricsSession(metricsProbe, EventType.BESKJED)
-        val service = DbEventCounterService(metricsProbe, repository)
+        val service = DbEventCounterOnPremService(metricsProbe, repository)
 
         runBlocking {
             service.countBeskjeder()
@@ -99,7 +99,7 @@ internal class DbEventCounterServiceTestIT {
         val innboksEventer = createInnboksEventer()
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
         val metricsSession = initMetricsSession(metricsProbe, EventType.INNBOKS)
-        val service = DbEventCounterService(metricsProbe, repository)
+        val service = DbEventCounterOnPremService(metricsProbe, repository)
 
         runBlocking {
             service.countInnboksEventer()
@@ -116,7 +116,7 @@ internal class DbEventCounterServiceTestIT {
         val oppgaver = createOppgaveEventer()
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
         val metricsSession = initMetricsSession(metricsProbe, EventType.OPPGAVE)
-        val service = DbEventCounterService(metricsProbe, repository)
+        val service = DbEventCounterOnPremService(metricsProbe, repository)
 
         runBlocking {
             service.countOppgaver()
@@ -137,7 +137,7 @@ internal class DbEventCounterServiceTestIT {
 
         val metricsProbe = mockk<DbCountingMetricsProbe>(relaxed = true)
         val metricsSession = initMetricsSession(metricsProbe, EventType.DONE)
-        val service = DbEventCounterService(metricsProbe, repository)
+        val service = DbEventCounterOnPremService(metricsProbe, repository)
 
         runBlocking {
             service.countDoneEvents()

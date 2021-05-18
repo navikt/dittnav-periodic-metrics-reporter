@@ -3,10 +3,11 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
@@ -30,8 +31,11 @@ class ApplicationContext {
     val metricsReporter = resolveMetricsReporter(environment)
 
     val databaseOnPrem: Database = PostgresDatabase(environment)
+    val databaseGCP: Database = PostgresDatabase(environment)
     val metricsRepositoryOnPrem = MetricsRepository(databaseOnPrem)
-    val dbEventCounterServiceOnPrem = DbEventCounterService(dbEventCountingMetricsProbe, metricsRepositoryOnPrem)
+    val metricsRepositoryGCP = MetricsRepository(databaseGCP)
+    val dbEventCounterOnPremService = DbEventCounterOnPremService(dbEventCountingMetricsProbe, metricsRepositoryOnPrem)
+    val dbEventCounterGCPService = DbEventCounterGCPService(dbEventCountingMetricsProbe, metricsRepositoryGCP)
 
     val nameResolver = ProducerNameResolver(databaseOnPrem)
     val nameScrubber = ProducerNameScrubber(nameResolver)
@@ -92,7 +96,8 @@ class ApplicationContext {
     )
 
     val metricsSubmitterService = MetricsSubmitterService(
-        dbEventCounterServiceOnPrem = dbEventCounterServiceOnPrem,
+        dbEventCounterOnPremService = dbEventCounterOnPremService,
+        dbEventCounterGCPService = dbEventCounterGCPService,
         topicEventCounterServiceOnPrem = topicEventCounterServiceOnPrem,
         topicEventCounterServiceAiven = topicEventCounterServiceAiven,
         dbMetricsReporter = dbMetricsReporter,

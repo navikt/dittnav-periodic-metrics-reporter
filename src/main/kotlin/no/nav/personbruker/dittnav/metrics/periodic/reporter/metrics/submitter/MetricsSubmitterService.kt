@@ -7,8 +7,9 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.M
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
@@ -18,7 +19,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class MetricsSubmitterService(
-    private val dbEventCounterServiceOnPrem: DbEventCounterService,
+    private val dbEventCounterOnPremService: DbEventCounterOnPremService,
+    private val dbEventCounterGCPService: DbEventCounterGCPService,
     private val topicEventCounterServiceOnPrem: TopicEventCounterOnPremService<Nokkel>,
     private val topicEventCounterServiceAiven: TopicEventCounterAivenService<NokkelIntern>,
     private val dbMetricsReporter: DbMetricsReporter,
@@ -33,17 +35,18 @@ class MetricsSubmitterService(
         try {
             val topicSessionsOnPrem = topicEventCounterServiceOnPrem.countAllEventTypesAsync()
             val topicSessionsAiven = topicEventCounterServiceAiven.countAllEventTypesAsync()
-            val dbSessionsOnPrem = dbEventCounterServiceOnPrem.countAllEventTypesAsync()
+            val dbSessionsOnPrem = dbEventCounterOnPremService.countAllEventTypesAsync()
+            val dbSessionsAiven = dbEventCounterGCPService.countAllEventTypesAsync()
 
             val sessionComparatorOnPrem = SessionComparator(topicSessionsOnPrem, dbSessionsOnPrem)
-            val sessionComparatorAiven = SessionComparator(topicSessionsAiven, dbSessionsOnPrem)
+            val sessionComparatorAiven = SessionComparator(topicSessionsAiven, dbSessionsAiven)
 
             sessionComparatorOnPrem.eventTypesWithSessionFromBothSources().forEach { eventType ->
                 reportMetricsByEventType(topicSessionsOnPrem, dbSessionsOnPrem, eventType)
             }
 
             sessionComparatorAiven.eventTypesWithSessionFromBothSources().forEach { eventType ->
-                reportMetricsByEventType(topicSessionsAiven, dbSessionsOnPrem, eventType)
+                reportMetricsByEventType(topicSessionsAiven, dbSessionsAiven, eventType)
             }
 
         } catch (e: CountException) {
