@@ -22,10 +22,20 @@ class TopicEventCounterAivenService<K>(
                 async { TopicMetricsSession(EventType.BESKJED_INTERN) }
             }
 
-            val oppgaver = async { TopicMetricsSession(EventType.OPPGAVE_INTERN) }
+            val oppgaver = if(isOtherEnvironmentThanProd()) {
+                oppgaveCounter.countEventsAsync()
+            } else {
+                async { TopicMetricsSession(EventType.OPPGAVE_INTERN) }
+            }
+
+            val done = if(isOtherEnvironmentThanProd()) {
+                doneCounter.countEventsAsync()
+            } else {
+                async { TopicMetricsSession(EventType.DONE_INTERN) }
+            }
+
             val innboks = async { TopicMetricsSession(EventType.INNBOKS_INTERN) }
             val statusoppdateringer = async { TopicMetricsSession(EventType.STATUSOPPDATERING_INTERN) }
-            val done = async { TopicMetricsSession(EventType.DONE_INTERN) }
 
             val sessions = CountingMetricsSessions()
 
