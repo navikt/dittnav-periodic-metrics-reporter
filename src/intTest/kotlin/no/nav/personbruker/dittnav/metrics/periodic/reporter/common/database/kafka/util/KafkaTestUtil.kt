@@ -47,7 +47,7 @@ object KafkaTestUtil {
         )
     }
 
-    suspend fun produceEvents(env: Environment, topicName: String, events: Map<Nokkel, GenericRecord>): Boolean {
+    suspend fun <K> produceEvents(env: Environment, topicName: String, events: Map<K, GenericRecord>): Boolean {
         return KafkaProducerUtil.kafkaAvroProduce(
                 env.bootstrapServers,
                 env.schemaRegistryUrl,
@@ -56,5 +56,4 @@ object KafkaTestUtil {
                 env.password,
                 events)
     }
-
 }

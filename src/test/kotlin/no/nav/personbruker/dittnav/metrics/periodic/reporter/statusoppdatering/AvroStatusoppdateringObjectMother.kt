@@ -9,7 +9,7 @@ object AvroStatusoppdateringObjectMother {
     private val defaultFodselsnr = "12345"
     private val defaultLink = "http://dummyLink"
     private val defaultSikkerhetsnivaa = 4
-    private val defaultStatusIntern = "dummyStatusIntern"
+    private val defaultStatusIntern = "statusIntern"
     private val defaultSakstema = "dummySakstema"
 
     fun createStatusoppdateringWithStatusGlobal(statusGlobal: String): Statusoppdatering {

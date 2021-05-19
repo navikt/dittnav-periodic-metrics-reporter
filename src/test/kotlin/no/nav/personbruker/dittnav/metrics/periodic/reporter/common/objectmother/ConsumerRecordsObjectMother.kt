@@ -28,13 +28,13 @@ object ConsumerRecordsObjectMother {
         return allRecords
     }
 
-    fun <T> createConsumerRecord(nokkel: Nokkel, actualEvent: T): ConsumerRecord<Nokkel, T> {
+    fun <K, V> createConsumerRecord(nokkel: K, actualEvent: V): ConsumerRecord<K, V> {
         return ConsumerRecord("dummyTopic", 1, 0, nokkel, actualEvent)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> createConsumerRecordWithoutNokkel(actualEvent: T): ConsumerRecord<Nokkel, T> {
-        return ConsumerRecord("dummyTopic", 1, 0, null, actualEvent) as ConsumerRecord<Nokkel, T>
+    fun <K, V> createConsumerRecordWithoutNokkel(actualEvent: V): ConsumerRecord<K, V> {
+        return ConsumerRecord("dummyTopic", 1, 0, null, actualEvent) as ConsumerRecord<K, V>
     }
 
     @Suppress("UNCHECKED_CAST")

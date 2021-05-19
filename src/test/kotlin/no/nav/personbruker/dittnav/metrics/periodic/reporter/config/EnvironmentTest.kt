@@ -42,15 +42,12 @@ internal class EnvironmentTest {
         }
     }
 
-
-
     @Test
     fun `Om DELTA_COUNTING_MODE er satt som "TRUE" env_var evalueres den til true`() {
         withEnvironment(envVars + ("DELTA_COUNTING_ENABLED" to "true")) {
             Environment().deltaCountingEnabled `should be equal to` true
         }
     }
-
 
     @Test
     fun `DB_HOST og DB_NAME benyttes til utledning av dbUser, dbReadonly, dbUrl`() {

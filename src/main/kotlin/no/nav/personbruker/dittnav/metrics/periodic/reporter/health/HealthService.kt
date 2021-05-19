@@ -9,16 +9,16 @@ class HealthService(private val applicationContext: ApplicationContext) {
                 applicationContext.databaseOnPrem.status(),
                 applicationContext.periodicMetricsSubmitter.status(),
                 applicationContext.periodicConsumerCheck.status(),
-                applicationContext.beskjedCountConsumerOnPrem.status(),
-                applicationContext.innboksCountConsumerOnPrem.status(),
-                applicationContext.oppgaveCountConsumerOnPrem.status(),
-                applicationContext.statusoppdateringCountConsumerOnPrem.status(),
-                applicationContext.doneCountConsumerOnPrem.status(),
-                applicationContext.beskjedCountConsumerAiven.status(),
-                applicationContext.innboksCountConsumerAiven.status(),
-                applicationContext.oppgaveCountConsumerAiven.status(),
-                applicationContext.statusoppdateringCountConsumerAiven.status(),
-                applicationContext.doneCountConsumerAiven.status()
+                applicationContext.beskjedCountOnPremConsumer.status(),
+                applicationContext.innboksCountOnPremConsumer.status(),
+                applicationContext.oppgaveCountOnPremConsumer.status(),
+                applicationContext.statusoppdateringOnPremConsumer.status(),
+                applicationContext.doneCountOnPremConsumer.status(),
+                applicationContext.beskjedCountAivenConsumer.status(),
+                applicationContext.innboksCountAivenConsumer.status(),
+                applicationContext.oppgaveCountAivenConsumer.status(),
+                applicationContext.statusoppdateringAivenConsumer.status(),
+                applicationContext.doneCountAivenConsumer.status()
         )
     }
 }

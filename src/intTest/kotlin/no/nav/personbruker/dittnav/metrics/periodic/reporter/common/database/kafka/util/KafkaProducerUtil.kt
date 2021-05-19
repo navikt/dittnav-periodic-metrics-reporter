@@ -15,16 +15,16 @@ import java.util.*
 
 object KafkaProducerUtil {
 
-    suspend fun kafkaAvroProduce(
+    suspend fun <K> kafkaAvroProduce(
             brokersURL: String,
             schemaRegistryUrl: String,
             topic: String,
             user: String,
             pwd: String,
-            data: Map<Nokkel, GenericRecord>
+            data: Map<K, GenericRecord>
     ): Boolean =
             try {
-                KafkaProducer<Nokkel, GenericRecord>(
+                KafkaProducer<K, GenericRecord>(
                         Properties().apply {
                             set(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersURL)
                             set(ProducerConfig.CLIENT_ID_CONFIG, "funKafkaAvroProduce")

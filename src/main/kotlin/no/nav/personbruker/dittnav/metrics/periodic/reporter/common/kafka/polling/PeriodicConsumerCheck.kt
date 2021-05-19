@@ -46,16 +46,16 @@ class PeriodicConsumerCheck(
     fun getConsumersThatHaveStoppedOnPrem(): MutableList<EventType> {
         val stoppedConsumers = mutableListOf<EventType>()
 
-        if (appContext.beskjedCountConsumerOnPrem.isStopped()) {
+        if (appContext.beskjedCountOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.BESKJED)
         }
-        if (appContext.doneCountConsumerOnPrem.isStopped()) {
+        if (appContext.doneCountOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.DONE)
         }
-        if (appContext.oppgaveCountConsumerOnPrem.isStopped()) {
+        if (appContext.oppgaveCountOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
-        if(appContext.statusoppdateringCountConsumerOnPrem.isStopped()) {
+        if(appContext.statusoppdateringOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.STATUSOPPDATERING)
         }
         return stoppedConsumers
@@ -64,16 +64,16 @@ class PeriodicConsumerCheck(
     fun getConsumersThatHaveStoppedAiven(): MutableList<EventType> {
         val stoppedConsumers = mutableListOf<EventType>()
 
-        if (appContext.beskjedCountConsumerAiven.isStopped()) {
+        if (appContext.beskjedCountAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.BESKJED)
         }
-        if (appContext.doneCountConsumerAiven.isStopped()) {
+        if (appContext.doneCountAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.DONE)
         }
-        if (appContext.oppgaveCountConsumerAiven.isStopped()) {
+        if (appContext.oppgaveCountAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
-        if(appContext.statusoppdateringCountConsumerAiven.isStopped()) {
+        if(appContext.statusoppdateringAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.STATUSOPPDATERING)
         }
         return stoppedConsumers

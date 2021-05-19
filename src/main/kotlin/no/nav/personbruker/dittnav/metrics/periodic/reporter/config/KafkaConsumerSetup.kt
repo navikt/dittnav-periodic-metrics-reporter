@@ -12,23 +12,23 @@ object KafkaConsumerSetup {
 
     private val log: Logger = LoggerFactory.getLogger(KafkaConsumerSetup::class.java)
 
-    fun <T> setupCountConsumerOnPrem(kafkaProps: Properties, topic: String): Consumer<Nokkel, T> {
+    fun <T> setupCountOnPremConsumer(kafkaProps: Properties, topic: String): Consumer<Nokkel, T> {
         val kafkaConsumer = KafkaConsumer<Nokkel, T>(kafkaProps)
         return Consumer(topic, kafkaConsumer)
     }
 
-    fun <T> setupCountConsumerAiven(kafkaProps: Properties, topic: String): Consumer<NokkelIntern, T> {
+    fun <T> setupCountAivenConsumer(kafkaProps: Properties, topic: String): Consumer<NokkelIntern, T> {
         val kafkaConsumer = KafkaConsumer<NokkelIntern, T>(kafkaProps)
         return Consumer(topic, kafkaConsumer)
     }
 
     fun startSubscriptionOnAllKafkaConsumersOnPrem(appContext: ApplicationContext) {
-        appContext.beskjedCountConsumerOnPrem.startSubscription()
-        appContext.oppgaveCountConsumerOnPrem.startSubscription()
-        appContext.doneCountConsumerOnPrem.startSubscription()
+        appContext.beskjedCountOnPremConsumer.startSubscription()
+        appContext.oppgaveCountOnPremConsumer.startSubscription()
+        appContext.doneCountOnPremConsumer.startSubscription()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountConsumerOnPrem.startSubscription()
-            appContext.statusoppdateringCountConsumerOnPrem.startSubscription()
+            appContext.innboksCountOnPremConsumer.startSubscription()
+            appContext.statusoppdateringOnPremConsumer.startSubscription()
         } else {
             log.info("Er i produksjonsmiljø, unnlater å starte innboks- og statusoppdateringconsumer on prem.")
         }
@@ -36,7 +36,7 @@ object KafkaConsumerSetup {
 
     fun startSubscriptionOnAllKafkaConsumersAiven(appContext: ApplicationContext) {
         if(isOtherEnvironmentThanProd()) {
-            appContext.beskjedCountConsumerAiven.startSubscription()
+            appContext.beskjedCountAivenConsumer.startSubscription()
             /** @TODO Foreløpig bare beskjed som konsumeres på Aiven
             appContext.oppgaveCountConsumerAiven.startSubscription()
             appContext.doneCountConsumerAiven.startSubscription()
@@ -50,12 +50,12 @@ object KafkaConsumerSetup {
 
     suspend fun stopAllKafkaConsumersOnPrem(appContext: ApplicationContext) {
         log.info("Begynner å stoppe kafka-pollerne on prem...")
-        appContext.beskjedCountConsumerOnPrem.stop()
-        appContext.oppgaveCountConsumerOnPrem.stop()
-        appContext.doneCountConsumerOnPrem.stop()
+        appContext.beskjedCountOnPremConsumer.stop()
+        appContext.oppgaveCountOnPremConsumer.stop()
+        appContext.doneCountOnPremConsumer.stop()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountConsumerOnPrem.stop()
-            appContext.statusoppdateringCountConsumerOnPrem.stop()
+            appContext.innboksCountOnPremConsumer.stop()
+            appContext.statusoppdateringOnPremConsumer.stop()
         }
         log.info("...ferdig med å stoppe kafka-pollerne on prem.")
     }
@@ -63,7 +63,7 @@ object KafkaConsumerSetup {
     suspend fun stopAllKafkaConsumersAiven(appContext: ApplicationContext) {
         log.info("Begynner å stoppe kafka-pollerne på Aiven...")
         if(isOtherEnvironmentThanProd()) {
-            appContext.beskjedCountConsumerAiven.stop()
+            appContext.beskjedCountAivenConsumer.stop()
             /** @TODO Foreløpig bare beskjed som konsumeres på Aiven
             appContext.oppgaveCountConsumerAiven.stop()
             appContext.doneCountConsumerAiven.stop()

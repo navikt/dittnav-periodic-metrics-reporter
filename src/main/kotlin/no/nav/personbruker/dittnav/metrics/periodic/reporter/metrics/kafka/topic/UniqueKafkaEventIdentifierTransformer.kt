@@ -16,16 +16,16 @@ object UniqueKafkaEventIdentifierTransformer {
         val value = external.value()
 
         return when(key) {
-            is Nokkel -> {
-                toInternalExternal(key, value)
-            }
-            is NokkelIntern -> {
-                toInternalInternal(key)
-            }
             null -> {
                 val invalidEvent = UniqueKafkaEventIdentifier.createInvalidEvent()
                 log.warn("Kan ikke telle eventet, fordi kafka-key (Nokkel) er null. Transformerer til et dummy-event: $invalidEvent.")
                 return invalidEvent
+            }
+            is Nokkel -> {
+                fromNokkel(key, value)
+            }
+            is NokkelIntern -> {
+                fromNokkelIntern(key)
             }
             else -> {
                 val invalidEvent = UniqueKafkaEventIdentifier.createInvalidEvent()
@@ -35,7 +35,7 @@ object UniqueKafkaEventIdentifierTransformer {
         }
     }
 
-    private fun toInternalInternal(key: NokkelIntern): UniqueKafkaEventIdentifier {
+    private fun fromNokkelIntern(key: NokkelIntern): UniqueKafkaEventIdentifier {
         return UniqueKafkaEventIdentifier(
             key.getEventId(),
             key.getSystembruker(),
@@ -43,7 +43,7 @@ object UniqueKafkaEventIdentifierTransformer {
         )
     }
 
-    private fun toInternalExternal(key: Nokkel, value: GenericRecord?): UniqueKafkaEventIdentifier {
+    private fun fromNokkel(key: Nokkel, value: GenericRecord?): UniqueKafkaEventIdentifier {
         when (value) {
             null -> {
                 val eventWithoutActualFnr = UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
