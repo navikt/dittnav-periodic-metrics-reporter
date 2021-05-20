@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ka
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import kotlinx.coroutines.withTimeoutOrNull
-import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.JAAS_PLAIN_LOGIN
 import no.nav.common.JAAS_REQUIRED
 import org.apache.avro.generic.GenericRecord
@@ -16,12 +15,13 @@ import java.util.*
 object KafkaProducerUtil {
 
     suspend fun <K> kafkaAvroProduce(
-            brokersURL: String,
-            schemaRegistryUrl: String,
-            topic: String,
-            user: String,
-            pwd: String,
-            data: Map<K, GenericRecord>
+        brokersURL: String,
+        schemaRegistryUrl: String,
+        topic: String,
+        user: String,
+        pwd: String,
+        enableSecurity: Boolean,
+        data: Map<K, GenericRecord>
     ): Boolean =
             try {
                 KafkaProducer<K, GenericRecord>(
@@ -34,9 +34,12 @@ object KafkaProducerUtil {
                             set(ProducerConfig.ACKS_CONFIG, "all")
                             set(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
                             set(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 500)
-                            set(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
-                            set(SaslConfigs.SASL_MECHANISM, "PLAIN")
-                            set(SaslConfigs.SASL_JAAS_CONFIG, "$JAAS_PLAIN_LOGIN $JAAS_REQUIRED username=\"$user\" password=\"$pwd\";")
+                            if(enableSecurity) {
+                                set(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
+                                set(SaslConfigs.SASL_MECHANISM, "PLAIN")
+                                set(SaslConfigs.SASL_JAAS_CONFIG, "$JAAS_PLAIN_LOGIN $JAAS_REQUIRED username=\"$user\" password=\"$pwd\";")
+                            }
+
                         }
                 ).use { p ->
                     withTimeoutOrNull(10_000) {

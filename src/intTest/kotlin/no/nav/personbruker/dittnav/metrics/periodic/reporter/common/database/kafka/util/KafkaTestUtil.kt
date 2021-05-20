@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util
 
-import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
@@ -11,10 +10,10 @@ object KafkaTestUtil {
     val username = "srvkafkaclient"
     val password = "kafkaclient"
 
-    fun createDefaultKafkaEmbeddedInstance(topics: List<String>): KafkaEnvironment {
+    fun createDefaultKafkaEmbeddedInstance(withSecurity: Boolean, topics: List<String>): KafkaEnvironment {
         return KafkaEnvironment(
                 topicNames = topics,
-                withSecurity = true,
+                withSecurity = withSecurity,
                 withSchemaRegistry = true,
                 users = listOf(JAASCredential(username, password))
         )
@@ -37,23 +36,24 @@ object KafkaTestUtil {
                 sensuHost = "sensuHostIkkeIBrukHer",
                 sensuPort = 0,
                 countingIntervalMinutes = 1,
-                aivenBrokers = "aivenBrokersIkkeIBrukHer",
+                aivenBrokers = embeddedEnv.brokersURL.substringAfterLast("/"),
                 aivenTruststorePath = "aivenTruststorePathIkkeIBrukHer",
                 aivenKeystorePath = "aivenKeystorePathIkkeIBrukHer",
                 aivenCredstorePassword = "aivenCredstorePasswordIkkeIBrukHer",
-                aivenSchemaRegistry = "aivenSchemaRegistryIkkeIBrukHer",
-                aivenSchemaRegistryUser = "aivenSchemaRegistryUser",
-                aivenSchemaRegistryPassword = "aivenSchemaRegistryPassword"
+                aivenSchemaRegistry = embeddedEnv.schemaRegistry!!.url,
+                aivenSchemaRegistryUser = username,
+                aivenSchemaRegistryPassword = password
         )
     }
 
-    suspend fun <K> produceEvents(env: Environment, topicName: String, events: Map<K, GenericRecord>): Boolean {
+    suspend fun <K> produceEvents(env: Environment, topicName: String, enableSecurity: Boolean, events: Map<K, GenericRecord>): Boolean {
         return KafkaProducerUtil.kafkaAvroProduce(
                 env.bootstrapServers,
                 env.schemaRegistryUrl,
                 topicName,
                 env.username,
                 env.password,
+                enableSecurity,
                 events)
     }
 }

@@ -33,7 +33,7 @@ class TopicEventCounterOnPremServiceIT {
 
     @BeforeEach
     fun setup() {
-        embeddedEnv = KafkaTestUtil.createDefaultKafkaEmbeddedInstance(listOf(topic))
+        embeddedEnv = KafkaTestUtil.createDefaultKafkaEmbeddedInstance(withSecurity = true, listOf(topic))
         testEnvironment = KafkaTestUtil.createEnvironmentForEmbeddedKafka(embeddedEnv)
         embeddedEnv.start()
     }
@@ -177,9 +177,9 @@ class TopicEventCounterOnPremServiceIT {
 
     private fun `Produser det samme settet av eventer tre ganger`(topic: String) {
         runBlocking {
-            val fikkProduserBatch1 = KafkaTestUtil.produceEvents(testEnvironment, topic, events)
-            val fikkProduserBatch2 = KafkaTestUtil.produceEvents(testEnvironment, topic, events)
-            val fikkProduserBatch3 = KafkaTestUtil.produceEvents(testEnvironment, topic, events)
+            val fikkProduserBatch1 = KafkaTestUtil.produceEvents(testEnvironment, topic, enableSecurity = true, events)
+            val fikkProduserBatch2 = KafkaTestUtil.produceEvents(testEnvironment, topic, enableSecurity = true, events)
+            val fikkProduserBatch3 = KafkaTestUtil.produceEvents(testEnvironment, topic, enableSecurity = true, events)
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
         } `should be equal to` true
     }
