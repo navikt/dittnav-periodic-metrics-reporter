@@ -38,7 +38,7 @@ configurations["intTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.
 
 dependencies {
     implementation(Brukernotifikasjon.schemas)
-    implementation("com.github.navikt:brukernotifikasjon-schemas-internal:1.2021.02.15-10.31-d3b3b298927a")
+    implementation(Brukernotifikasjon.schemas_internal)
     implementation(DittNAV.Common.utils)
     implementation(DittNAV.Common.influx)
     implementation(Hikari.cp)

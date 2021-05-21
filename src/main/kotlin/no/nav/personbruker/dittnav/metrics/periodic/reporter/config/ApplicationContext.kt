@@ -176,35 +176,35 @@ class ApplicationContext {
 
     fun reinitializeConsumersAiven() {
         if (beskjedCountAivenConsumer.isCompleted()) {
-            beskjedCountAivenConsumer = initializeCountConsumerAiven(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameAiven)
+            beskjedCountAivenConsumer = initializeCountConsumerAiven(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
             log.info("beskjedCountConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("beskjedCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (oppgaveCountAivenConsumer.isCompleted()) {
-            oppgaveCountAivenConsumer = initializeCountConsumerAiven(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameAiven)
+            oppgaveCountAivenConsumer = initializeCountConsumerAiven(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
             log.info("oppgaveCountConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("oppgaveCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (innboksCountAivenConsumer.isCompleted()) {
-            innboksCountAivenConsumer = initializeCountConsumerAiven(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameAiven)
+            innboksCountAivenConsumer = initializeCountConsumerAiven(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
             log.info("innboksCountConsumer på Aiven blitt reinstansiert.")
         } else {
             log.warn("innboksCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (statusoppdateringAivenConsumer.isCompleted()) {
-            statusoppdateringAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameAiven)
+            statusoppdateringAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
             log.info("statusoppdateringCountConsumer på Aiven blitt reinstansiert.")
         } else {
             log.warn("statusoppdateringCountConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
 
         if (doneCountAivenConsumer.isCompleted()) {
-            doneCountAivenConsumer = initializeCountConsumerAiven(doneKafkaPropsOnPrem, Kafka.doneTopicNameAiven)
+            doneCountAivenConsumer = initializeCountConsumerAiven(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
             log.info("doneConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("doneConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
