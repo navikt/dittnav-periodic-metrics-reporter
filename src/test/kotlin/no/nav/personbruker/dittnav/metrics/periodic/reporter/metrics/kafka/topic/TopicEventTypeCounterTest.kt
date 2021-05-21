@@ -25,7 +25,7 @@ internal class TopicEventTypeCounterTest {
         mockkObject(TopicEventTypeCounter)
 
         val polledEvents: ConsumerRecords<Nokkel, GenericRecord> = mockk()
-        val consumer: Consumer<GenericRecord> = mockk()
+        val consumer: Consumer<Nokkel, GenericRecord> = mockk()
 
         val deltaCountingEnabled = true
         val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled)

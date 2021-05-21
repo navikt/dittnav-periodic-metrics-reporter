@@ -4,7 +4,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
@@ -15,8 +14,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords
 import java.time.Duration
 import java.time.Instant
 
-class TopicEventTypeCounter(
-        val consumer: Consumer<GenericRecord>,
+class TopicEventTypeCounter<K>(
+        val consumer: Consumer<K, GenericRecord>,
         val eventType: EventType,
         val deltaCountingEnabled: Boolean
 ) {
@@ -66,9 +65,9 @@ class TopicEventTypeCounter(
     }
 
     companion object {
-        fun countBatch(records: ConsumerRecords<Nokkel, GenericRecord>, metricsSession: TopicMetricsSession) {
+        fun <K> countBatch(records: ConsumerRecords<K, GenericRecord>, metricsSession: TopicMetricsSession) {
             records.forEach { record ->
-                val event = UniqueKafkaEventIdentifierTransformer.toInternal(record)
+                val event = UniqueKafkaEventIdentifierTransformer.toInternal<K>(record)
                 metricsSession.countEvent(event)
             }
         }

@@ -19,10 +19,14 @@ class PeriodicConsumerCheckTest {
     @BeforeEach
     fun resetMocks() {
         mockkObject(KafkaConsumerSetup)
-        coEvery { KafkaConsumerSetup.restartConsumers(appContext) } returns Unit
-        coEvery { KafkaConsumerSetup.stopAllKafkaConsumers(appContext) } returns Unit
-        coEvery { appContext.reinitializeConsumers() } returns Unit
-        coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumers(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.restartConsumersOnPrem(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.restartConsumersAiven(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.stopAllKafkaConsumersOnPrem(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.stopAllKafkaConsumersAiven(appContext) } returns Unit
+        coEvery { appContext.reinitializeConsumersOnPrem() } returns Unit
+        coEvery { appContext.reinitializeConsumersAiven() } returns Unit
+        coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumersOnPrem(appContext) } returns Unit
+        coEvery { KafkaConsumerSetup.startSubscriptionOnAllKafkaConsumersAiven(appContext) } returns Unit
     }
 
     @AfterAll
@@ -31,52 +35,102 @@ class PeriodicConsumerCheckTest {
     }
 
     @Test
-    fun `Skal returnere en liste med konsumenter som har stoppet aa polle`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns true
-        coEvery { appContext.doneCountConsumer.isStopped() } returns true
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+    fun `Skal returnere en liste med konsumere som har stoppet aa polle on-prem`() {
+        coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns true
+        coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns true
+        coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerCheck.getConsumersThatHaveStopped().size `should be equal to` 2
+            periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().size `should be equal to` 2
         }
     }
 
     @Test
-    fun `Skal returnere en tom liste hvis alle konsumenter kjorer som normalt`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns false
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+    fun `Skal returnere en liste med konsumere som har stoppet aa polle paa Aiven`() {
+        coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns true
+        coEvery { appContext.doneCountAivenConsumer.isStopped() } returns true
+        coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
 
         runBlocking {
-            periodicConsumerCheck.getConsumersThatHaveStopped().`should be empty`()
+            periodicConsumerCheck.getConsumersThatHaveStoppedAiven().size `should be equal to` 2
         }
     }
 
     @Test
-    fun `Skal kalle paa restartConsumers hvis en eller flere konsumere har sluttet aa kjore`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns true
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns true
+    fun `Skal returnere en tom liste hvis alle konsumere kjorer som normalt on-prem`() {
+        coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
+
+        runBlocking {
+            periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Skal returnere en tom liste hvis alle konsumere kjorer som normalt paa Aiven`() {
+        coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
+
+        runBlocking {
+            periodicConsumerCheck.getConsumersThatHaveStoppedAiven().`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Skal kalle paa restartConsumers hvis en eller flere konsumere har sluttet aa kjore on-prem`() {
+        coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns true
+        coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns true
+        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns true
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
-
-        coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumers(appContext) }
-        confirmVerified(KafkaConsumerSetup)
+        coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumersOnPrem(appContext) }
     }
 
     @Test
-    fun `Skal ikke restarte konsumer hvis alle kafka-konsumerne kjorer`() {
-        coEvery { appContext.beskjedCountConsumer.isStopped() } returns false
-        coEvery { appContext.doneCountConsumer.isStopped() } returns false
-        coEvery { appContext.oppgaveCountConsumer.isStopped() } returns false
+    fun `Skal kalle paa restartConsumers hvis en eller flere konsumere har sluttet aa kjore paa Aiven`() {
+        coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns true
+        coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns true
+        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns true
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
         }
+        coVerify(exactly = 1) { KafkaConsumerSetup.restartConsumersAiven(appContext) }
+    }
 
-        coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumers(appContext) }
-        confirmVerified(KafkaConsumerSetup)
+    @Test
+    fun `Skal ikke restarte konsumer hvis alle kafka-konsumerne kjorer on-prem`() {
+        coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
+
+        runBlocking {
+            periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
+        }
+        coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumersOnPrem(appContext) }
+    }
+
+    @Test
+    fun `Skal ikke restarte konsumer hvis alle kafka-konsumerne kjorer paa Aiven`() {
+        coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
+
+        runBlocking {
+            periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
+        }
+        coVerify(exactly = 0) { KafkaConsumerSetup.restartConsumersAiven(appContext) }
     }
 }

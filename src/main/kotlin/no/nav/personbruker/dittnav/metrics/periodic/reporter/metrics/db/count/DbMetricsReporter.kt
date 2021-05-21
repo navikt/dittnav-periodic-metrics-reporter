@@ -33,7 +33,7 @@ class DbMetricsReporter(
             reportTimeUsed(session)
 
         } else {
-            log.info("Ingen eventer ble funnet for ${session.eventType}.")
+            log.info("Ingen eventer ble funnet i databasen for ${session.eventType}.")
         }
     }
 

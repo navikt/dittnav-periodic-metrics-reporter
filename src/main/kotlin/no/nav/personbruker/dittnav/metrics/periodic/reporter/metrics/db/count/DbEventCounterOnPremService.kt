@@ -3,18 +3,19 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import no.nav.brukernotifikasjon.schemas.builders.domain.Eventtype
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.slf4j.LoggerFactory
 
-class DbEventCounterService(
+class DbEventCounterOnPremService(
     private val metricsProbe: DbCountingMetricsProbe,
     private val repository: MetricsRepository
 ) {
 
-    private val log = LoggerFactory.getLogger(DbEventCounterService::class.java)
+    private val log = LoggerFactory.getLogger(DbEventCounterOnPremService::class.java)
 
     suspend fun countAllEventTypesAsync() : CountingMetricsSessions = withContext(Dispatchers.IO) {
         val beskjeder = async {
@@ -46,7 +47,7 @@ class DbEventCounterService(
         val eventType = EventType.BESKJED
         return try {
             metricsProbe.runWithMetrics(eventType) {
-                val grupperPerProdusent = repository.getNumberOfBeskjedEventsGroupedByProdusent()
+                val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.BESKJED)
                 addEventsByProducer(grupperPerProdusent)
             }
 
@@ -60,7 +61,7 @@ class DbEventCounterService(
         return if (isOtherEnvironmentThanProd()) {
             try {
                 metricsProbe.runWithMetrics(eventType) {
-                    val grupperPerProdusent = repository.getNumberOfInnboksEventsGroupedByProdusent()
+                    val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.INNBOKS)
                     addEventsByProducer(grupperPerProdusent)
                 }
 
@@ -77,7 +78,7 @@ class DbEventCounterService(
         return if (isOtherEnvironmentThanProd()) {
             try {
                 metricsProbe.runWithMetrics(eventType) {
-                    val grupperPerProdusent = repository.getNumberOfStatusoppdateringEventsGroupedByProdusent()
+                    val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.STATUSOPPDATERING)
                     addEventsByProducer(grupperPerProdusent)
                 }
 
@@ -93,7 +94,7 @@ class DbEventCounterService(
         val eventType = EventType.OPPGAVE
         return try {
             metricsProbe.runWithMetrics(eventType) {
-                val grupperPerProdusent = repository.getNumberOfOppgaveEventsGroupedByProdusent()
+                val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.OPPGAVE)
                 addEventsByProducer(grupperPerProdusent)
             }
 
@@ -106,7 +107,7 @@ class DbEventCounterService(
         val eventType = EventType.DONE
         return try {
             metricsProbe.runWithMetrics(eventType) {
-                addEventsByProducer(repository.getNumberOfDoneEventsInWaitingTableGroupedByProdusent())
+                addEventsByProducer(repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.DONE))
                 addEventsByProducer(repository.getNumberOfInactiveBrukernotifikasjonerGroupedByProdusent())
             }
 

@@ -6,12 +6,12 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.isOtherEnvironmentThanProd
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 
-class TopicEventCounterService(
-        val beskjedCounter: TopicEventTypeCounter,
-        val innboksCounter: TopicEventTypeCounter,
-        val oppgaveCounter: TopicEventTypeCounter,
-        val statusoppdateringCounter: TopicEventTypeCounter,
-        val doneCounter: TopicEventTypeCounter
+class TopicEventCounterOnPremService<K>(
+        val beskjedCounter: TopicEventTypeCounter<K>,
+        val innboksCounter: TopicEventTypeCounter<K>,
+        val oppgaveCounter: TopicEventTypeCounter<K>,
+        val statusoppdateringCounter: TopicEventTypeCounter<K>,
+        val doneCounter: TopicEventTypeCounter<K>
 ) {
 
     suspend fun countAllEventTypesAsync(): CountingMetricsSessions = coroutineScope {

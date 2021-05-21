@@ -38,6 +38,7 @@ configurations["intTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.
 
 dependencies {
     implementation(Brukernotifikasjon.schemas)
+    implementation("com.github.navikt:brukernotifikasjon-schemas-internal:1.2021.02.15-10.31-d3b3b298927a")
     implementation(DittNAV.Common.utils)
     implementation(DittNAV.Common.influx)
     implementation(Hikari.cp)
@@ -53,7 +54,6 @@ dependencies {
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(Prometheus.logback)
-    implementation(DittNAV.Common.utils)
 
     testImplementation(H2Database.h2)
     testImplementation(Junit.api)
@@ -67,6 +67,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:4.3.1")
     testImplementation("io.kotest:kotest-assertions-core:4.3.1")
     testImplementation("io.kotest:kotest-extensions:4.3.1")
+    testImplementation(ULID.sulkyUlid)
     intTestImplementation(Junit.engine)
 }
 

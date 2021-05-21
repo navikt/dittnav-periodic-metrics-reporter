@@ -6,13 +6,19 @@ class HealthService(private val applicationContext: ApplicationContext) {
 
     suspend fun getHealthChecks(): List<HealthStatus> {
         return listOf(
-                applicationContext.database.status(),
+                applicationContext.databaseOnPrem.status(),
                 applicationContext.periodicMetricsSubmitter.status(),
                 applicationContext.periodicConsumerCheck.status(),
-                applicationContext.beskjedCountConsumer.status(),
-                applicationContext.innboksCountConsumer.status(),
-                applicationContext.oppgaveCountConsumer.status(),
-                applicationContext.doneCountConsumer.status()
+                applicationContext.beskjedCountOnPremConsumer.status(),
+                applicationContext.innboksCountOnPremConsumer.status(),
+                applicationContext.oppgaveCountOnPremConsumer.status(),
+                applicationContext.statusoppdateringOnPremConsumer.status(),
+                applicationContext.doneCountOnPremConsumer.status(),
+                applicationContext.beskjedCountAivenConsumer.status(),
+                applicationContext.innboksCountAivenConsumer.status(),
+                applicationContext.oppgaveCountAivenConsumer.status(),
+                applicationContext.statusoppdateringAivenConsumer.status(),
+                applicationContext.doneCountAivenConsumer.status()
         )
     }
 }

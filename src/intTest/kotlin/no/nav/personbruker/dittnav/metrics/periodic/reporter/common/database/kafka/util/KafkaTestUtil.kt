@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kafka.util
 
-import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
@@ -11,21 +10,10 @@ object KafkaTestUtil {
     val username = "srvkafkaclient"
     val password = "kafkaclient"
 
-    fun createDefaultKafkaEmbeddedInstance(topics: List<String>): KafkaEnvironment {
+    fun createDefaultKafkaEmbeddedInstance(withSecurity: Boolean, topics: List<String>): KafkaEnvironment {
         return KafkaEnvironment(
                 topicNames = topics,
-                withSecurity = true,
-                withSchemaRegistry = true,
-                users = listOf(JAASCredential(username, password))
-        )
-    }
-
-    fun createKafkaEmbeddedInstanceWithNumPartitions(topics: List<String>, partitions: Int): KafkaEnvironment {
-        val topicInfos = topics.map { KafkaEnvironment.TopicInfo(it, partitions = partitions) }
-
-        return KafkaEnvironment(
-                topicInfos = topicInfos,
-                withSecurity = true,
+                withSecurity = withSecurity,
                 withSchemaRegistry = true,
                 users = listOf(JAASCredential(username, password))
         )
@@ -37,28 +25,35 @@ object KafkaTestUtil {
                 schemaRegistryUrl = embeddedEnv.schemaRegistry!!.url,
                 username = username,
                 password = password,
-                dbReadOnlyUser = "dbAdminIkkeIBrukHer",
-                dbHost = "dbHostIkkeIBrukHer",
+                dbReadOnlyUserOnPrem = "dbAdminIkkeIBrukHer",
+                dbHostOnPrem = "dbHostIkkeIBrukHer",
                 dbMountPath = "dbMountPathIkkeIBrukHer",
                 dbName = "dbNameIkkeIBrukHer",
-                dbUrl = "dbUrlIkkeIBrukHer",
-                dbUser = "dbUserIkkeIBrukHer",
+                dbUrlOnPrem = "dbUrlIkkeIBrukHer",
+                dbUserOnPrem = "dbUserIkkeIBrukHer",
                 clusterName = "clusterNameIkkeIBrukHer",
                 namespace = "namespaceIkkeIBrukHer",
                 sensuHost = "sensuHostIkkeIBrukHer",
                 sensuPort = 0,
-                countingIntervalMinutes = 1
+                countingIntervalMinutes = 1,
+                aivenBrokers = embeddedEnv.brokersURL.substringAfterLast("/"),
+                aivenTruststorePath = "aivenTruststorePathIkkeIBrukHer",
+                aivenKeystorePath = "aivenKeystorePathIkkeIBrukHer",
+                aivenCredstorePassword = "aivenCredstorePasswordIkkeIBrukHer",
+                aivenSchemaRegistry = embeddedEnv.schemaRegistry!!.url,
+                aivenSchemaRegistryUser = username,
+                aivenSchemaRegistryPassword = password
         )
     }
 
-    suspend fun produceEvents(env: Environment, topicName: String, events: Map<Nokkel, GenericRecord>): Boolean {
+    suspend fun <K> produceEvents(env: Environment, topicName: String, enableSecurity: Boolean, events: Map<K, GenericRecord>): Boolean {
         return KafkaProducerUtil.kafkaAvroProduce(
                 env.bootstrapServers,
                 env.schemaRegistryUrl,
                 topicName,
                 env.username,
                 env.password,
+                enableSecurity,
                 events)
     }
-
 }

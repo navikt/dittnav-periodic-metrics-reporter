@@ -2,12 +2,13 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessionsObjectMother
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class SessionComparatorTest {
 
     @Test
-    fun `Should return all sessions from both sources, when the have the same session types`() {
+    fun `Should return all sessions from both sources, when they have the same session types`() {
         val allTopicSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllEventTypesExceptForInnboks()
         val allDbSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllEventTypesExceptForInnboks()
 
@@ -36,5 +37,4 @@ internal class SessionComparatorTest {
 
         comparator.eventTypesWithSessionFromBothSources().size `should be equal to` oneDbSessionMissing.getEventTypesWithSession().size
     }
-
 }

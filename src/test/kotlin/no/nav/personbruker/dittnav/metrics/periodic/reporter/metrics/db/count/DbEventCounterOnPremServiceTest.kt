@@ -9,12 +9,12 @@ import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
 
-internal class DbEventCounterServiceTest {
+internal class DbEventCounterOnPremServiceTest {
 
     private val metricsProbe : DbCountingMetricsProbe = mockk(relaxed = true)
     private val repository : MetricsRepository = mockk(relaxed = true)
 
-    private val dbEventCounterService = DbEventCounterService(metricsProbe, repository)
+    private val dbEventCounterService = DbEventCounterOnPremService(metricsProbe, repository)
 
     @Test
     internal fun `Should handle exceptions and rethrow as internal exception`() {
