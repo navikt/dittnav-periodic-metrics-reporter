@@ -89,8 +89,8 @@ tasks {
         DockerComposeDefaults.environomentVariables.forEach { (name, value) ->
             println("Setting the environment variable $name")
             environment(name, value)
-            environment("COUNTING_INTERVAL_MINUTES", "1")
         }
+        environment("COUNTING_INTERVAL_MINUTES", "1")
 
         main = application.mainClass.get()
         classpath = sourceSets["main"].runtimeClasspath
