@@ -31,6 +31,7 @@ object Kafka {
     val innboksTopicNameAiven = "min-side.privat-brukernotifikasjon-innboks-v1"
     val oppgaveTopicNameAiven = "min-side.privat-brukernotifikasjon-oppgave-v1"
     val statusoppdateringTopicNameAiven = "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
+    val feilresponsTopicNameAiven = "min-side.aapen-brukernotifikasjon-feilrespons-v1"
 
     fun counterConsumerOnPremProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
         return Properties().apply {

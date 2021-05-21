@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.internal.NokkelFeilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.apache.avro.generic.GenericRecord
@@ -26,6 +27,9 @@ object UniqueKafkaEventIdentifierTransformer {
             }
             is NokkelIntern -> {
                 fromNokkelIntern(key)
+            }
+            is NokkelFeilrespons -> {
+              //  fromNokkelFeilrespons(key)
             }
             else -> {
                 val invalidEvent = UniqueKafkaEventIdentifier.createInvalidEvent()

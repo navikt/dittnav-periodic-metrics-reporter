@@ -12,7 +12,7 @@ class SessionComparator(
     private val log = LoggerFactory.getLogger(SessionComparator::class.java)
 
     private val eventTypesInBothSources = mutableListOf<EventType>()
-    private val internalEventTypes = listOf(EventType.BESKJED_INTERN, EventType.INNBOKS_INTERN, EventType.STATUSOPPDATERING_INTERN, EventType.DONE_INTERN, EventType.OPPGAVE_INTERN)
+    private val internalEventTypes = listOf(EventType.BESKJED_INTERN, EventType.INNBOKS_INTERN, EventType.STATUSOPPDATERING_INTERN, EventType.DONE_INTERN, EventType.OPPGAVE_INTERN, EventType.FEILRESPONS)
 
     init {
         EventType.values().forEach { eventType ->

@@ -15,7 +15,6 @@ import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class TopicEventCounterAivenServiceIT {
@@ -44,7 +43,7 @@ class TopicEventCounterAivenServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
 
         val kafkaProps = Kafka.counterConsumerAivenProps(testEnvironment, EventType.BESKJED_INTERN, false)
-        val beskjedInternCountConsumer = KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedInternCountConsumer = KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaProps, topic)
         beskjedInternCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
@@ -67,7 +66,7 @@ class TopicEventCounterAivenServiceIT {
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
         val kafkaProps = Kafka.counterConsumerAivenProps(testEnvironment, EventType.BESKJED_INTERN, false)
-        val beskjedInternCountConsumer = KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedInternCountConsumer = KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaProps, topic)
         beskjedInternCountConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -99,12 +98,12 @@ class TopicEventCounterAivenServiceIT {
 
         val kafkaPropsDeltaCounting = Kafka.counterConsumerAivenProps(deltaCountingEnv, EventType.BESKJED_INTERN, false)
         val deltaCountingConsumer =
-            KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
+            KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaPropsDeltaCounting, topic)
         deltaCountingConsumer.startSubscription()
 
         val kafkaPropsFromScratchCounting = Kafka.counterConsumerAivenProps(fromScratchCountingEnv, EventType.BESKJED_INTERN, false)
         val fromScratchCountingConsumer =
-            KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
+            KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -145,7 +144,7 @@ class TopicEventCounterAivenServiceIT {
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
         val kafkaProps = Kafka.counterConsumerAivenProps(testEnvironment, EventType.BESKJED_INTERN, false)
-        val beskjedCountConsumer = KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(

@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.config
 
+import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
@@ -79,6 +81,10 @@ class ApplicationContext {
     val doneCounterOnPrem = TopicEventTypeCounter(doneCountOnPremConsumer, EventType.DONE, environment.deltaCountingEnabled)
     val doneCounterAiven = TopicEventTypeCounter(doneCountAivenConsumer, EventType.DONE_INTERN, environment.deltaCountingEnabled)
 
+    val feilresponsKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.FEILRESPONS)
+    var feilresponsCountAivenConsumer = initializeCountConsumerAiven(feilresponsKafkaPropsAiven, Kafka.feilresponsTopicNameAiven)
+    val feilresponsCounterAiven = TopicEventTypeCounter(feilresponsCountAivenConsumer, EventType.FEILRESPONS, environment.deltaCountingEnabled)
+
     val topicEventCounterServiceOnPrem = TopicEventCounterOnPremService(
         beskjedCounter = beskjedCounterOnPrem,
         innboksCounter = innboksCounterOnPrem,
@@ -92,7 +98,8 @@ class ApplicationContext {
         innboksCounter = innboksCounterAiven,
         oppgaveCounter = oppgaveCounterAiven,
         statusoppdateringCounter = statusoppdateringCounterAiven,
-        doneCounter = doneCounterAiven
+        doneCounter = doneCounterAiven,
+        feilresponsCounter = feilresponsCounterAiven
     )
 
     val metricsSubmitterService = MetricsSubmitterService(
@@ -111,10 +118,10 @@ class ApplicationContext {
             PeriodicConsumerCheck(this)
 
     private fun initializeCountConsumerOnPrem(kafkaProps: Properties, topic: String) =
-            KafkaConsumerSetup.setupCountOnPremConsumer<GenericRecord>(kafkaProps, topic)
+            KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
 
     private fun initializeCountConsumerAiven(kafkaProps: Properties, topic: String) =
-            KafkaConsumerSetup.setupCountAivenConsumer<GenericRecord>(kafkaProps, topic)
+            KafkaConsumerSetup.setupCountConsumer<NokkelIntern, GenericRecord>(kafkaProps, topic)
 
     private fun initializePeriodicMetricsSubmitter(): PeriodicMetricsSubmitter =
             PeriodicMetricsSubmitter(metricsSubmitterService, environment.countingIntervalMinutes)
@@ -208,6 +215,13 @@ class ApplicationContext {
             log.info("doneConsumer på Aiven har blitt reinstansiert.")
         } else {
             log.warn("doneConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
+        }
+
+        if (feilresponsCountAivenConsumer.isCompleted()) {
+            feilresponsCountAivenConsumer = initializeCountConsumerAiven(feilresponsKafkaPropsAiven, Kafka.feilresponsTopicNameAiven)
+            log.info("feilresponsConsumer på Aiven har blitt reinstansiert.")
+        } else {
+            log.warn("feilresponsConsumer på Aiven kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
     }
 }

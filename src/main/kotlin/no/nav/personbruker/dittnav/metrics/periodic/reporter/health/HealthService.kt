@@ -18,7 +18,8 @@ class HealthService(private val applicationContext: ApplicationContext) {
                 applicationContext.innboksCountAivenConsumer.status(),
                 applicationContext.oppgaveCountAivenConsumer.status(),
                 applicationContext.statusoppdateringAivenConsumer.status(),
-                applicationContext.doneCountAivenConsumer.status()
+                applicationContext.doneCountAivenConsumer.status(),
+                applicationContext.feilresponsCountAivenConsumer.status()
         )
     }
 }
