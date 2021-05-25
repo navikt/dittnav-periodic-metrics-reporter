@@ -90,7 +90,21 @@ tasks {
             println("Setting the environment variable $name")
             environment(name, value)
         }
+
         environment("COUNTING_INTERVAL_MINUTES", "1")
+        environment("DB_HOST_ONPREM", "localhost:5432")
+        environment("DB_NAME_ONPREM", "dittnav-event-cache-preprod")
+        environment("DB_PASSWORD_ONPREM", "testpassword")
+        environment("DB_MOUNT_PATH_ONPREM", "notUsedOnLocalhost")
+
+        environment("KAFKA_BROKERS", "localhost:29092")
+        environment("KAFKA_TRUSTSTORE_PATH", "/path/to/trust/store")
+        environment("KAFKA_KEYSTORE_PATH", "/path/to/key/store")
+        environment("KAFKA_KEYSTORE_PATH", "superhemmelig")
+        environment("KAFKA_CREDSTORE_PASSWORD", "superhemmelig")
+        environment("KAFKA_SCHEMA_REGISTRY", "http://localhost:8081")
+        environment("KAFKA_SCHEMA_REGISTRY_USER", "schema-user")
+        environment("KAFKA_SCHEMA_REGISTRY_PASSWORD", "schema-pwd")
 
         main = application.mainClass.get()
         classpath = sourceSets["main"].runtimeClasspath
