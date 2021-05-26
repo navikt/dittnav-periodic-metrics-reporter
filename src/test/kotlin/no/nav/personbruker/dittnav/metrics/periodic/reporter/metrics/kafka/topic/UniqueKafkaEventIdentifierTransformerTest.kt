@@ -1,10 +1,14 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.builders.domain.Eventtype
+import no.nav.brukernotifikasjon.schemas.internal.Feilrespons
+import no.nav.brukernotifikasjon.schemas.internal.NokkelFeilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedInternObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.AvroDoneInternObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.AvroDoneObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.innboks.AvroInnboksInternObjectMother
@@ -19,6 +23,7 @@ import org.amshove.kluent.shouldNotBeNull
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 internal class UniqueKafkaEventIdentifierTransformerTest {
 
@@ -160,6 +165,20 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
         transformed.eventId `should be equal to` nokkelIntern.getEventId()
         transformed.systembruker `should be equal to` nokkelIntern.getSystembruker()
         transformed.fodselsnummer `should be equal to` nokkelIntern.getFodselsnummer()
+    }
+
+    @Test
+    fun `Should transform Feilrespons to internal`() {
+        val nokkelFeilrespons = NokkelFeilrespons("sysBruker4", "4", EventType.BESKJED.toString())
+        val feilrespons = Feilrespons(Instant.now().toEpochMilli(), "Simulert feil i en test")
+        val original: ConsumerRecord<NokkelFeilrespons, GenericRecord> =
+            ConsumerRecordsObjectMother.createConsumerRecord(nokkelFeilrespons, feilrespons)
+
+        val transformed = UniqueKafkaEventIdentifierTransformer.toInternal(original)
+
+        transformed.eventId `should be equal to` nokkelFeilrespons.getEventId()
+        transformed.systembruker `should be equal to` nokkelFeilrespons.getSystembruker()
+        transformed.fodselsnummer `should be equal to` "000"
     }
 
     @Test

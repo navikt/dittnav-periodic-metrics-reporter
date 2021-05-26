@@ -17,7 +17,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class MetricsSubmitterServiceTest {
@@ -46,12 +45,13 @@ internal class MetricsSubmitterServiceTest {
 
     @Test
     fun `Should report metrics for both kafka topics and the database cache`() {
-        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllEventTypes()
-        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllEventTypes()
+        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypes()
+        val topicMetricsInternSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllInternalEventTypes()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
         val dbMetricsInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
 
         coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns topicMetricsSessions
-        coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns topicMetricsSessions
+        coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns topicMetricsInternSessions
         coEvery { dbEventCounterOnPremService.countAllEventTypesAsync() } returns dbMetricsSessions
         coEvery { dbEventCounterGCPService.countAllEventTypesAsync() } returns dbMetricsInternSessions
 
@@ -63,8 +63,8 @@ internal class MetricsSubmitterServiceTest {
         coVerify(exactly = 1) { topicEventCounterServiceAiven.countAllEventTypesAsync() }
         coVerify(exactly = 1) { dbEventCounterOnPremService.countAllEventTypesAsync() }
 
-        coVerify(exactly = 4) { kafkaMetricsReporter.report(any()) }
-        coVerify(exactly = 4) { dbMetricsReporter.report(any()) }
+        coVerify(exactly = 10) { kafkaMetricsReporter.report(any()) }
+        coVerify(exactly = 10) { dbMetricsReporter.report(any()) }
 
         confirmVerified(topicEventCounterServiceOnPrem)
         confirmVerified(topicEventCounterServiceAiven)
@@ -75,12 +75,13 @@ internal class MetricsSubmitterServiceTest {
 
     @Test
     fun `Should not report metrics for event types without metrics session`() {
-        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllEventTypesExceptForInnboks()
-        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllEventTypesExceptForInnboks()
+        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks()
+        val topicMetricsInternSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllInternalEventTypes()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks()
         val dbMetricInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
 
         coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns topicMetricsSessions
-        coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns topicMetricsSessions
+        coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns topicMetricsInternSessions
         coEvery { dbEventCounterOnPremService.countAllEventTypesAsync() } returns dbMetricsSessions
         coEvery { dbEventCounterGCPService.countAllEventTypesAsync() } returns dbMetricInternSessions
 
@@ -119,10 +120,10 @@ internal class MetricsSubmitterServiceTest {
 
     @Test
     fun `Should not report metrics for count sessions with a lower count than the previous count session`() {
-        val sessionWithCorrectCount = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllEventTypes()
+        val sessionWithCorrectCount = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypes()
         val simulatedWrongCount =
-            CountingMetricsSessionsObjectMother.giveMeTopicSessionsWithSingleEventForAllEventTypes()
-        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllEventTypes()
+            CountingMetricsSessionsObjectMother.giveMeTopicSessionsWithSingleEventForAllExternalEventTypes()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
         val dbMetricInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
         coEvery {
             topicEventCounterServiceOnPrem.countAllEventTypesAsync()
@@ -142,8 +143,8 @@ internal class MetricsSubmitterServiceTest {
         coVerify(exactly = 3) { topicEventCounterServiceAiven.countAllEventTypesAsync() }
         coVerify(exactly = 3) { dbEventCounterOnPremService.countAllEventTypesAsync() }
 
-        coVerify(exactly = 4 * 2) { kafkaMetricsReporter.report(any()) }
-        coVerify(exactly = 4 * 2) { dbMetricsReporter.report(any()) }
+        coVerify(exactly = 5 * 2) { kafkaMetricsReporter.report(any()) }
+        coVerify(exactly = 5 * 2) { dbMetricsReporter.report(any()) }
 
         confirmVerified(topicEventCounterServiceOnPrem)
         confirmVerified(topicEventCounterServiceAiven)
@@ -155,8 +156,8 @@ internal class MetricsSubmitterServiceTest {
     @Test
     fun `Should not report metrics if one of the counting fails`() {
         val simulatedException = Exception("Simulated error in a test")
-        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllEventTypes()
-        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllEventTypes()
+        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypes()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
         coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns topicMetricsSessions
         coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns topicMetricsSessions
         coEvery { dbEventCounterOnPremService.countAllEventTypesAsync() } throws simulatedException andThen dbMetricsSessions

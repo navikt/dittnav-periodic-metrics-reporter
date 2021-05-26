@@ -29,7 +29,7 @@ object UniqueKafkaEventIdentifierTransformer {
                 fromNokkelIntern(key)
             }
             is NokkelFeilrespons -> {
-              //  fromNokkelFeilrespons(key)
+                fromNokkelFeilrespons(key)
             }
             else -> {
                 val invalidEvent = UniqueKafkaEventIdentifier.createInvalidEvent()
@@ -44,6 +44,13 @@ object UniqueKafkaEventIdentifierTransformer {
             key.getEventId(),
             key.getSystembruker(),
             key.getFodselsnummer()
+        )
+    }
+
+    private fun fromNokkelFeilrespons(key: NokkelFeilrespons): UniqueKafkaEventIdentifier {
+        return UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
+            key.getEventId(),
+            key.getSystembruker(),
         )
     }
 
