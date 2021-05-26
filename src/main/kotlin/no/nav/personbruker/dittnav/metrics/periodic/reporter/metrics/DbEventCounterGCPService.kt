@@ -32,6 +32,9 @@ class DbEventCounterGCPService(
         val done = async {
             countDoneEvents()
         }
+        val feilrespons = async {
+            countFeilrespons()
+        }
 
         val sessions = CountingMetricsSessions()
         sessions.put(EventType.BESKJED_INTERN, beskjeder.await())
@@ -39,6 +42,7 @@ class DbEventCounterGCPService(
         sessions.put(EventType.INNBOKS_INTERN, innboks.await())
         sessions.put(EventType.OPPGAVE_INTERN, oppgave.await())
         sessions.put(EventType.STATUSOPPDATERING_INTERN, statusoppdatering.await())
+        sessions.put(EventType.FEILRESPONS, feilrespons.await())
         return@withContext sessions
     }
 
@@ -60,5 +64,9 @@ class DbEventCounterGCPService(
 
     fun countDoneEvents(): DbCountingMetricsSession {
         return DbCountingMetricsSession(EventType.DONE_INTERN)
+    }
+
+    fun countFeilrespons(): DbCountingMetricsSession {
+        return DbCountingMetricsSession(EventType.FEILRESPONS)
     }
 }
