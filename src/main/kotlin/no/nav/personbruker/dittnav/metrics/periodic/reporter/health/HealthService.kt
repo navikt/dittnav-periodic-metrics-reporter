@@ -12,12 +12,12 @@ class HealthService(private val applicationContext: ApplicationContext) {
                 applicationContext.beskjedCountOnPremConsumer.status(),
                 applicationContext.innboksCountOnPremConsumer.status(),
                 applicationContext.oppgaveCountOnPremConsumer.status(),
-                applicationContext.statusoppdateringOnPremConsumer.status(),
+                applicationContext.statusoppdateringCountOnPremConsumer.status(),
                 applicationContext.doneCountOnPremConsumer.status(),
                 applicationContext.beskjedCountAivenConsumer.status(),
                 applicationContext.innboksCountAivenConsumer.status(),
                 applicationContext.oppgaveCountAivenConsumer.status(),
-                applicationContext.statusoppdateringAivenConsumer.status(),
+                applicationContext.statusoppdateringCountAivenConsumer.status(),
                 applicationContext.doneCountAivenConsumer.status(),
                 applicationContext.feilresponsCountAivenConsumer.status()
         )

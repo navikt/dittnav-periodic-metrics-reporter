@@ -55,7 +55,7 @@ class PeriodicConsumerCheck(
         if (appContext.oppgaveCountOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
-        if(appContext.statusoppdateringOnPremConsumer.isStopped()) {
+        if(appContext.statusoppdateringCountOnPremConsumer.isStopped()) {
             stoppedConsumers.add(EventType.STATUSOPPDATERING)
         }
         return stoppedConsumers
@@ -73,8 +73,11 @@ class PeriodicConsumerCheck(
         if (appContext.oppgaveCountAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.OPPGAVE)
         }
-        if(appContext.statusoppdateringAivenConsumer.isStopped()) {
+        if(appContext.statusoppdateringCountAivenConsumer.isStopped()) {
             stoppedConsumers.add(EventType.STATUSOPPDATERING)
+        }
+        if(appContext.feilresponsCountAivenConsumer.isStopped()) {
+            stoppedConsumers.add(EventType.FEILRESPONS)
         }
         return stoppedConsumers
     }
