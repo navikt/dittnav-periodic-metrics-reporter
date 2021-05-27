@@ -34,9 +34,6 @@ class SessionComparator(
 
     private fun logWarningWithInfoAboutWhatSourcesWasMissingTheEventType(eventType: EventType) {
         when {
-            internalEventTypes.contains(eventType) -> {
-                log.info("Fant eventer for intern eventtype $eventType, telles foreløpig ikke i cache.")
-            }
             topic.getEventTypesWithSession().contains(eventType) -> {
                 val numberOfEvents = topic.getForType(eventType).getNumberOfUniqueEvents()
                 log.warn("Eventtypen '$eventType' ble kun telt for topic, og ikke i databasen. Fant $numberOfEvents eventer.")
