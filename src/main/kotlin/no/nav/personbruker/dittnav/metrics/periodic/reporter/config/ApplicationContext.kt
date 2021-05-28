@@ -66,7 +66,7 @@ class ApplicationContext {
     val innboksCounterAiven = TopicEventTypeCounter(innboksCountAivenConsumer, EventType.INNBOKS_INTERN, environment.deltaCountingEnabled)
 
     val statusoppdateringKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.STATUSOPPDATERING)
-    val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerOnPremProps(environment, EventType.STATUSOPPDATERING)
+    val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.STATUSOPPDATERING)
     var statusoppdateringOnPremConsumer = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
     var statusoppdateringAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
     val statusoppdateringCounterOnPrem = TopicEventTypeCounter(statusoppdateringOnPremConsumer, EventType.STATUSOPPDATERING, environment.deltaCountingEnabled)
