@@ -39,7 +39,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns true
         coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns true
         coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountOnPremConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().size `should be equal to` 2
@@ -51,7 +51,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns true
         coEvery { appContext.doneCountAivenConsumer.isStopped() } returns true
         coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountAivenConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStoppedAiven().size `should be equal to` 2
@@ -63,7 +63,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns false
         coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountOnPremConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStoppedOnPrem().`should be empty`()
@@ -75,7 +75,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns false
         coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountAivenConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.getConsumersThatHaveStoppedAiven().`should be empty`()
@@ -87,7 +87,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns true
         coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns true
-        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns true
+        coEvery { appContext.statusoppdateringCountOnPremConsumer.isStopped() } returns true
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
@@ -100,7 +100,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns true
         coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns true
-        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns true
+        coEvery { appContext.statusoppdateringCountAivenConsumer.isStopped() } returns true
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
@@ -113,7 +113,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountOnPremConsumer.isStopped() } returns false
         coEvery { appContext.doneCountOnPremConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountOnPremConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringOnPremConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountOnPremConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()
@@ -126,7 +126,7 @@ class PeriodicConsumerCheckTest {
         coEvery { appContext.beskjedCountAivenConsumer.isStopped() } returns false
         coEvery { appContext.doneCountAivenConsumer.isStopped() } returns false
         coEvery { appContext.oppgaveCountAivenConsumer.isStopped() } returns false
-        coEvery { appContext.statusoppdateringAivenConsumer.isStopped() } returns false
+        coEvery { appContext.statusoppdateringCountAivenConsumer.isStopped() } returns false
 
         runBlocking {
             periodicConsumerCheck.checkIfConsumersAreRunningAndRestartIfNot()

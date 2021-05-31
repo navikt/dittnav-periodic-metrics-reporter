@@ -11,7 +11,8 @@ class TopicEventCounterAivenService<K>(
     val innboksCounter: TopicEventTypeCounter<K>,
     val oppgaveCounter: TopicEventTypeCounter<K>,
     val statusoppdateringCounter: TopicEventTypeCounter<K>,
-    val doneCounter: TopicEventTypeCounter<K>
+    val doneCounter: TopicEventTypeCounter<K>,
+    val feilresponsCounter: TopicEventTypeCounter<K>
     ) {
 
         suspend fun countAllEventTypesAsync(): CountingMetricsSessions = coroutineScope {
@@ -34,6 +35,12 @@ class TopicEventCounterAivenService<K>(
                 async { TopicMetricsSession(EventType.DONE_INTERN) }
             }
 
+            val feilrespons = if(isOtherEnvironmentThanProd()) {
+                feilresponsCounter.countEventsAsync()
+            } else {
+                async { TopicMetricsSession(EventType.FEILRESPONS) }
+            }
+
             val innboks = async { TopicMetricsSession(EventType.INNBOKS_INTERN) }
             val statusoppdateringer = async { TopicMetricsSession(EventType.STATUSOPPDATERING_INTERN) }
 
@@ -44,6 +51,7 @@ class TopicEventCounterAivenService<K>(
             sessions.put(EventType.INNBOKS_INTERN, innboks.await())
             sessions.put(EventType.OPPGAVE_INTERN, oppgaver.await())
             sessions.put(EventType.STATUSOPPDATERING_INTERN, statusoppdateringer.await())
+            sessions.put(EventType.FEILRESPONS, feilrespons.await())
 
             sessions
         }

@@ -30,12 +30,12 @@ object Kafka {
     const val innboksTopicNameAiven = "min-side.privat-brukernotifikasjon-innboks-v1"
     const val oppgaveTopicNameAiven = "min-side.privat-brukernotifikasjon-oppgave-v1"
     const val statusoppdateringTopicNameAiven = "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
+    const val feilresponsTopicNameAiven = "min-side.aapen-brukernotifikasjon-feilrespons-v1"
 
     fun counterConsumerOnPremProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
         return Properties().apply {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.bootstrapServers)
             put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.schemaRegistryUrl)
-            put(ConsumerConfig.CLIENT_ID_CONFIG, "onprem" + getGroupId(env, eventTypeToConsume) + getHostname(InetSocketAddress(0)))
             commonProps(env, eventTypeToConsume)
             if (enableSecurity) {
                 putAll(credentialPropsOnPrem(env))
@@ -47,7 +47,6 @@ object Kafka {
         return Properties().apply {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.aivenBrokers)
             put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, env.aivenSchemaRegistry)
-            put(ConsumerConfig.CLIENT_ID_CONFIG, "aiven" + getGroupId(env, eventTypeToConsume) + getHostname(InetSocketAddress(0)))
             commonProps(env, eventTypeToConsume)
             if (enableSecurity) {
                 putAll(credentialPropsAiven(env))
@@ -88,8 +87,10 @@ object Kafka {
     }
 
     private fun Properties.commonProps(env: Environment, eventTypeToConsume: EventType) {
+        val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
         val sixMinutes = 6 * 60 * 1000
-        put(ConsumerConfig.GROUP_ID_CONFIG, getGroupId(env, eventTypeToConsume))
+        put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
+        put(ConsumerConfig.CLIENT_ID_CONFIG, groupIdAndEventType + getHostname(InetSocketAddress(0)))
         put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, sixMinutes)
         put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false)
         put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, SwallowSerializationErrorsAvroDeserializer::class.java)
@@ -97,9 +98,4 @@ object Kafka {
         put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
     }
-
-    private fun getGroupId(env: Environment, eventType: EventType): String {
-        return "${env.groupIdBase}_${eventType.eventType}"
-    }
-
 }

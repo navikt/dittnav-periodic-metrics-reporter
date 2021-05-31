@@ -6,7 +6,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 object CountingMetricsSessionsObjectMother {
 
-    fun giveMeDatabaseSessionsForAllEventTypes(): CountingMetricsSessions {
+    fun giveMeDatabaseSessionsForAllExternalEventTypes(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, DbCountingMetricsSessionObjectMother.giveMeBeskjedSessionWithOneCountedEvent())
             put(EventType.DONE, DbCountingMetricsSessionObjectMother.giveMeDoneSessionWithTwoCountedEvents())
@@ -26,38 +26,52 @@ object CountingMetricsSessionsObjectMother {
         }
     }
 
-    fun giveMeDatabaseSessionsForAllEventTypesExceptForInnboks(): CountingMetricsSessions {
+    fun giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, DbCountingMetricsSessionObjectMother.giveMeBeskjedSessionWithOneCountedEvent())
             put(EventType.DONE, DbCountingMetricsSessionObjectMother.giveMeDoneSessionWithTwoCountedEvents())
             put(EventType.OPPGAVE, DbCountingMetricsSessionObjectMother.giveMeOppgaveSessionWithFourCountedEvents())
+            put(EventType.STATUSOPPDATERING, DbCountingMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFourCountedEvents())
         }
     }
 
-    fun giveMeTopicSessionsForAllEventTypes(): CountingMetricsSessions {
+    fun giveMeTopicSessionsForAllInternalEventTypes(): CountingMetricsSessions {
+        return CountingMetricsSessions().apply {
+            put(EventType.BESKJED_INTERN, TopicMetricsSessionObjectMother.giveMeBeskjedInternSessionWithTwoCountedEvents())
+            put(EventType.DONE_INTERN, TopicMetricsSessionObjectMother.giveMeDoneInternSessionWithThreeCountedEvent())
+            put(EventType.INNBOKS_INTERN, TopicMetricsSessionObjectMother.giveMeInnboksInternSessionWithFourCountedEvent())
+            put(EventType.OPPGAVE_INTERN, TopicMetricsSessionObjectMother.giveMeOppgaveInternSessionWithFiveCountedEvent())
+            put(EventType.STATUSOPPDATERING_INTERN, TopicMetricsSessionObjectMother.giveMeStatusoppdateringInternSessionWithFiveCountedEvent())
+
+        }
+    }
+
+    fun giveMeTopicSessionsForAllExternalEventTypes(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, TopicMetricsSessionObjectMother.giveMeBeskjedSessionWithTwoCountedEvents())
             put(EventType.DONE, TopicMetricsSessionObjectMother.giveMeDoneSessionWithThreeCountedEvent())
             put(EventType.INNBOKS, TopicMetricsSessionObjectMother.giveMeInnboksSessionWithFourCountedEvent())
             put(EventType.OPPGAVE, TopicMetricsSessionObjectMother.giveMeOppgaveSessionWithFiveCountedEvent())
+            put(EventType.STATUSOPPDATERING, TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFiveCountedEvent())
         }
     }
 
-    fun giveMeTopicSessionsForAllEventTypesExceptForInnboks(): CountingMetricsSessions {
+    fun giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, TopicMetricsSessionObjectMother.giveMeBeskjedSessionWithTwoCountedEvents())
             put(EventType.DONE, TopicMetricsSessionObjectMother.giveMeDoneSessionWithThreeCountedEvent())
             put(EventType.OPPGAVE, TopicMetricsSessionObjectMother.giveMeOppgaveSessionWithFiveCountedEvent())
+            put(EventType.STATUSOPPDATERING, TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFiveCountedEvent())
         }
     }
 
-    fun giveMeTopicSessionsWithSingleEventForAllEventTypes(): CountingMetricsSessions {
+    fun giveMeTopicSessionsWithSingleEventForAllExternalEventTypes(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, TopicMetricsSessionObjectMother.giveMeBeskjedSessionWithOneCountedEvent())
             put(EventType.DONE, TopicMetricsSessionObjectMother.giveMeDoneSessionWithOneCountedEvent())
             put(EventType.INNBOKS, TopicMetricsSessionObjectMother.giveMeInnboksSessionWithOneCountedEvent())
             put(EventType.OPPGAVE, TopicMetricsSessionObjectMother.giveMeOppgaveSessionWithOneCountedEvent())
+            put(EventType.STATUSOPPDATERING, TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithOneCountedEvent())
         }
     }
-
 }

@@ -4,6 +4,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.internal.NokkelFeilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with message containing`
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
@@ -27,6 +28,7 @@ internal class TopicEventCounterServiceTest {
     private val statusoppdateringInternCountConsumer: Consumer<NokkelIntern, GenericRecord> = mockk(relaxed = true)
     private val doneCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
     private val doneInternCountConsumer: Consumer<NokkelIntern, GenericRecord> = mockk(relaxed = true)
+    private val feilresponsCountConsumer: Consumer<NokkelFeilrespons, GenericRecord> = mockk(relaxed = true)
     private val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, false)
     private val beskjedInternCounter = TopicEventTypeCounter(beskjedInternCountConsumer, EventType.BESKJED_INTERN, false)
     private val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, false)
@@ -37,6 +39,7 @@ internal class TopicEventCounterServiceTest {
     private val statusoppdateringInternCounter = TopicEventTypeCounter(statusoppdateringInternCountConsumer, EventType.STATUSOPPDATERING_INTERN, false)
     private val doneCounter = TopicEventTypeCounter(doneCountConsumer, EventType.DONE, false)
     private val doneInternCounter = TopicEventTypeCounter(doneInternCountConsumer, EventType.DONE_INTERN, false)
+    private val feilresponsCounter = TopicEventTypeCounter(feilresponsCountConsumer, EventType.FEILRESPONS, false)
 
     @Test
     internal fun `Should handle exceptions and rethrow as internal exception`() {
@@ -51,6 +54,7 @@ internal class TopicEventCounterServiceTest {
         coEvery { statusoppdateringInternCountConsumer.kafkaConsumer.poll(any<Duration>()) } throws simulatedException
         coEvery { doneCountConsumer.kafkaConsumer.poll(any<Duration>()) } throws simulatedException
         coEvery { doneInternCountConsumer.kafkaConsumer.poll(any<Duration>()) } throws simulatedException
+        coEvery { feilresponsCountConsumer.kafkaConsumer.poll(any<Duration>()) } throws simulatedException
 
         invoking {
             runBlocking {
@@ -111,5 +115,11 @@ internal class TopicEventCounterServiceTest {
                 statusoppdateringInternCounter.countEventsAsync()
             }
         } `should throw` CountException::class `with message containing` "statusoppdatering_intern"
+
+        invoking {
+            runBlocking {
+                feilresponsCounter.countEventsAsync()
+            }
+        } `should throw` CountException::class `with message containing` "feilrespons"
     }
 }
