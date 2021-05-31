@@ -7,7 +7,6 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Swallo
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ConfigUtil.isCurrentlyRunningOnNais
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.slf4j.Logger
@@ -20,18 +19,18 @@ object Kafka {
 
     private val log: Logger = LoggerFactory.getLogger(Kafka::class.java)
 
-    val doneTopicNameOnPrem = "aapen-brukernotifikasjon-done-v1"
-    val beskjedTopicNameOnPrem = "aapen-brukernotifikasjon-nyBeskjed-v1"
-    val innboksTopicNameOnPrem = "aapen-brukernotifikasjon-nyInnboks-v1"
-    val oppgaveTopicNameOnPrem = "aapen-brukernotifikasjon-nyOppgave-v1"
-    val statusoppdateringTopicNameOnPrem = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+    const val doneTopicNameOnPrem = "aapen-brukernotifikasjon-done-v1"
+    const val beskjedTopicNameOnPrem = "aapen-brukernotifikasjon-nyBeskjed-v1"
+    const val innboksTopicNameOnPrem = "aapen-brukernotifikasjon-nyInnboks-v1"
+    const val oppgaveTopicNameOnPrem = "aapen-brukernotifikasjon-nyOppgave-v1"
+    const val statusoppdateringTopicNameOnPrem = "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
 
-    val doneTopicNameAiven= "min-side.privat-brukernotifikasjon-done-v1"
-    val beskjedTopicNameAiven = "min-side.privat-brukernotifikasjon-beskjed-v1"
-    val innboksTopicNameAiven = "min-side.privat-brukernotifikasjon-innboks-v1"
-    val oppgaveTopicNameAiven = "min-side.privat-brukernotifikasjon-oppgave-v1"
-    val statusoppdateringTopicNameAiven = "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
-    val feilresponsTopicNameAiven = "min-side.aapen-brukernotifikasjon-feilrespons-v1"
+    const val doneTopicNameAiven = "min-side.privat-brukernotifikasjon-done-v1"
+    const val beskjedTopicNameAiven = "min-side.privat-brukernotifikasjon-beskjed-v1"
+    const val innboksTopicNameAiven = "min-side.privat-brukernotifikasjon-innboks-v1"
+    const val oppgaveTopicNameAiven = "min-side.privat-brukernotifikasjon-oppgave-v1"
+    const val statusoppdateringTopicNameAiven = "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
+    const val feilresponsTopicNameAiven = "min-side.aapen-brukernotifikasjon-feilrespons-v1"
 
     fun counterConsumerOnPremProps(env: Environment, eventTypeToConsume: EventType, enableSecurity: Boolean = isCurrentlyRunningOnNais()): Properties {
         return Properties().apply {
@@ -99,5 +98,4 @@ object Kafka {
         put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
         put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
     }
-
 }
