@@ -1,12 +1,10 @@
-package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.slf4j.LoggerFactory
 
 class DbEventCounterGCPService(

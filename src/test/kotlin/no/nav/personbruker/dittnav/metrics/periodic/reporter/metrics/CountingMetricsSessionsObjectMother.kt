@@ -74,4 +74,16 @@ object CountingMetricsSessionsObjectMother {
             put(EventType.STATUSOPPDATERING, TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithOneCountedEvent())
         }
     }
+
+    fun giveMeTopicSessionsWithSingleEventForFeilrespons(): CountingMetricsSessions {
+        return CountingMetricsSessions().apply {
+            put(EventType.FEILRESPONS, TopicMetricsSessionObjectMother.giveMeFeilresponsSessionWithOneCountedEvent())
+        }
+    }
+
+    fun giveMeTopicSessionsWithFiveEventsForFeilrespons(): CountingMetricsSessions {
+        return CountingMetricsSessions().apply {
+            put(EventType.FEILRESPONS, TopicMetricsSessionObjectMother.giveMeFeilresponsSessionWithFiveCountedEvent())
+        }
+    }
 }

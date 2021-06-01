@@ -152,4 +152,20 @@ object TopicMetricsSessionObjectMother {
         statusoppdateringSession.countEvent(UniqueKafkaEventIdentifier("65", "sysBruker", "123"))
         return statusoppdateringSession
     }
+
+    fun giveMeFeilresponsSessionWithOneCountedEvent(): TopicMetricsSession {
+        val feilresponsSession = TopicMetricsSession(EventType.FEILRESPONS)
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("71", "sysBruker",))
+        return feilresponsSession
+    }
+
+    fun giveMeFeilresponsSessionWithFiveCountedEvent(): TopicMetricsSession {
+        val feilresponsSession = TopicMetricsSession(EventType.FEILRESPONS)
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("71", "sysBruker"))
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("72", "sysBruker"))
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("73", "sysBruker"))
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("74", "sysBruker"))
+        feilresponsSession.countEvent(UniqueKafkaEventIdentifier.createEventWithoutValidFnr("75", "sysBruker"))
+        return feilresponsSession
+    }
 }
