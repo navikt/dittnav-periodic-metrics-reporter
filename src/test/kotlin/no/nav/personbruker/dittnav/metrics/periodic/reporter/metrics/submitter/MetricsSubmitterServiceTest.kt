@@ -6,7 +6,7 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessionsObjectMother
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DbEventCounterGCPService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
@@ -125,10 +125,8 @@ internal class MetricsSubmitterServiceTest {
             CountingMetricsSessionsObjectMother.giveMeTopicSessionsWithSingleEventForAllExternalEventTypes()
         val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
         val dbMetricInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
-        coEvery {
-            topicEventCounterServiceOnPrem.countAllEventTypesAsync()
-        } returns sessionWithCorrectCount andThen simulatedWrongCount andThen sessionWithCorrectCount
 
+        coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns sessionWithCorrectCount andThen simulatedWrongCount andThen sessionWithCorrectCount
         coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns sessionWithCorrectCount andThen simulatedWrongCount andThen sessionWithCorrectCount
         coEvery { dbEventCounterOnPremService.countAllEventTypesAsync() } returns dbMetricsSessions
         coEvery { dbEventCounterGCPService.countAllEventTypesAsync() } returns dbMetricInternSessions
@@ -151,6 +149,28 @@ internal class MetricsSubmitterServiceTest {
         confirmVerified(dbEventCounterOnPremService)
         confirmVerified(kafkaMetricsReporter)
         confirmVerified(dbMetricsReporter)
+    }
+
+    @Test
+    fun `Should report metrics even if Feilrespons has a lower count than the previous count session`() {
+        val sessionWithHighestCount = CountingMetricsSessionsObjectMother.giveMeTopicSessionsWithFiveEventsForFeilrespons()
+        val sessionWithLowestCount = CountingMetricsSessionsObjectMother.giveMeTopicSessionsWithSingleEventForFeilrespons()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
+        val dbMetricInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
+        coEvery { topicEventCounterServiceAiven.countAllEventTypesAsync() } returns sessionWithHighestCount andThen sessionWithLowestCount
+        coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns sessionWithHighestCount andThen sessionWithLowestCount
+        coEvery { dbEventCounterOnPremService.countAllEventTypesAsync() } returns dbMetricsSessions
+        coEvery { dbEventCounterGCPService.countAllEventTypesAsync() } returns dbMetricInternSessions
+
+        runBlocking {
+            submitter.submitMetrics()
+            submitter.submitMetrics()
+        }
+
+        coVerify(exactly = 2) { topicEventCounterServiceAiven.countAllEventTypesAsync() }
+        coVerify(exactly = 2 * 2) { kafkaMetricsReporter.report(any()) }
+
+        confirmVerified(topicEventCounterServiceAiven)
     }
 
     @Test
