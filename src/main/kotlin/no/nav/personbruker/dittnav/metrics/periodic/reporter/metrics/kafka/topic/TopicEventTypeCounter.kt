@@ -11,14 +11,18 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetT
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
+import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.Instant
 
 class TopicEventTypeCounter<K>(
         val consumer: Consumer<K, GenericRecord>,
         val eventType: EventType,
-        val deltaCountingEnabled: Boolean
+        val deltaCountingEnabled: Boolean,
+        val requireEventsInFirstBatch : Boolean = false
 ) {
+
+    private val log = LoggerFactory.getLogger(TopicEventTypeCounter::class.java)
 
     private var previousSession: TopicMetricsSession? = null
 
@@ -40,28 +44,44 @@ class TopicEventTypeCounter<K>(
     }
 
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
-
         val startTime = Instant.now()
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
 
         var records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
-        countBatch(records, session)
 
-        while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
-            records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+        if (records.foundRecords()) {
             countBatch(records, session)
-        }
 
-        if (deltaCountingEnabled) {
-            previousSession = session
+            while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
+                records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
+                countBatch(records, session)
+            }
+
+            if (deltaCountingEnabled) {
+                previousSession = session
+            } else {
+                consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            }
+
         } else {
-            consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
+            log.info("Ingen eventer funnet ved første polling etter $eventType, dette kan indikerer at noe er feil.")
+            if(shouldCountAllEventsOnTopicInNextPoll()) {
+                resetCountingSession()
+            }
         }
 
         session.calculateProcessingTime()
 
         return session
+    }
+
+    private fun shouldCountAllEventsOnTopicInNextPoll() = deltaCountingEnabled && requireEventsInFirstBatch
+
+    private fun resetCountingSession() {
+        log.info("Resetter tellesesjonen for $eventType, og teller alle eventer i neste runde.")
+        previousSession = null
+        consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
     }
 
     companion object {
@@ -75,6 +95,10 @@ class TopicEventTypeCounter<K>(
 
     private fun maxTimeoutExceeded(start: Instant, config: TimeoutConfig): Boolean {
         return Instant.now() > start.plus(config.maxTotalTimeout)
+    }
+
+    fun getPreviousSession(): TopicMetricsSession? {
+        return previousSession
     }
 
     private data class TimeoutConfig(private val initialTimeout: Duration,
@@ -97,6 +121,6 @@ class TopicEventTypeCounter<K>(
             require(regularTimeut.toMillis() > 0) { "regularTimeout kan ikke være mindre enn 1 millisekund." }
         }
 
-
     }
+
 }
