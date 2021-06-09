@@ -25,7 +25,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     configureShutdownHook(appContext)
 
     log.info("Delta counting enabled: ${appContext.environment.deltaCountingEnabled}")
-    log.info("Require events in first batch: ${appContext.environment.requireEventsInFirstBatch}")
+    log.info("Require events in first batch enabled: ${appContext.environment.requireEventsInFirstBatch}")
 }
 
 private fun Application.configureStartupHook(appContext: ApplicationContext) {
