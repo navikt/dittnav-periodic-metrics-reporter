@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.M
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.DbEventCounterGCPService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
@@ -67,13 +67,15 @@ class MetricsSubmitterService(
     ) {
         val kafkaEventSession = topicSessions.getForType(eventType)
 
-        if (countedMoreKafkaEventsThanLastCount(kafkaEventSession, eventType)) {
+        if(EventType.FEILRESPONS == eventType) {
+            kafkaMetricsReporter.report(kafkaEventSession as TopicMetricsSession)
+            lastReportedUniqueKafkaEvents[eventType] = kafkaEventSession.getNumberOfUniqueEvents()
+        } else if (countedMoreKafkaEventsThanLastCount(kafkaEventSession, eventType)) {
             val dbSession = dbSessions.getForType(eventType)
             dbMetricsReporter.report(dbSession as DbCountingMetricsSession)
             kafkaMetricsReporter.report(kafkaEventSession as TopicMetricsSession)
             lastReportedUniqueKafkaEvents[eventType] = kafkaEventSession.getNumberOfUniqueEvents()
-
-        } else if (!currentAndLastCountWasZero(kafkaEventSession, eventType)) {
+        }  else if (!currentAndLastCountWasZero(kafkaEventSession, eventType)) {
             val currentCount = kafkaEventSession.getNumberOfUniqueEvents()
             val previousCount = lastReportedUniqueKafkaEvents.getOrDefault(eventType, 0)
             val msg = "Det har oppstått en tellefeil, rapporterer derfor ikke nye $eventType-metrikker. " +

@@ -1,12 +1,10 @@
-package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics
+package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessions
 import org.slf4j.LoggerFactory
 
 class DbEventCounterGCPService(
@@ -32,6 +30,9 @@ class DbEventCounterGCPService(
         val done = async {
             countDoneEvents()
         }
+        val feilrespons = async {
+            countFeilrespons()
+        }
 
         val sessions = CountingMetricsSessions()
         sessions.put(EventType.BESKJED_INTERN, beskjeder.await())
@@ -39,6 +40,7 @@ class DbEventCounterGCPService(
         sessions.put(EventType.INNBOKS_INTERN, innboks.await())
         sessions.put(EventType.OPPGAVE_INTERN, oppgave.await())
         sessions.put(EventType.STATUSOPPDATERING_INTERN, statusoppdatering.await())
+        sessions.put(EventType.FEILRESPONS, feilrespons.await())
         return@withContext sessions
     }
 
@@ -60,5 +62,9 @@ class DbEventCounterGCPService(
 
     fun countDoneEvents(): DbCountingMetricsSession {
         return DbCountingMetricsSession(EventType.DONE_INTERN)
+    }
+
+    fun countFeilrespons(): DbCountingMetricsSession {
+        return DbCountingMetricsSession(EventType.FEILRESPONS)
     }
 }

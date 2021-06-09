@@ -9,7 +9,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.kaf
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup.setupCountOnPremConsumer
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.AvroNokkelObjectMother.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
@@ -43,7 +43,7 @@ class TopicEventCounterOnPremServiceIT {
         `Produser det samme settet av eventer tre ganger`(topic)
 
         val kafkaProps = Kafka.counterConsumerOnPremProps(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountOnPremConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
@@ -66,7 +66,7 @@ class TopicEventCounterOnPremServiceIT {
     @Test
     fun `Ved deltatelling skal metrikkene akkumuleres fra forrige telling`() {
         val kafkaProps = Kafka.counterConsumerOnPremProps(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountOnPremConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -97,11 +97,11 @@ class TopicEventCounterOnPremServiceIT {
         val fromScratchCountingEnv = testEnvironment.copy(groupIdBase = "fromScratch")
 
         val kafkaPropsDeltaCounting = Kafka.counterConsumerOnPremProps(deltaCountingEnv, EventType.BESKJED, true)
-        val deltaCountingConsumer = setupCountOnPremConsumer<GenericRecord>(kafkaPropsDeltaCounting, topic)
+        val deltaCountingConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaPropsDeltaCounting, topic)
         deltaCountingConsumer.startSubscription()
 
         val kafkaPropsFromScratchCounting = Kafka.counterConsumerOnPremProps(fromScratchCountingEnv, EventType.BESKJED, true)
-        val fromScratchCountingConsumer = setupCountOnPremConsumer<GenericRecord>(kafkaPropsFromScratchCounting, topic)
+        val fromScratchCountingConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
@@ -142,7 +142,7 @@ class TopicEventCounterOnPremServiceIT {
     fun `Skal telle riktig antall eventer flere ganger paa rad ved bruk av samme kafka-klient`() {
         `Produser det samme settet av eventer tre ganger`(topic)
         val kafkaProps = Kafka.counterConsumerOnPremProps(testEnvironment, EventType.BESKJED, true)
-        val beskjedCountConsumer = setupCountOnPremConsumer<GenericRecord>(kafkaProps, topic)
+        val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
         val topicEventTypeCounter = TopicEventTypeCounter(
@@ -183,5 +183,4 @@ class TopicEventCounterOnPremServiceIT {
             fikkProduserBatch1 && fikkProduserBatch2 && fikkProduserBatch3
         } `should be equal to` true
     }
-
 }

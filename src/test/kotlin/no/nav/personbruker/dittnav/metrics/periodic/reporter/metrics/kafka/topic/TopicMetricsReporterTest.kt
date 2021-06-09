@@ -158,9 +158,21 @@ internal class TopicMetricsReporterTest {
 
         invoking {
             runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeBeskjedInternSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "beskjed_intern"
+
+        invoking {
+            runBlocking {
                 topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeDoneSessionWithOneCountedEvent())
             }
         } `should throw` MetricsReportingException::class `with message containing` "done"
+
+        invoking {
+            runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeDoneInternSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "done_intern"
 
         invoking {
             runBlocking {
@@ -170,9 +182,33 @@ internal class TopicMetricsReporterTest {
 
         invoking {
             runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeInnboksInternSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "innboks_intern"
+
+        invoking {
+            runBlocking {
                 topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeOppgaveSessionWithOneCountedEvent())
             }
         } `should throw` MetricsReportingException::class `with message containing` "oppgave"
+
+        invoking {
+            runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeOppgaveInternSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "oppgave_intern"
+
+        invoking {
+            runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "statusoppdatering"
+
+        invoking {
+            runBlocking {
+                topicMetricsReporter.report(TopicMetricsSessionObjectMother.giveMeStatusoppdateringInternSessionWithOneCountedEvent())
+            }
+        } `should throw` MetricsReportingException::class `with message containing` "statusoppdatering_intern"
     }
 
 }

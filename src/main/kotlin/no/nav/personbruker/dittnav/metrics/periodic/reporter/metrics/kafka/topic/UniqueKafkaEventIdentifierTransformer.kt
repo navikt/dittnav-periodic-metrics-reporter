@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.internal.NokkelFeilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import org.apache.avro.generic.GenericRecord
@@ -27,6 +28,9 @@ object UniqueKafkaEventIdentifierTransformer {
             is NokkelIntern -> {
                 fromNokkelIntern(key)
             }
+            is NokkelFeilrespons -> {
+                fromNokkelFeilrespons(key)
+            }
             else -> {
                 val invalidEvent = UniqueKafkaEventIdentifier.createInvalidEvent()
                 log.warn("Kan ikke telle eventet, fordi kafka-key (Nokkel) er av ukjent type. Transformerer til et dummy-event: $invalidEvent.")
@@ -40,6 +44,13 @@ object UniqueKafkaEventIdentifierTransformer {
             key.getEventId(),
             key.getSystembruker(),
             key.getFodselsnummer()
+        )
+    }
+
+    private fun fromNokkelFeilrespons(key: NokkelFeilrespons): UniqueKafkaEventIdentifier {
+        return UniqueKafkaEventIdentifier.createEventWithoutValidFnr(
+            key.getEventId(),
+            key.getSystembruker(),
         )
     }
 

@@ -10,14 +10,6 @@ class CountingMetricsSessions {
         sessions[eventType] = session
     }
 
-    fun totalUniqueEvents(): Int {
-        var total = 0
-        sessions.forEach { (_, session: CountingMetricsSession) ->
-            total += session.getNumberOfUniqueEvents()
-        }
-        return total
-    }
-
     fun getEventTypesWithSession(): Set<EventType> {
         return sessions.keys
     }
