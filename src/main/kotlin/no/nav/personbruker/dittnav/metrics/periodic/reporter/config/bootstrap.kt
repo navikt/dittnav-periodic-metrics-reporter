@@ -8,6 +8,9 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.consumerApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.healthApi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.metricsSubmitterApi
+import org.slf4j.LoggerFactory
+
+val log = LoggerFactory.getLogger(ApplicationContext::class.java)
 
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
     DefaultExports.initialize()
@@ -20,6 +23,9 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
 
     configureStartupHook(appContext)
     configureShutdownHook(appContext)
+
+    log.info("Delta counting enabled: ${appContext.environment.deltaCountingEnabled}")
+    log.info("Require events in first batch: ${appContext.environment.requireEventsInFirstBatch}")
 }
 
 private fun Application.configureStartupHook(appContext: ApplicationContext) {

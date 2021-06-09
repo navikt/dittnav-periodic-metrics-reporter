@@ -9,7 +9,6 @@ class TopicMetricsSession : CountingMetricsSession {
 
     val eventType: EventType
 
-
     private var duplicatesByProdusent: MutableMap<String, Int>
     private var totalNumberOfEventsByProducer: MutableMap<String, Int>
     private val uniqueEventsOnTopicByProducer: MutableMap<String, Int>

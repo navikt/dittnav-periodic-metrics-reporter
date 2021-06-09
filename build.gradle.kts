@@ -106,6 +106,9 @@ tasks {
         environment("KAFKA_SCHEMA_REGISTRY_USER", "schema-user")
         environment("KAFKA_SCHEMA_REGISTRY_PASSWORD", "schema-pwd")
 
+        environment("DELTA_COUNTING_ENABLED", "true")
+        environment("REQUIRE_EVENTS_IN_FIRST_BATCH", "true")
+
         main = application.mainClass.get()
         classpath = sourceSets["main"].runtimeClasspath
     }
