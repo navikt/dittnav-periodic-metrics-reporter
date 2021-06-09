@@ -50,40 +50,95 @@ class ApplicationContext {
     val beskjedKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.BESKJED_INTERN)
     var beskjedCountOnPremConsumer = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
     var beskjedCountAivenConsumer = initializeCountConsumerAiven(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
-    val beskjedCounterOnPrem = TopicEventTypeCounter(beskjedCountOnPremConsumer, EventType.BESKJED, environment.deltaCountingEnabled)
-    val beskjedCounterAiven = TopicEventTypeCounter(beskjedCountAivenConsumer, EventType.BESKJED_INTERN, environment.deltaCountingEnabled)
+    val beskjedCounterOnPrem = TopicEventTypeCounter(
+        beskjedCountOnPremConsumer,
+        EventType.BESKJED,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
+    val beskjedCounterAiven = TopicEventTypeCounter(
+        beskjedCountAivenConsumer,
+        EventType.BESKJED_INTERN,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val oppgaveKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.OPPGAVE)
     val oppgaveKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.OPPGAVE_INTERN)
     var oppgaveCountOnPremConsumer = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
     var oppgaveCountAivenConsumer = initializeCountConsumerAiven(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
-    val oppgaveCounterOnPrem = TopicEventTypeCounter(oppgaveCountOnPremConsumer, EventType.OPPGAVE, environment.deltaCountingEnabled)
-    val oppgaveCounterAiven = TopicEventTypeCounter(oppgaveCountAivenConsumer, EventType.OPPGAVE_INTERN, environment.deltaCountingEnabled)
+    val oppgaveCounterOnPrem = TopicEventTypeCounter(
+        oppgaveCountOnPremConsumer,
+        EventType.OPPGAVE,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
+    val oppgaveCounterAiven = TopicEventTypeCounter(
+        oppgaveCountAivenConsumer,
+        EventType.OPPGAVE_INTERN,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val innboksKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.INNBOKS)
     val innboksKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.INNBOKS_INTERN)
     var innboksCountOnPremConsumer = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
     var innboksCountAivenConsumer = initializeCountConsumerAiven(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
-    val innboksCounterOnPrem = TopicEventTypeCounter(innboksCountOnPremConsumer, EventType.INNBOKS, environment.deltaCountingEnabled)
-    val innboksCounterAiven = TopicEventTypeCounter(innboksCountAivenConsumer, EventType.INNBOKS_INTERN, environment.deltaCountingEnabled)
+    val innboksCounterOnPrem = TopicEventTypeCounter(
+        innboksCountOnPremConsumer,
+        EventType.INNBOKS,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
+    val innboksCounterAiven = TopicEventTypeCounter(
+        innboksCountAivenConsumer,
+        EventType.INNBOKS_INTERN,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val statusoppdateringKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.STATUSOPPDATERING)
     val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.STATUSOPPDATERING_INTERN)
     var statusoppdateringCountOnPremConsumer = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
     var statusoppdateringCountAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
-    val statusoppdateringCounterOnPrem = TopicEventTypeCounter(statusoppdateringCountOnPremConsumer, EventType.STATUSOPPDATERING, environment.deltaCountingEnabled)
-    val statusoppdateringCounterAiven = TopicEventTypeCounter(statusoppdateringCountAivenConsumer, EventType.STATUSOPPDATERING_INTERN, environment.deltaCountingEnabled)
+    val statusoppdateringCounterOnPrem = TopicEventTypeCounter(
+        statusoppdateringCountOnPremConsumer,
+        EventType.STATUSOPPDATERING,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
+    val statusoppdateringCounterAiven = TopicEventTypeCounter(
+        statusoppdateringCountAivenConsumer,
+        EventType.STATUSOPPDATERING_INTERN,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val doneKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.DONE)
     val doneKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.DONE_INTERN)
     var doneCountOnPremConsumer = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
     var doneCountAivenConsumer = initializeCountConsumerAiven(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
-    val doneCounterOnPrem = TopicEventTypeCounter(doneCountOnPremConsumer, EventType.DONE, environment.deltaCountingEnabled)
-    val doneCounterAiven = TopicEventTypeCounter(doneCountAivenConsumer, EventType.DONE_INTERN, environment.deltaCountingEnabled)
+    val doneCounterOnPrem = TopicEventTypeCounter(
+        doneCountOnPremConsumer,
+        EventType.DONE,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
+    val doneCounterAiven = TopicEventTypeCounter(
+        doneCountAivenConsumer,
+        EventType.DONE_INTERN,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val feilresponsKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.FEILRESPONS)
     var feilresponsCountAivenConsumer = initializeCountConsumerAiven(feilresponsKafkaPropsAiven, Kafka.feilresponsTopicNameAiven)
-    val feilresponsCounterAiven = TopicEventTypeCounter(feilresponsCountAivenConsumer, EventType.FEILRESPONS, environment.deltaCountingEnabled)
+    val feilresponsCounterAiven = TopicEventTypeCounter(
+        feilresponsCountAivenConsumer,
+        EventType.FEILRESPONS,
+        environment.deltaCountingEnabled,
+        environment.requireEventsInFirstBatch
+    )
 
     val topicEventCounterServiceOnPrem = TopicEventCounterOnPremService(
         beskjedCounter = beskjedCounterOnPrem,
