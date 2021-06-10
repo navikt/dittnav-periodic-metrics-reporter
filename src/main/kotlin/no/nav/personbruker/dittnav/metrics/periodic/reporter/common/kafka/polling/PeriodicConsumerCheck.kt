@@ -33,33 +33,12 @@ class PeriodicConsumerCheck(
     }
 
     suspend fun checkIfConsumersAreRunningAndRestartIfNot() {
-        val stoppedConsumersOnPrem = getConsumersThatHaveStoppedOnPrem()
         val stoppedConsumersAiven = getConsumersThatHaveStoppedAiven()
-        if (stoppedConsumersOnPrem.isNotEmpty()) {
-            restartConsumersOnPrem(stoppedConsumersOnPrem)
-        }
         if(stoppedConsumersAiven.isNotEmpty()) {
             restartConsumersAiven(stoppedConsumersAiven)
         }
     }
 
-    fun getConsumersThatHaveStoppedOnPrem(): MutableList<EventType> {
-        val stoppedConsumers = mutableListOf<EventType>()
-
-        if (appContext.beskjedCountOnPremConsumer.isStopped()) {
-            stoppedConsumers.add(EventType.BESKJED)
-        }
-        if (appContext.doneCountOnPremConsumer.isStopped()) {
-            stoppedConsumers.add(EventType.DONE)
-        }
-        if (appContext.oppgaveCountOnPremConsumer.isStopped()) {
-            stoppedConsumers.add(EventType.OPPGAVE)
-        }
-        if(appContext.statusoppdateringCountOnPremConsumer.isStopped()) {
-            stoppedConsumers.add(EventType.STATUSOPPDATERING)
-        }
-        return stoppedConsumers
-    }
 
     fun getConsumersThatHaveStoppedAiven(): MutableList<EventType> {
         val stoppedConsumers = mutableListOf<EventType>()
@@ -80,12 +59,6 @@ class PeriodicConsumerCheck(
             stoppedConsumers.add(EventType.FEILRESPONS)
         }
         return stoppedConsumers
-    }
-
-    suspend fun restartConsumersOnPrem(stoppedConsumers: MutableList<EventType>) {
-        log.warn("Følgende konsumere on-prem hadde stoppet ${stoppedConsumers}, de(n) vil bli restartet.")
-        KafkaConsumerSetup.restartConsumersOnPrem(appContext)
-        log.info("$stoppedConsumers konsumern(e) har blitt restartet.")
     }
 
     suspend fun restartConsumersAiven(stoppedConsumers: MutableList<EventType>) {

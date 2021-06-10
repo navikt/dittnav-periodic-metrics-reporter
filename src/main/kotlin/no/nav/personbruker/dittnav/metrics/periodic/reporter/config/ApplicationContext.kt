@@ -5,15 +5,13 @@ import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameScrubber
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsProbe
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.MetricsRepository
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventTypeCounter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.resolveMetricsReporter
@@ -34,9 +32,7 @@ class ApplicationContext {
 
     val databaseOnPrem: Database = PostgresDatabase(environment)
     val databaseGCP: Database = PostgresDatabase(environment)
-    val metricsRepositoryOnPrem = MetricsRepository(databaseOnPrem)
     val metricsRepositoryGCP = MetricsRepository(databaseGCP)
-    val dbEventCounterOnPremService = DbEventCounterOnPremService(dbEventCountingMetricsProbe, metricsRepositoryOnPrem)
     val dbEventCounterGCPService = DbEventCounterGCPService(dbEventCountingMetricsProbe, metricsRepositoryGCP)
 
     val nameResolver = ProducerNameResolver(databaseOnPrem)
@@ -46,16 +42,8 @@ class ApplicationContext {
     val dbMetricsReporter = DbMetricsReporter(metricsReporter, nameScrubber)
     val kafkaMetricsReporter = TopicMetricsReporter(metricsReporter, nameScrubber)
 
-    val beskjedKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.BESKJED)
     val beskjedKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.BESKJED_INTERN)
-    var beskjedCountOnPremConsumer = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
     var beskjedCountAivenConsumer = initializeCountConsumerAiven(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
-    val beskjedCounterOnPrem = TopicEventTypeCounter(
-        beskjedCountOnPremConsumer,
-        EventType.BESKJED,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
-    )
     val beskjedCounterAiven = TopicEventTypeCounter(
         beskjedCountAivenConsumer,
         EventType.BESKJED_INTERN,
@@ -63,16 +51,8 @@ class ApplicationContext {
         environment.requireEventsInFirstBatch
     )
 
-    val oppgaveKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.OPPGAVE)
     val oppgaveKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.OPPGAVE_INTERN)
-    var oppgaveCountOnPremConsumer = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
     var oppgaveCountAivenConsumer = initializeCountConsumerAiven(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
-    val oppgaveCounterOnPrem = TopicEventTypeCounter(
-        oppgaveCountOnPremConsumer,
-        EventType.OPPGAVE,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
-    )
     val oppgaveCounterAiven = TopicEventTypeCounter(
         oppgaveCountAivenConsumer,
         EventType.OPPGAVE_INTERN,
@@ -80,16 +60,8 @@ class ApplicationContext {
         environment.requireEventsInFirstBatch
     )
 
-    val innboksKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.INNBOKS)
     val innboksKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.INNBOKS_INTERN)
-    var innboksCountOnPremConsumer = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
     var innboksCountAivenConsumer = initializeCountConsumerAiven(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
-    val innboksCounterOnPrem = TopicEventTypeCounter(
-        innboksCountOnPremConsumer,
-        EventType.INNBOKS,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
-    )
     val innboksCounterAiven = TopicEventTypeCounter(
         innboksCountAivenConsumer,
         EventType.INNBOKS_INTERN,
@@ -97,16 +69,8 @@ class ApplicationContext {
         environment.requireEventsInFirstBatch
     )
 
-    val statusoppdateringKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.STATUSOPPDATERING)
     val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.STATUSOPPDATERING_INTERN)
-    var statusoppdateringCountOnPremConsumer = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
     var statusoppdateringCountAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
-    val statusoppdateringCounterOnPrem = TopicEventTypeCounter(
-        statusoppdateringCountOnPremConsumer,
-        EventType.STATUSOPPDATERING,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
-    )
     val statusoppdateringCounterAiven = TopicEventTypeCounter(
         statusoppdateringCountAivenConsumer,
         EventType.STATUSOPPDATERING_INTERN,
@@ -114,16 +78,8 @@ class ApplicationContext {
         environment.requireEventsInFirstBatch
     )
 
-    val doneKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.DONE)
     val doneKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.DONE_INTERN)
-    var doneCountOnPremConsumer = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
     var doneCountAivenConsumer = initializeCountConsumerAiven(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
-    val doneCounterOnPrem = TopicEventTypeCounter(
-        doneCountOnPremConsumer,
-        EventType.DONE,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
-    )
     val doneCounterAiven = TopicEventTypeCounter(
         doneCountAivenConsumer,
         EventType.DONE_INTERN,
@@ -140,14 +96,6 @@ class ApplicationContext {
         environment.requireEventsInFirstBatch
     )
 
-    val topicEventCounterServiceOnPrem = TopicEventCounterOnPremService(
-        beskjedCounter = beskjedCounterOnPrem,
-        innboksCounter = innboksCounterOnPrem,
-        oppgaveCounter = oppgaveCounterOnPrem,
-        statusoppdateringCounter = statusoppdateringCounterOnPrem,
-        doneCounter = doneCounterOnPrem
-    )
-
     val topicEventCounterServiceAiven = TopicEventCounterAivenService(
         beskjedCounter = beskjedCounterAiven,
         innboksCounter = innboksCounterAiven,
@@ -158,9 +106,7 @@ class ApplicationContext {
     )
 
     val metricsSubmitterService = MetricsSubmitterService(
-        dbEventCounterOnPremService = dbEventCounterOnPremService,
         dbEventCounterGCPService = dbEventCounterGCPService,
-        topicEventCounterServiceOnPrem = topicEventCounterServiceOnPrem,
         topicEventCounterServiceAiven = topicEventCounterServiceAiven,
         dbMetricsReporter = dbMetricsReporter,
         kafkaMetricsReporter = kafkaMetricsReporter
@@ -196,43 +142,6 @@ class ApplicationContext {
             log.info("periodicConsumerCheck har blitt reinstansiert.")
         } else {
             log.warn("periodicConsumerCheck kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
-        }
-    }
-
-    fun reinitializeConsumersOnPrem() {
-        if (beskjedCountOnPremConsumer.isCompleted()) {
-            beskjedCountOnPremConsumer = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
-            log.info("beskjedCountConsumer on-prem har blitt reinstansiert.")
-        } else {
-            log.warn("beskjedCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
-        }
-
-        if (oppgaveCountOnPremConsumer.isCompleted()) {
-            oppgaveCountOnPremConsumer = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
-            log.info("oppgaveCountConsumer on-prem har blitt reinstansiert.")
-        } else {
-            log.warn("oppgaveCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
-        }
-
-        if (innboksCountOnPremConsumer.isCompleted()) {
-            innboksCountOnPremConsumer = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
-            log.info("innboksCountConsumer on-prem har blitt reinstansiert.")
-        } else {
-            log.warn("innboksCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
-        }
-
-        if (statusoppdateringCountOnPremConsumer.isCompleted()) {
-            statusoppdateringCountOnPremConsumer = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
-            log.info("statusoppdateringCountConsumer on-prem har blitt reinstansiert.")
-        } else {
-            log.warn("statusoppdateringCountConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
-        }
-
-        if (doneCountOnPremConsumer.isCompleted()) {
-            doneCountOnPremConsumer = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
-            log.info("doneConsumer har blitt reinstansiert.")
-        } else {
-            log.warn("doneConsumer on-prem kunne ikke bli reinstansiert fordi den fortsatt er aktiv.")
         }
     }
 

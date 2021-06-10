@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.ka
 import no.nav.common.JAASCredential
 import no.nav.common.KafkaEnvironment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.SecurityConfig
 import org.apache.avro.generic.GenericRecord
 
 object KafkaTestUtil {
@@ -21,39 +22,34 @@ object KafkaTestUtil {
 
     fun createEnvironmentForEmbeddedKafka(embeddedEnv: KafkaEnvironment): Environment {
         return Environment(
-                bootstrapServers = embeddedEnv.brokersURL.substringAfterLast("/"),
-                schemaRegistryUrl = embeddedEnv.schemaRegistry!!.url,
-                username = username,
-                password = password,
-                dbReadOnlyUserOnPrem = "dbAdminIkkeIBrukHer",
-                dbHostOnPrem = "dbHostIkkeIBrukHer",
-                dbMountPath = "dbMountPathIkkeIBrukHer",
-                dbName = "dbNameIkkeIBrukHer",
-                dbUrlOnPrem = "dbUrlIkkeIBrukHer",
-                dbUserOnPrem = "dbUserIkkeIBrukHer",
-                clusterName = "clusterNameIkkeIBrukHer",
-                namespace = "namespaceIkkeIBrukHer",
-                sensuHost = "sensuHostIkkeIBrukHer",
-                sensuPort = 0,
-                countingIntervalMinutes = 1,
-                aivenBrokers = embeddedEnv.brokersURL.substringAfterLast("/"),
-                aivenTruststorePath = "aivenTruststorePathIkkeIBrukHer",
-                aivenKeystorePath = "aivenKeystorePathIkkeIBrukHer",
-                aivenCredstorePassword = "aivenCredstorePasswordIkkeIBrukHer",
-                aivenSchemaRegistry = embeddedEnv.schemaRegistry!!.url,
-                aivenSchemaRegistryUser = username,
-                aivenSchemaRegistryPassword = password
+            username = username,
+            password = password,
+            dbHost = "dbHostIkkeIBrukHer",
+            dbPort = 12,
+            dbName = "dbNameIkkeIBrukHer",
+            dbUrl = "dbUrlIkkeIBrukHer",
+            dbUser = "dbUserIkkeIBrukHer",
+            dbPassword = "dbPWIkkeIBrukHer",
+            clusterName = "clusterNameIkkeIBrukHer",
+            namespace = "namespaceIkkeIBrukHer",
+            aivenBrokers = embeddedEnv.brokersURL.substringAfterLast("/"),
+            aivenSchemaRegistry = embeddedEnv.schemaRegistry!!.url,
+            securityConfig = SecurityConfig(enabled = false),
+            countingIntervalMinutes = 1,
+            influxdbHost = "influxdbHostIkkeIBrukHer",
+            influxdbPort = 12,
+            influxdbName = "influxdbNameIkkeIBrukHer",
+            influxdbUser = "influxdbUserIkkeIBrukHer",
+            influxdbPassword = "influxdbPasswordIkkeIBrukHer",
+            influxdbRetentionPolicy = "influxdbRetentionPolicyIkkeIBrukHer"
         )
     }
 
-    suspend fun <K> produceEvents(env: Environment, topicName: String, enableSecurity: Boolean, events: Map<K, GenericRecord>): Boolean {
+    suspend fun <K> produceEvents(env: Environment, topicName: String, events: Map<K, GenericRecord>): Boolean {
         return KafkaProducerUtil.kafkaAvroProduce(
-                env.bootstrapServers,
-                env.schemaRegistryUrl,
+                env.aivenBrokers,
+                env.aivenSchemaRegistry,
                 topicName,
-                env.username,
-                env.password,
-                enableSecurity,
                 events)
     }
 }
