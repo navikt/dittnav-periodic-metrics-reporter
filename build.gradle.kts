@@ -40,7 +40,7 @@ dependencies {
     implementation(Brukernotifikasjon.schemas)
     implementation(Brukernotifikasjon.schemas_internal)
     implementation(DittNAV.Common.utils)
-    implementation(DittNAV.Common.influx)
+    implementation(DittNAV.Common.influxdb)
     implementation(Hikari.cp)
     implementation(Influxdb.java)
     implementation(Kafka.Apache.clients)

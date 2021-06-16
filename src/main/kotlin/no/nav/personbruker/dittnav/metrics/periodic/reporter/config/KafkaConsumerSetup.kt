@@ -15,18 +15,6 @@ object KafkaConsumerSetup {
         return Consumer(topic, kafkaConsumer)
     }
 
-    fun startSubscriptionOnAllKafkaConsumersOnPrem(appContext: ApplicationContext) {
-        appContext.beskjedCountOnPremConsumer.startSubscription()
-        appContext.oppgaveCountOnPremConsumer.startSubscription()
-        appContext.doneCountOnPremConsumer.startSubscription()
-        if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountOnPremConsumer.startSubscription()
-            appContext.statusoppdateringCountOnPremConsumer.startSubscription()
-        } else {
-            log.info("Er i produksjonsmiljø, unnlater å starte innboks- og statusoppdateringconsumer on prem.")
-        }
-    }
-
     fun startSubscriptionOnAllKafkaConsumersAiven(appContext: ApplicationContext) {
         if(isOtherEnvironmentThanProd()) {
             appContext.beskjedCountAivenConsumer.startSubscription()
@@ -38,18 +26,6 @@ object KafkaConsumerSetup {
         }
     }
 
-    suspend fun stopAllKafkaConsumersOnPrem(appContext: ApplicationContext) {
-        log.info("Begynner å stoppe kafka-pollerne on prem...")
-        appContext.beskjedCountOnPremConsumer.stop()
-        appContext.oppgaveCountOnPremConsumer.stop()
-        appContext.doneCountOnPremConsumer.stop()
-        if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountOnPremConsumer.stop()
-            appContext.statusoppdateringCountOnPremConsumer.stop()
-        }
-        log.info("...ferdig med å stoppe kafka-pollerne on prem.")
-    }
-
     suspend fun stopAllKafkaConsumersAiven(appContext: ApplicationContext) {
         log.info("Begynner å stoppe kafka-pollerne på Aiven...")
         if(isOtherEnvironmentThanProd()) {
@@ -59,12 +35,6 @@ object KafkaConsumerSetup {
             appContext.feilresponsCountAivenConsumer.stop()
         }
         log.info("...ferdig med å stoppe kafka-pollerne på Aiven.")
-    }
-
-    suspend fun restartConsumersOnPrem(appContext: ApplicationContext) {
-        stopAllKafkaConsumersOnPrem(appContext)
-        appContext.reinitializeConsumersOnPrem()
-        startSubscriptionOnAllKafkaConsumersOnPrem(appContext)
     }
 
     suspend fun restartConsumersAiven(appContext: ApplicationContext) {

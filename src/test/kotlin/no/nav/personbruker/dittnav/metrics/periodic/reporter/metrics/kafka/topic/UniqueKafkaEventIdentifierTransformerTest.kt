@@ -5,6 +5,7 @@ import no.nav.brukernotifikasjon.schemas.builders.domain.Eventtype
 import no.nav.brukernotifikasjon.schemas.internal.Feilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelFeilrespons
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
+import no.nav.brukernotifikasjon.schemas.internal.domain.FeilresponsBegrunnelse
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedInternObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
@@ -170,7 +171,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
     @Test
     fun `Should transform Feilrespons to internal`() {
         val nokkelFeilrespons = NokkelFeilrespons("sysBruker4", "4", EventType.BESKJED.toString())
-        val feilrespons = Feilrespons(Instant.now().toEpochMilli(), "Simulert feil i en test")
+        val feilrespons = Feilrespons(Instant.now().toEpochMilli(), FeilresponsBegrunnelse.VALIDERINGSFEIL.toString(), "Simulert feil i en test")
         val original: ConsumerRecord<NokkelFeilrespons, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelFeilrespons, feilrespons)
 

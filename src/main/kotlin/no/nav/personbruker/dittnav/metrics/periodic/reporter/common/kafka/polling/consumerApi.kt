@@ -11,15 +11,13 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsume
 fun Routing.consumerApi(appContext: ApplicationContext) {
 
     get("/internal/consumer/start") {
-        val responseText = "Konsumerne har blitt restartet, både on-prem og Aiven."
-        KafkaConsumerSetup.restartConsumersOnPrem(appContext)
+        val responseText = "Aiven-konsumerne har blitt restartet."
         KafkaConsumerSetup.restartConsumersAiven(appContext)
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
 
     get("/internal/consumer/stop") {
-        val responseText = "Stoppet alle konsumere, både on-prem og Aiven."
-        KafkaConsumerSetup.stopAllKafkaConsumersOnPrem(appContext)
+        val responseText = "Stoppet alle Aiven-konsumere."
         KafkaConsumerSetup.stopAllKafkaConsumersAiven(appContext)
         call.respondText(text = responseText, contentType = ContentType.Text.Plain)
     }
