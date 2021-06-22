@@ -1,19 +1,29 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.health
 
-import io.ktor.application.call
+import io.ktor.application.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import java.time.Instant
 
 fun Routing.healthApi(healthService: HealthService) {
 
+    val start = Instant.now()
+
     get("/internal/isAlive") {
-        call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
+        val timeSinceStart = Instant.now().epochSecond - start.epochSecond
+
+        if (timeSinceStart < 600) {
+            call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
+        } else {
+            call.respondText(text = "DEAD", status = InternalServerError, contentType = ContentType.Text.Plain)
+        }
     }
 
     get("/internal/isReady") {
