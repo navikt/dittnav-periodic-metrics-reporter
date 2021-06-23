@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
+import io.mockk.mockk
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
@@ -10,6 +11,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.AvroNokkelInternObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
@@ -22,6 +24,7 @@ class TopicEventCounterAivenServiceIT {
     private val topic = "topic"
     private lateinit var embeddedEnv: KafkaEnvironment
     private lateinit var testEnvironment: Environment
+    private val topicActivityService: TopicActivityService = mockk()
 
     private val events = (1..5).map { AvroNokkelInternObjectMother.createNokkelIntern(it) to AvroBeskjedInternObjectMother.createBeskjedIntern() }.toMap()
 
@@ -48,6 +51,7 @@ class TopicEventCounterAivenServiceIT {
 
         val topicEventTypeCounter = TopicEventTypeCounter(
             consumer = beskjedInternCountConsumer,
+            topicActivityService = topicActivityService,
             eventType = EventType.BESKJED_INTERN,
             deltaCountingEnabled = false
         )
@@ -71,6 +75,7 @@ class TopicEventCounterAivenServiceIT {
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
             consumer = beskjedInternCountConsumer,
+            topicActivityService = topicActivityService,
             eventType = EventType.BESKJED_INTERN,
             deltaCountingEnabled = true
         )
@@ -108,11 +113,13 @@ class TopicEventCounterAivenServiceIT {
 
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
             consumer = deltaCountingConsumer,
+            topicActivityService = topicActivityService,
             eventType = EventType.BESKJED_INTERN,
             deltaCountingEnabled = true
         )
         val fromScratchTopicEventTypeCounter = TopicEventTypeCounter(
             consumer = fromScratchCountingConsumer,
+            topicActivityService = topicActivityService,
             eventType = EventType.BESKJED_INTERN,
             deltaCountingEnabled = false
         )
@@ -149,6 +156,7 @@ class TopicEventCounterAivenServiceIT {
 
         val topicEventTypeCounter = TopicEventTypeCounter(
             consumer = beskjedCountConsumer,
+            topicActivityService = topicActivityService,
             eventType = EventType.BESKJED_INTERN,
             deltaCountingEnabled = false
         )

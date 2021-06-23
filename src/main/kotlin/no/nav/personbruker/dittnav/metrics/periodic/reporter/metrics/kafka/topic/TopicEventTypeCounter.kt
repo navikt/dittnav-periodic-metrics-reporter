@@ -9,6 +9,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consum
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.foundRecords
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.slf4j.LoggerFactory
@@ -17,9 +18,9 @@ import java.time.Instant
 
 class TopicEventTypeCounter<K>(
         val consumer: Consumer<K, GenericRecord>,
+        val topicActivityService: TopicActivityService,
         val eventType: EventType,
-        val deltaCountingEnabled: Boolean,
-        val requireEventsInFirstBatch : Boolean = false
+        val deltaCountingEnabled: Boolean
 ) {
 
     private val log = LoggerFactory.getLogger(TopicEventTypeCounter::class.java)
@@ -44,6 +45,8 @@ class TopicEventTypeCounter<K>(
     }
 
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
+        topicActivityService.reportEventsFound()
+
         val startTime = Instant.now()
 
         val session = previousSession?.let { TopicMetricsSession(it) } ?: TopicMetricsSession(eventType)
@@ -65,23 +68,12 @@ class TopicEventTypeCounter<K>(
             }
 
         } else {
-            log.info("Ingen eventer funnet ved første polling etter $eventType, dette kan indikerer at noe er feil.")
-            if(shouldCountAllEventsOnTopicInNextPoll()) {
-                resetCountingSession()
-            }
+            topicActivityService.reportNoEventsFound()
         }
 
         session.calculateProcessingTime()
 
         return session
-    }
-
-    private fun shouldCountAllEventsOnTopicInNextPoll() = deltaCountingEnabled && requireEventsInFirstBatch
-
-    private fun resetCountingSession() {
-        log.info("Resetter tellesesjonen for $eventType, og teller alle eventer i neste runde.")
-        previousSession = null
-        consumer.kafkaConsumer.resetTheGroupIdsOffsetToZero()
     }
 
     companion object {

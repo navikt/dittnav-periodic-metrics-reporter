@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.health
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.ApplicationContext
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 
 class HealthService(private val applicationContext: ApplicationContext) {
 

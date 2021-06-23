@@ -29,7 +29,10 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val aivenSchemaRegistry: String = getEnvVar("KAFKA_SCHEMA_REGISTRY"),
                        val aivenSchemaRegistryUser: String = getEnvVar("KAFKA_SCHEMA_REGISTRY_USER"),
                        val aivenSchemaRegistryPassword: String = getEnvVar("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
-                       val requireEventsInFirstBatch : Boolean = getEnvVarAsBoolean("REQUIRE_EVENTS_IN_FIRST_BATCH", false)
+                       val activityHistoryLength: Int = getEnvVarAsInt("ACTIVITY_HISTORY_LENGTH", 30),
+                       val lowActivityStreakThreshold: Int = getEnvVarAsInt("LOW_ACTIVITY_STREAK_THRESHOLD", 30),
+                       val moderateActivityStreakThreshold: Int = getEnvVarAsInt("MODERATE_ACTIVITY_STREAK_THRESHOLD", 15),
+                       val highActivityStreakThreshold: Int = getEnvVarAsInt("HIGH_ACTIVITY_STREAK_THRESHOLD", 5)
 )
 
 fun isOtherEnvironmentThanProd() = System.getenv("NAIS_CLUSTER_NAME") != "prod-sbs"

@@ -16,7 +16,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     DefaultExports.initialize()
     install(DefaultHeaders)
     routing {
-        healthApi(appContext.healthService)
+        healthApi(appContext.healthService, appContext.activityHealthService)
         metricsSubmitterApi(appContext)
         consumerApi(appContext)
     }
@@ -25,7 +25,6 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     configureShutdownHook(appContext)
 
     log.info("Delta counting enabled: ${appContext.environment.deltaCountingEnabled}")
-    log.info("Require events in first batch enabled: ${appContext.environment.requireEventsInFirstBatch}")
 }
 
 private fun Application.configureStartupHook(appContext: ApplicationContext) {

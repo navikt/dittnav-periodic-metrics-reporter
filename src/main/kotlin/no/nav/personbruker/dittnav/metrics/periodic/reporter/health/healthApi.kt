@@ -12,14 +12,12 @@ import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import java.time.Instant
 
-fun Routing.healthApi(healthService: HealthService) {
+fun Routing.healthApi(healthService: HealthService, activityHealthService: ActivityHealthService) {
 
     val start = Instant.now()
 
     get("/internal/isAlive") {
-        val timeSinceStart = Instant.now().epochSecond - start.epochSecond
-
-        if (timeSinceStart < 600) {
+        if (activityHealthService.assertOnPremTopicActivityHealth()) {
             call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
         } else {
             call.respondText(text = "DEAD", status = InternalServerError, contentType = ContentType.Text.Plain)

@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Nokkel
@@ -10,6 +12,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Environment
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.Kafka
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.KafkaConsumerSetup
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.nokkel.AvroNokkelObjectMother.createNokkel
 import org.amshove.kluent.`should be equal to`
 import org.apache.avro.generic.GenericRecord
@@ -22,6 +25,7 @@ class TopicEventCounterOnPremServiceIT {
     private val topic = "topic"
     private lateinit var embeddedEnv: KafkaEnvironment
     private lateinit var testEnvironment: Environment
+    private val activityService: TopicActivityService = mockk()
 
     private val events = (1..5).map { createNokkel(it) to AvroBeskjedObjectMother.createBeskjed(it) }.toMap()
 
@@ -46,8 +50,12 @@ class TopicEventCounterOnPremServiceIT {
         val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
+        every { activityService.reportEventsFound() } returns Unit
+        every { activityService.reportNoEventsFound() } returns Unit
+
         val topicEventTypeCounter = TopicEventTypeCounter(
                 consumer = beskjedCountConsumer,
+                topicActivityService = activityService,
                 eventType = EventType.BESKJED,
                 deltaCountingEnabled = false
         )
@@ -69,8 +77,12 @@ class TopicEventCounterOnPremServiceIT {
         val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
+        every { activityService.reportEventsFound() } returns Unit
+        every { activityService.reportNoEventsFound() } returns Unit
+
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
                 consumer = beskjedCountConsumer,
+                topicActivityService = activityService,
                 eventType = EventType.BESKJED,
                 deltaCountingEnabled = true
         )
@@ -104,13 +116,18 @@ class TopicEventCounterOnPremServiceIT {
         val fromScratchCountingConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaPropsFromScratchCounting, topic)
         fromScratchCountingConsumer.startSubscription()
 
+        every { activityService.reportEventsFound() } returns Unit
+        every { activityService.reportNoEventsFound() } returns Unit
+
         val deltaTopicEventTypeCounter = TopicEventTypeCounter(
                 consumer = deltaCountingConsumer,
+                topicActivityService = activityService,
                 eventType = EventType.BESKJED,
                 deltaCountingEnabled = true
         )
         val fromScratchTopicEventTypeCounter = TopicEventTypeCounter(
                 consumer = fromScratchCountingConsumer,
+                topicActivityService = activityService,
                 eventType = EventType.BESKJED,
                 deltaCountingEnabled = false
         )
@@ -145,8 +162,12 @@ class TopicEventCounterOnPremServiceIT {
         val beskjedCountConsumer = KafkaConsumerSetup.setupCountConsumer<Nokkel, GenericRecord>(kafkaProps, topic)
         beskjedCountConsumer.startSubscription()
 
+        every { activityService.reportEventsFound() } returns Unit
+        every { activityService.reportNoEventsFound() } returns Unit
+
         val topicEventTypeCounter = TopicEventTypeCounter(
                 consumer = beskjedCountConsumer,
+                topicActivityService = activityService,
                 eventType = EventType.BESKJED,
                 deltaCountingEnabled = false
         )
