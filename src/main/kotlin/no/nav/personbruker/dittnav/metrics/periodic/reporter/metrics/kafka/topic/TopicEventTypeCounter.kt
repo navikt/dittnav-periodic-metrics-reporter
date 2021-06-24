@@ -45,7 +45,6 @@ class TopicEventTypeCounter<K>(
     }
 
     private fun pollAndCountEvents(eventType: EventType): TopicMetricsSession {
-        topicActivityService.reportEventsFound()
 
         val startTime = Instant.now()
 
@@ -54,9 +53,12 @@ class TopicEventTypeCounter<K>(
         var records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
 
         if (records.foundRecords()) {
+            topicActivityService.reportEventsFound()
+
             countBatch(records, session)
 
             while (records.foundRecords() && !maxTimeoutExceeded(startTime, timeoutConfig)) {
+
                 records = consumer.kafkaConsumer.poll(timeoutConfig.pollingTimeout)
                 countBatch(records, session)
             }

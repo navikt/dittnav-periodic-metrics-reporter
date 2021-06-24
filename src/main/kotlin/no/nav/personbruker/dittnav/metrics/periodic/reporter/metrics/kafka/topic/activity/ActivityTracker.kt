@@ -34,8 +34,6 @@ class ActivityTracker(private val historyLength: Int) {
 }
 
 private class FixedSizeBooleanQueue(private val size: Int) {
-    private var entries: Int = 0
-
     private var cursor: Int = 0
 
     private val array = BooleanArray(size) { true }
@@ -43,7 +41,6 @@ private class FixedSizeBooleanQueue(private val size: Int) {
     fun add(entry: Boolean) {
         array[cursor] = entry
 
-        entries++
         cursor = (cursor + 1) % size
     }
 

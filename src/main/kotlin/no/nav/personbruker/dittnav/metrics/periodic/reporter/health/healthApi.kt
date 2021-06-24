@@ -14,8 +14,6 @@ import java.time.Instant
 
 fun Routing.healthApi(healthService: HealthService, activityHealthService: ActivityHealthService) {
 
-    val start = Instant.now()
-
     get("/internal/isAlive") {
         if (activityHealthService.assertOnPremTopicActivityHealth()) {
             call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
