@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity
 
 class ActivityTracker(private val historyLength: Int) {
-    private val recentCountHistory = FixedSizeBooleanQueue(historyLength)
+    private val recentCountHistory = FixedLengthBooleanQueue(historyLength)
 
     private var inactivityStreak = 0
 
@@ -25,23 +25,32 @@ class ActivityTracker(private val historyLength: Int) {
     }
 
     fun getActivityPercentage(): Int {
-        val percentage = (recentCountHistory.countTrueEntries() * 100.0) / historyLength
+        val currentHistoryLength = recentCountHistory.getCurrentLength()
 
-        return (percentage + 0.5).toInt()
+        return if (currentHistoryLength == 0) {
+            0
+        } else {
+            val percentage = (recentCountHistory.countTrueEntries() * 100.0) / currentHistoryLength
+
+            (percentage + 0.5).toInt()
+        }
     }
 
     fun getInactivityStreak(): Int = inactivityStreak
 }
 
-private class FixedSizeBooleanQueue(private val size: Int) {
+private class FixedLengthBooleanQueue(private val maxLength: Int) {
+    private var entries: Int = 0
+
     private var cursor: Int = 0
 
-    private val array = BooleanArray(size) { true }
+    private val array = BooleanArray(maxLength) { false }
 
     fun add(entry: Boolean) {
         array[cursor] = entry
 
-        cursor = (cursor + 1) % size
+        entries = (entries + 1).coerceAtMost(maxLength)
+        cursor = (cursor + 1) % maxLength
     }
 
     fun countTrueEntries(): Int {
@@ -49,4 +58,6 @@ private class FixedSizeBooleanQueue(private val size: Int) {
             if (entry) 1 else 0
         }
     }
+
+    fun getCurrentLength() = entries
 }
