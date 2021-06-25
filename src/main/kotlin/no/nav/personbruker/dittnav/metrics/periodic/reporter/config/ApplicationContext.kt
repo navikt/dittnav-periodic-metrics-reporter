@@ -5,6 +5,7 @@ import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthServiceConfig
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
@@ -179,15 +180,24 @@ class ApplicationContext {
         kafkaMetricsReporter = kafkaMetricsReporter
     )
 
+    val activityHealthServiceConfig = ActivityHealthServiceConfig(
+            lowActivityStreakThreshold = environment.lowActivityStreakThreshold,
+            moderateActivityStreakThreshold = environment.moderateActivityStreakThreshold,
+            highActivityStreakThreshold = environment.highActivityStreakThreshold,
+            monitorOnPremBeskjedActivity = environment.monitorOnPremBeskjedActivity,
+            monitorOnPremOppgaveActivity = environment.monitorOnPremOppgaveActivity,
+            monitorOnPremInnboksActivity = environment.monitorOnPremInnboksActivity,
+            monitorOnPremDoneActivity = environment.monitorOnPremDoneActivity,
+            monitorOnPremStatusOppdateringActivity = environment.monitorOnPremStatusOppdateringActivity
+    )
+
     val activityHealthService = ActivityHealthService(
             beskjedTopicActivityService = beskjedTopicActivityService,
             oppgaveTopicActivityService = oppgaveTopicActivityService,
             innboksTopicActivityService = innboksTopicActivityService,
             doneTopicActivityService = doneTopicActivityService,
             statusoppdateringTopicActivityService = statusoppdateringTopicActivityService,
-            lowActivityStreakThreshold = environment.lowActivityStreakThreshold,
-            moderateActivityStreakThreshold = environment.moderateActivityStreakThreshold,
-            highActivityStreakThreshold = environment.highActivityStreakThreshold
+            config = activityHealthServiceConfig
     )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()

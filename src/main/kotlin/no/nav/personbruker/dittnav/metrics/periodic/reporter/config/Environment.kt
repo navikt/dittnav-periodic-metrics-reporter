@@ -30,9 +30,14 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val aivenSchemaRegistryUser: String = getEnvVar("KAFKA_SCHEMA_REGISTRY_USER"),
                        val aivenSchemaRegistryPassword: String = getEnvVar("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
                        val activityHistoryLength: Int = getEnvVarAsInt("ACTIVITY_HISTORY_LENGTH", 30),
-                       val lowActivityStreakThreshold: Int = getEnvVarAsInt("LOW_ACTIVITY_STREAK_THRESHOLD", 30),
+                       val lowActivityStreakThreshold: Int = getEnvVarAsInt("LOW_ACTIVITY_STREAK_THRESHOLD", 60),
                        val moderateActivityStreakThreshold: Int = getEnvVarAsInt("MODERATE_ACTIVITY_STREAK_THRESHOLD", 15),
-                       val highActivityStreakThreshold: Int = getEnvVarAsInt("HIGH_ACTIVITY_STREAK_THRESHOLD", 5)
+                       val highActivityStreakThreshold: Int = getEnvVarAsInt("HIGH_ACTIVITY_STREAK_THRESHOLD", 5),
+                       val monitorOnPremBeskjedActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_BESKJED_ACTIVITY"),
+                       val monitorOnPremOppgaveActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_OPPGAVE_ACTIVITY"),
+                       val monitorOnPremInnboksActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_INNBOKS_ACTIVITY"),
+                       val monitorOnPremDoneActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_DONE_ACTIVITY"),
+                       val monitorOnPremStatusOppdateringActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_STATUSOPPDATERING_ACTIVITY")
 )
 
 fun isOtherEnvironmentThanProd() = System.getenv("NAIS_CLUSTER_NAME") != "prod-sbs"

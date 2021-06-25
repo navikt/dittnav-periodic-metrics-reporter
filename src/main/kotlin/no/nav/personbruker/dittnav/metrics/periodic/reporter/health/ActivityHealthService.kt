@@ -11,9 +11,7 @@ class ActivityHealthService(
         val innboksTopicActivityService: TopicActivityService,
         val doneTopicActivityService: TopicActivityService,
         val statusoppdateringTopicActivityService: TopicActivityService,
-        val lowActivityStreakThreshold: Int,
-        val moderateActivityStreakThreshold: Int,
-        val highActivityStreakThreshold: Int
+        val config: ActivityHealthServiceConfig
 ) {
 
     private val log = LoggerFactory.getLogger(ActivityHealthService::class.java)
@@ -21,23 +19,23 @@ class ActivityHealthService(
     fun assertOnPremTopicActivityHealth(): Boolean {
         var healthy = true
 
-        if (!assertServiceHealth(beskjedTopicActivityService, "on-prem beskjed")) {
+        if (config.monitorOnPremBeskjedActivity && !assertServiceHealth(beskjedTopicActivityService, "on-prem beskjed")) {
             healthy = false
         }
 
-        if (!assertServiceHealth(oppgaveTopicActivityService, "on-prem oppgave")) {
+        if (config.monitorOnPremOppgaveActivity && !assertServiceHealth(oppgaveTopicActivityService, "on-prem oppgave")) {
             healthy = false
         }
 
-        if (!assertServiceHealth(innboksTopicActivityService, "on-prem innboks")) {
+        if (config.monitorOnPremInnboksActivity && !assertServiceHealth(innboksTopicActivityService, "on-prem innboks")) {
             healthy = false
         }
 
-        if (!assertServiceHealth(doneTopicActivityService, "on-prem done")) {
+        if (config.monitorOnPremDoneActivity && !assertServiceHealth(doneTopicActivityService, "on-prem done")) {
             healthy = false
         }
 
-        if (!assertServiceHealth(statusoppdateringTopicActivityService, "on-prem statusoppdatering")) {
+        if (config.monitorOnPremStatusOppdateringActivity && !assertServiceHealth(statusoppdateringTopicActivityService, "on-prem statusoppdatering")) {
             healthy = false
         }
 
@@ -57,9 +55,20 @@ class ActivityHealthService(
 
     private fun stateIsHealthy(state: ActivityState): Boolean {
         return when(state.recentActivityLevel) {
-            ActivityLevel.LOW -> state.inactivityStreak < lowActivityStreakThreshold
-            ActivityLevel.MODERATE -> state.inactivityStreak < moderateActivityStreakThreshold
-            ActivityLevel.HIGH -> state.inactivityStreak < highActivityStreakThreshold
+            ActivityLevel.LOW -> state.inactivityStreak < config.lowActivityStreakThreshold
+            ActivityLevel.MODERATE -> state.inactivityStreak < config.moderateActivityStreakThreshold
+            ActivityLevel.HIGH -> state.inactivityStreak < config.highActivityStreakThreshold
         }
     }
 }
+
+data class ActivityHealthServiceConfig(
+        val lowActivityStreakThreshold: Int,
+        val moderateActivityStreakThreshold: Int,
+        val highActivityStreakThreshold: Int,
+        val monitorOnPremBeskjedActivity: Boolean,
+        val monitorOnPremOppgaveActivity: Boolean,
+        val monitorOnPremInnboksActivity: Boolean,
+        val monitorOnPremDoneActivity: Boolean,
+        val monitorOnPremStatusOppdateringActivity: Boolean
+)
