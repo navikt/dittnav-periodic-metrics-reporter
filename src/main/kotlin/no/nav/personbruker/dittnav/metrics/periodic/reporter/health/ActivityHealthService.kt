@@ -6,12 +6,13 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 import org.slf4j.LoggerFactory
 
 class ActivityHealthService(
-        val beskjedTopicActivityService: TopicActivityService,
-        val oppgaveTopicActivityService: TopicActivityService,
-        val innboksTopicActivityService: TopicActivityService,
-        val doneTopicActivityService: TopicActivityService,
-        val statusoppdateringTopicActivityService: TopicActivityService,
-        val config: ActivityHealthServiceConfig
+        private val beskjedTopicActivityService: TopicActivityService,
+        private val oppgaveTopicActivityService: TopicActivityService,
+        private val innboksTopicActivityService: TopicActivityService,
+        private val doneTopicActivityService: TopicActivityService,
+        private val statusoppdateringTopicActivityService: TopicActivityService,
+        private val activityHealthDecider: ActivityHealthDecider,
+        private val monitoringToggles: ActivityMonitoringToggles
 ) {
 
     private val log = LoggerFactory.getLogger(ActivityHealthService::class.java)
@@ -19,23 +20,23 @@ class ActivityHealthService(
     fun assertOnPremTopicActivityHealth(): Boolean {
         var healthy = true
 
-        if (config.monitorOnPremBeskjedActivity && !assertServiceHealth(beskjedTopicActivityService, "on-prem beskjed")) {
+        if (monitoringToggles.monitorOnPremBeskjedActivity && !assertServiceHealth(beskjedTopicActivityService, "on-prem beskjed")) {
             healthy = false
         }
 
-        if (config.monitorOnPremOppgaveActivity && !assertServiceHealth(oppgaveTopicActivityService, "on-prem oppgave")) {
+        if (monitoringToggles.monitorOnPremOppgaveActivity && !assertServiceHealth(oppgaveTopicActivityService, "on-prem oppgave")) {
             healthy = false
         }
 
-        if (config.monitorOnPremInnboksActivity && !assertServiceHealth(innboksTopicActivityService, "on-prem innboks")) {
+        if (monitoringToggles.monitorOnPremInnboksActivity && !assertServiceHealth(innboksTopicActivityService, "on-prem innboks")) {
             healthy = false
         }
 
-        if (config.monitorOnPremDoneActivity && !assertServiceHealth(doneTopicActivityService, "on-prem done")) {
+        if (monitoringToggles.monitorOnPremDoneActivity && !assertServiceHealth(doneTopicActivityService, "on-prem done")) {
             healthy = false
         }
 
-        if (config.monitorOnPremStatusOppdateringActivity && !assertServiceHealth(statusoppdateringTopicActivityService, "on-prem statusoppdatering")) {
+        if (monitoringToggles.monitorOnPremStatusoppdateringActivity && !assertServiceHealth(statusoppdateringTopicActivityService, "on-prem statusoppdatering")) {
             healthy = false
         }
 
@@ -45,30 +46,34 @@ class ActivityHealthService(
     private fun assertServiceHealth(service: TopicActivityService, topicSource: String): Boolean {
         val state = service.getActivityState()
 
-        return if (stateIsHealthy(state)) {
+        return if (activityHealthDecider.stateIsHealthy(state)) {
             true
         } else {
             log.warn("On-prem topic counting for $topicSource looks unhealthy. Recent activity is ${state.recentActivityLevel} and counted zero events ${state.inactivityStreak} times in a row.")
             false
         }
     }
+}
 
-    private fun stateIsHealthy(state: ActivityState): Boolean {
+class ActivityHealthDecider(
+        private val lowActivityStreakThreshold: Int,
+        private val moderateActivityStreakThreshold: Int,
+        private val highActivityStreakThreshold: Int
+
+) {
+    fun stateIsHealthy(state: ActivityState): Boolean {
         return when(state.recentActivityLevel) {
-            ActivityLevel.LOW -> state.inactivityStreak < config.lowActivityStreakThreshold
-            ActivityLevel.MODERATE -> state.inactivityStreak < config.moderateActivityStreakThreshold
-            ActivityLevel.HIGH -> state.inactivityStreak < config.highActivityStreakThreshold
+            ActivityLevel.HIGH -> state.inactivityStreak < highActivityStreakThreshold
+            ActivityLevel.MODERATE -> state.inactivityStreak < moderateActivityStreakThreshold
+            ActivityLevel.LOW -> state.inactivityStreak < lowActivityStreakThreshold
         }
     }
 }
 
-data class ActivityHealthServiceConfig(
-        val lowActivityStreakThreshold: Int,
-        val moderateActivityStreakThreshold: Int,
-        val highActivityStreakThreshold: Int,
+data class ActivityMonitoringToggles(
         val monitorOnPremBeskjedActivity: Boolean,
         val monitorOnPremOppgaveActivity: Boolean,
         val monitorOnPremInnboksActivity: Boolean,
         val monitorOnPremDoneActivity: Boolean,
-        val monitorOnPremStatusOppdateringActivity: Boolean
+        val monitorOnPremStatusoppdateringActivity: Boolean
 )

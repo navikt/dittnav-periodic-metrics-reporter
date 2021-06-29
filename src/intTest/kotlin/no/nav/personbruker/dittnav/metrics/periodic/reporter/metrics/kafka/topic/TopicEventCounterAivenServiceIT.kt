@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 
+import io.mockk.clearMocks
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -24,7 +26,7 @@ class TopicEventCounterAivenServiceIT {
     private val topic = "topic"
     private lateinit var embeddedEnv: KafkaEnvironment
     private lateinit var testEnvironment: Environment
-    private val topicActivityService: TopicActivityService = mockk()
+    private val topicActivityService =  TopicActivityService(30)
 
     private val events = (1..5).map { AvroNokkelInternObjectMother.createNokkelIntern(it) to AvroBeskjedInternObjectMother.createBeskjedIntern() }.toMap()
 

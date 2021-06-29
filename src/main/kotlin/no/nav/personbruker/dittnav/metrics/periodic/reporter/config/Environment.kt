@@ -37,7 +37,7 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val monitorOnPremOppgaveActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_OPPGAVE_ACTIVITY"),
                        val monitorOnPremInnboksActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_INNBOKS_ACTIVITY"),
                        val monitorOnPremDoneActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_DONE_ACTIVITY"),
-                       val monitorOnPremStatusOppdateringActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_STATUSOPPDATERING_ACTIVITY")
+                       val monitorOnPremStatusoppdateringActivity: Boolean = getEnvVarAsBoolean("MONITOR_ON_PREM_STATUSOPPDATERING_ACTIVITY")
 )
 
 fun isOtherEnvironmentThanProd() = System.getenv("NAIS_CLUSTER_NAME") != "prod-sbs"

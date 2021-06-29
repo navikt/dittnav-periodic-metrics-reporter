@@ -4,8 +4,9 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthDecider
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthService
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthServiceConfig
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityMonitoringToggles
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
@@ -180,15 +181,18 @@ class ApplicationContext {
         kafkaMetricsReporter = kafkaMetricsReporter
     )
 
-    val activityHealthServiceConfig = ActivityHealthServiceConfig(
-            lowActivityStreakThreshold = environment.lowActivityStreakThreshold,
-            moderateActivityStreakThreshold = environment.moderateActivityStreakThreshold,
-            highActivityStreakThreshold = environment.highActivityStreakThreshold,
+    val activityHealthServiceConfig = ActivityMonitoringToggles(
             monitorOnPremBeskjedActivity = environment.monitorOnPremBeskjedActivity,
             monitorOnPremOppgaveActivity = environment.monitorOnPremOppgaveActivity,
             monitorOnPremInnboksActivity = environment.monitorOnPremInnboksActivity,
             monitorOnPremDoneActivity = environment.monitorOnPremDoneActivity,
-            monitorOnPremStatusOppdateringActivity = environment.monitorOnPremStatusOppdateringActivity
+            monitorOnPremStatusoppdateringActivity = environment.monitorOnPremStatusoppdateringActivity
+    )
+
+    val activityHealthDecider = ActivityHealthDecider(
+            lowActivityStreakThreshold = environment.lowActivityStreakThreshold,
+            moderateActivityStreakThreshold = environment.moderateActivityStreakThreshold,
+            highActivityStreakThreshold = environment.highActivityStreakThreshold
     )
 
     val activityHealthService = ActivityHealthService(
@@ -197,7 +201,8 @@ class ApplicationContext {
             innboksTopicActivityService = innboksTopicActivityService,
             doneTopicActivityService = doneTopicActivityService,
             statusoppdateringTopicActivityService = statusoppdateringTopicActivityService,
-            config = activityHealthServiceConfig
+            activityHealthDecider = activityHealthDecider,
+            monitoringToggles = activityHealthServiceConfig
     )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()

@@ -14,7 +14,6 @@ class TopicActivityService(historyLength: Int) {
     fun getActivityState(): ActivityState {
         return ActivityState(
                 activityCounter.getLevelOfRecentActivity(),
-                activityCounter.getActivityPercentage(),
                 activityCounter.getInactivityStreak()
         )
     }

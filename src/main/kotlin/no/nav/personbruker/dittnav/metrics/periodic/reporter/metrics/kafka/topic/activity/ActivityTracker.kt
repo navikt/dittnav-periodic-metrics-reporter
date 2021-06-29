@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity
 
-class ActivityTracker(private val historyLength: Int) {
+class ActivityTracker(historyLength: Int) {
     private val recentCountHistory = FixedLengthBooleanQueue(historyLength)
 
     private var inactivityStreak = 0
