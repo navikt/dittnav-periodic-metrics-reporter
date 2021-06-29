@@ -4,6 +4,9 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.database.Database
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.polling.PeriodicConsumerCheck
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthDecider
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityHealthService
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.ActivityMonitoringToggles
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.health.HealthService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.ProducerNameResolver
@@ -16,6 +19,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventTypeCounter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicMetricsReporter
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.resolveMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.MetricsSubmitterService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.submitter.PeriodicMetricsSubmitter
@@ -50,94 +54,105 @@ class ApplicationContext {
     val beskjedKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.BESKJED_INTERN)
     var beskjedCountOnPremConsumer = initializeCountConsumerOnPrem(beskjedKafkaPropsOnPrem, Kafka.beskjedTopicNameOnPrem)
     var beskjedCountAivenConsumer = initializeCountConsumerAiven(beskjedKafkaPropsAiven, Kafka.beskjedTopicNameAiven)
+    val beskjedTopicActivityService = TopicActivityService(environment.activityHistoryLength)
+    val beskjedAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val beskjedCounterOnPrem = TopicEventTypeCounter(
         beskjedCountOnPremConsumer,
+        beskjedTopicActivityService,
         EventType.BESKJED,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+        environment.deltaCountingEnabled
     )
     val beskjedCounterAiven = TopicEventTypeCounter(
         beskjedCountAivenConsumer,
+        beskjedAivenTopicActivityService,
         EventType.BESKJED_INTERN,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+        environment.deltaCountingEnabled
     )
 
     val oppgaveKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.OPPGAVE)
     val oppgaveKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.OPPGAVE_INTERN)
     var oppgaveCountOnPremConsumer = initializeCountConsumerOnPrem(oppgaveKafkaPropsOnPrem, Kafka.oppgaveTopicNameOnPrem)
     var oppgaveCountAivenConsumer = initializeCountConsumerAiven(oppgaveKafkaPropsAiven, Kafka.oppgaveTopicNameAiven)
+    val oppgaveTopicActivityService = TopicActivityService(environment.activityHistoryLength)
+    val oppgaveAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val oppgaveCounterOnPrem = TopicEventTypeCounter(
-        oppgaveCountOnPremConsumer,
-        EventType.OPPGAVE,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            oppgaveCountOnPremConsumer,
+            oppgaveTopicActivityService,
+            EventType.OPPGAVE,
+            environment.deltaCountingEnabled
     )
     val oppgaveCounterAiven = TopicEventTypeCounter(
-        oppgaveCountAivenConsumer,
-        EventType.OPPGAVE_INTERN,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            oppgaveCountAivenConsumer,
+            oppgaveAivenTopicActivityService,
+            EventType.OPPGAVE_INTERN,
+            environment.deltaCountingEnabled
     )
 
     val innboksKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.INNBOKS)
     val innboksKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.INNBOKS_INTERN)
     var innboksCountOnPremConsumer = initializeCountConsumerOnPrem(innboksKafkaPropsOnPrem, Kafka.innboksTopicNameOnPrem)
     var innboksCountAivenConsumer = initializeCountConsumerAiven(innboksKafkaPropsAiven, Kafka.innboksTopicNameAiven)
+    val innboksTopicActivityService = TopicActivityService(environment.activityHistoryLength)
+    val innboksAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val innboksCounterOnPrem = TopicEventTypeCounter(
-        innboksCountOnPremConsumer,
-        EventType.INNBOKS,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            innboksCountOnPremConsumer,
+            innboksTopicActivityService,
+            EventType.INNBOKS,
+            environment.deltaCountingEnabled
     )
     val innboksCounterAiven = TopicEventTypeCounter(
-        innboksCountAivenConsumer,
-        EventType.INNBOKS_INTERN,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            innboksCountAivenConsumer,
+            innboksAivenTopicActivityService,
+            EventType.INNBOKS_INTERN,
+            environment.deltaCountingEnabled
     )
 
     val statusoppdateringKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.STATUSOPPDATERING)
     val statusoppdateringKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.STATUSOPPDATERING_INTERN)
     var statusoppdateringCountOnPremConsumer = initializeCountConsumerOnPrem(statusoppdateringKafkaPropsOnPrem, Kafka.statusoppdateringTopicNameOnPrem)
     var statusoppdateringCountAivenConsumer = initializeCountConsumerAiven(statusoppdateringKafkaPropsAiven, Kafka.statusoppdateringTopicNameAiven)
+    val statusoppdateringTopicActivityService = TopicActivityService(environment.activityHistoryLength)
+    val statusoppdateringAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val statusoppdateringCounterOnPrem = TopicEventTypeCounter(
-        statusoppdateringCountOnPremConsumer,
-        EventType.STATUSOPPDATERING,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            statusoppdateringCountOnPremConsumer,
+            statusoppdateringTopicActivityService,
+            EventType.STATUSOPPDATERING,
+            environment.deltaCountingEnabled
     )
     val statusoppdateringCounterAiven = TopicEventTypeCounter(
-        statusoppdateringCountAivenConsumer,
-        EventType.STATUSOPPDATERING_INTERN,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            statusoppdateringCountAivenConsumer,
+            statusoppdateringAivenTopicActivityService,
+            EventType.STATUSOPPDATERING_INTERN,
+            environment.deltaCountingEnabled
     )
 
     val doneKafkaPropsOnPrem = Kafka.counterConsumerOnPremProps(environment, EventType.DONE)
     val doneKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.DONE_INTERN)
     var doneCountOnPremConsumer = initializeCountConsumerOnPrem(doneKafkaPropsOnPrem, Kafka.doneTopicNameOnPrem)
     var doneCountAivenConsumer = initializeCountConsumerAiven(doneKafkaPropsAiven, Kafka.doneTopicNameAiven)
+    val doneTopicActivityService = TopicActivityService(environment.activityHistoryLength)
+    val doneAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val doneCounterOnPrem = TopicEventTypeCounter(
-        doneCountOnPremConsumer,
-        EventType.DONE,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            doneCountOnPremConsumer,
+            doneTopicActivityService,
+            EventType.DONE,
+            environment.deltaCountingEnabled
     )
     val doneCounterAiven = TopicEventTypeCounter(
-        doneCountAivenConsumer,
-        EventType.DONE_INTERN,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+            doneCountAivenConsumer,
+            doneAivenTopicActivityService,
+            EventType.DONE_INTERN,
+            environment.deltaCountingEnabled
     )
 
     val feilresponsKafkaPropsAiven = Kafka.counterConsumerAivenProps(environment, EventType.FEILRESPONS)
     var feilresponsCountAivenConsumer = initializeCountConsumerAiven(feilresponsKafkaPropsAiven, Kafka.feilresponsTopicNameAiven)
+    val feilresponsAivenTopicActivityService = TopicActivityService(environment.activityHistoryLength)
     val feilresponsCounterAiven = TopicEventTypeCounter(
         feilresponsCountAivenConsumer,
+        feilresponsAivenTopicActivityService,
         EventType.FEILRESPONS,
-        environment.deltaCountingEnabled,
-        environment.requireEventsInFirstBatch
+        environment.deltaCountingEnabled
     )
 
     val topicEventCounterServiceOnPrem = TopicEventCounterOnPremService(
@@ -164,6 +179,30 @@ class ApplicationContext {
         topicEventCounterServiceAiven = topicEventCounterServiceAiven,
         dbMetricsReporter = dbMetricsReporter,
         kafkaMetricsReporter = kafkaMetricsReporter
+    )
+
+    val activityHealthServiceConfig = ActivityMonitoringToggles(
+            monitorOnPremBeskjedActivity = environment.monitorOnPremBeskjedActivity,
+            monitorOnPremOppgaveActivity = environment.monitorOnPremOppgaveActivity,
+            monitorOnPremInnboksActivity = environment.monitorOnPremInnboksActivity,
+            monitorOnPremDoneActivity = environment.monitorOnPremDoneActivity,
+            monitorOnPremStatusoppdateringActivity = environment.monitorOnPremStatusoppdateringActivity
+    )
+
+    val activityHealthDecider = ActivityHealthDecider(
+            lowActivityStreakThreshold = environment.lowActivityStreakThreshold,
+            moderateActivityStreakThreshold = environment.moderateActivityStreakThreshold,
+            highActivityStreakThreshold = environment.highActivityStreakThreshold
+    )
+
+    val activityHealthService = ActivityHealthService(
+            beskjedTopicActivityService = beskjedTopicActivityService,
+            oppgaveTopicActivityService = oppgaveTopicActivityService,
+            innboksTopicActivityService = innboksTopicActivityService,
+            doneTopicActivityService = doneTopicActivityService,
+            statusoppdateringTopicActivityService = statusoppdateringTopicActivityService,
+            activityHealthDecider = activityHealthDecider,
+            monitoringToggles = activityHealthServiceConfig
     )
 
     var periodicMetricsSubmitter = initializePeriodicMetricsSubmitter()

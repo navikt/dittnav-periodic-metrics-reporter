@@ -10,6 +10,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.`with messag
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.exceptions.CountException
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consumer
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.apache.avro.generic.GenericRecord
@@ -29,17 +30,28 @@ internal class TopicEventCounterServiceTest {
     private val doneCountConsumer: Consumer<Nokkel, GenericRecord> = mockk(relaxed = true)
     private val doneInternCountConsumer: Consumer<NokkelIntern, GenericRecord> = mockk(relaxed = true)
     private val feilresponsCountConsumer: Consumer<NokkelFeilrespons, GenericRecord> = mockk(relaxed = true)
-    private val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, EventType.BESKJED, false)
-    private val beskjedInternCounter = TopicEventTypeCounter(beskjedInternCountConsumer, EventType.BESKJED_INTERN, false)
-    private val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, EventType.INNBOKS, false)
-    private val innboksInternCounter = TopicEventTypeCounter(innboksInternCountConsumer, EventType.INNBOKS_INTERN, false)
-    private val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, EventType.OPPGAVE, false)
-    private val oppgaveInternCounter = TopicEventTypeCounter(oppgaveInternCountConsumer, EventType.OPPGAVE_INTERN, false)
-    private val statusoppdateringCounter = TopicEventTypeCounter(statusoppdateringCountConsumer, EventType.STATUSOPPDATERING, false)
-    private val statusoppdateringInternCounter = TopicEventTypeCounter(statusoppdateringInternCountConsumer, EventType.STATUSOPPDATERING_INTERN, false)
-    private val doneCounter = TopicEventTypeCounter(doneCountConsumer, EventType.DONE, false)
-    private val doneInternCounter = TopicEventTypeCounter(doneInternCountConsumer, EventType.DONE_INTERN, false)
-    private val feilresponsCounter = TopicEventTypeCounter(feilresponsCountConsumer, EventType.FEILRESPONS, false)
+    private val beskjedActivityService: TopicActivityService = mockk()
+    private val beskjedInternActivityService: TopicActivityService = mockk()
+    private val innboksActivityService: TopicActivityService = mockk()
+    private val innboksInternActivityService: TopicActivityService = mockk()
+    private val oppgaveActivityService: TopicActivityService = mockk()
+    private val oppgaveInternActivityService: TopicActivityService = mockk()
+    private val statusoppdateringActivityService: TopicActivityService = mockk()
+    private val statusoppdateringInternActivityService: TopicActivityService = mockk()
+    private val doneActivityService: TopicActivityService = mockk()
+    private val doneInternActivityService: TopicActivityService = mockk()
+    private val feilresponsActivityService: TopicActivityService = mockk()
+    private val beskjedCounter = TopicEventTypeCounter(beskjedCountConsumer, beskjedActivityService, EventType.BESKJED, false)
+    private val beskjedInternCounter = TopicEventTypeCounter(beskjedInternCountConsumer, beskjedInternActivityService, EventType.BESKJED_INTERN, false)
+    private val innboksCounter = TopicEventTypeCounter(innboksCountConsumer, innboksActivityService, EventType.INNBOKS, false)
+    private val innboksInternCounter = TopicEventTypeCounter(innboksInternCountConsumer, innboksInternActivityService, EventType.INNBOKS_INTERN, false)
+    private val oppgaveCounter = TopicEventTypeCounter(oppgaveCountConsumer, oppgaveActivityService, EventType.OPPGAVE, false)
+    private val oppgaveInternCounter = TopicEventTypeCounter(oppgaveInternCountConsumer, oppgaveInternActivityService, EventType.OPPGAVE_INTERN, false)
+    private val statusoppdateringCounter = TopicEventTypeCounter(statusoppdateringCountConsumer, statusoppdateringActivityService, EventType.STATUSOPPDATERING, false)
+    private val statusoppdateringInternCounter = TopicEventTypeCounter(statusoppdateringInternCountConsumer, statusoppdateringInternActivityService, EventType.STATUSOPPDATERING_INTERN, false)
+    private val doneCounter = TopicEventTypeCounter(doneCountConsumer, doneActivityService, EventType.DONE, false)
+    private val doneInternCounter = TopicEventTypeCounter(doneInternCountConsumer, doneInternActivityService, EventType.DONE_INTERN, false)
+    private val feilresponsCounter = TopicEventTypeCounter(feilresponsCountConsumer, feilresponsActivityService, EventType.FEILRESPONS, false)
 
     @Test
     internal fun `Should handle exceptions and rethrow as internal exception`() {

@@ -42,7 +42,16 @@ object KafkaTestUtil {
                 aivenCredstorePassword = "aivenCredstorePasswordIkkeIBrukHer",
                 aivenSchemaRegistry = embeddedEnv.schemaRegistry!!.url,
                 aivenSchemaRegistryUser = username,
-                aivenSchemaRegistryPassword = password
+                aivenSchemaRegistryPassword = password,
+                lowActivityStreakThreshold = 60,
+                moderateActivityStreakThreshold = 15,
+                highActivityStreakThreshold = 5,
+                monitorOnPremBeskjedActivity = false,
+                monitorOnPremOppgaveActivity = false,
+                monitorOnPremInnboksActivity = false,
+                monitorOnPremDoneActivity = false,
+                monitorOnPremStatusoppdateringActivity = false
+
         )
     }
 

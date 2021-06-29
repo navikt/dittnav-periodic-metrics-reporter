@@ -8,6 +8,7 @@ import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.Consum
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.kafka.resetTheGroupIdsOffsetToZero
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.activity.TopicActivityService
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be greater than`
 import org.amshove.kluent.shouldBeNull
@@ -15,6 +16,7 @@ import org.amshove.kluent.shouldNotBeNull
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -23,6 +25,9 @@ internal class TopicEventTypeCounterTest {
 
     private val polledEvents: ConsumerRecords<Nokkel, GenericRecord> = mockk()
     private val polledNoEvents: ConsumerRecords<Nokkel, GenericRecord> = mockk()
+
+    private val activityService: TopicActivityService = mockk()
+
 
     @BeforeEach
     fun resetMocks() {
@@ -41,9 +46,11 @@ internal class TopicEventTypeCounterTest {
         val consumer: Consumer<Nokkel, GenericRecord> = mockk()
 
         val deltaCountingEnabled = true
-        val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled)
+        val counter = TopicEventTypeCounter(consumer, activityService, EventType.BESKJED, deltaCountingEnabled)
 
         every { consumer.kafkaConsumer.poll(any<Duration>()) } returns polledEvents andThen polledNoEvents
+        every { activityService.reportEventsFound() } returns Unit
+        every { activityService.reportNoEventsFound() } returns Unit
 
         val sessionSlot = slot<TopicMetricsSession>()
 
@@ -68,45 +75,6 @@ internal class TopicEventTypeCounterTest {
 
         session.getProcessingTime() `should be greater than` minimumProcessingTimeInNs
         counter.getPreviousSession().shouldNotBeNull()
-    }
-
-    @Test
-    fun `requireEventsInFirstBatch enabled - Should reset session if zero events is counted in first batch`() {
-        val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord> = mockk(relaxed = true)
-        val consumer = Consumer("dummyTopic", kafkaConsumer)
-
-        val deltaCountingEnabled = true
-        val requireEventsInFirstBatch = true
-        val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled, requireEventsInFirstBatch)
-
-        every { consumer.kafkaConsumer.poll(any<Duration>()) } returns polledNoEvents
-
-        val metricsSession = runBlocking {
-            counter.countEventsAsync().await()
-        }
-
-        metricsSession.getProducersWithUniqueEvents().isEmpty() `should be equal to` true
-        coVerify(exactly = 1) { kafkaConsumer.resetTheGroupIdsOffsetToZero() }
-        counter.getPreviousSession().shouldBeNull()
-    }
-
-    @Test
-    fun `requireEventsInFirstBatch disabled - Should not reset session if zero events is counted in first batch`() {
-        val kafkaConsumer: KafkaConsumer<Nokkel, GenericRecord> = mockk(relaxed = true)
-        val consumer = Consumer("dummyTopic", kafkaConsumer)
-
-        val deltaCountingEnabled = true
-        val requireEventsInFirstBatch = false
-        val counter = TopicEventTypeCounter(consumer, EventType.BESKJED, deltaCountingEnabled, requireEventsInFirstBatch)
-
-        every { consumer.kafkaConsumer.poll(any<Duration>()) } returns polledNoEvents
-
-        val metricsSession = runBlocking {
-            counter.countEventsAsync().await()
-        }
-
-        metricsSession.getProducersWithUniqueEvents().isEmpty() `should be equal to` true
-        coVerify(exactly = 0) { kafkaConsumer.resetTheGroupIdsOffsetToZero() }
     }
 
 }
