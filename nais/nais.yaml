@@ -35,9 +35,9 @@ spec:
   resources:
     limits:
       cpu: "3"
-      memory: 3000Mi
+      memory: 4800Mi
     requests:
       cpu: "1"
-      memory: 2560Mi
+      memory: 4096Mi
   kafka:
     pool: {{kafkapool}}
