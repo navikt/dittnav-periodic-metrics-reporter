@@ -32,6 +32,26 @@ data class EventIdUlid (
     override fun getFormat() = EventIdFormat.ULID
 }
 
+data class EventIdSuffixedUlid (
+        val suffix: Int,
+        val lowBits: Long,
+        val highBits: Long
+): EventId {
+    override fun getFormat() = EventIdFormat.SUFFIXED_ULID
+}
+
+data class EventIdNumeric(
+        val value: Long
+): EventId {
+    override fun getFormat() = EventIdFormat.NUMERIC
+}
+
+data class EventIdFodselsnummer(
+        val value: Long
+): EventId {
+    override fun getFormat() = EventIdFormat.FODSELSNUMMER
+}
+
 enum class EventIdFormat {
-    PLAINTEXT, UUID, PREFIXED_UUID, ULID
+    PLAINTEXT, UUID, PREFIXED_UUID, ULID, SUFFIXED_ULID, NUMERIC, FODSELSNUMMER
 }

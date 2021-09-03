@@ -49,10 +49,20 @@ private data class UserEventIdEntry(
         val eventId: EventId
 ) {
     companion object {
-        fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier) =
+        fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier): UserEventIdEntry {
+            val fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer)
+
+            return if (uniqueIdentifier.fodselsnummer == uniqueIdentifier.eventId && fodselsnummer is FodselsnummerNumeric) {
+                UserEventIdEntry(
+                        fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
+                        eventId = EventIdFodselsnummer(fodselsnummer.longValue)
+                )
+            } else {
                 UserEventIdEntry(
                         fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
                         eventId = EventIdParser.parseEventId(uniqueIdentifier.eventId)
                 )
+            }
+        }
     }
 }
