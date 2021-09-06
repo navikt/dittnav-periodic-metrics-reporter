@@ -35,7 +35,7 @@ object EventIdParser {
     // character is only 3 bits wide (128 mod 5), and can only be in the range 0-7 inclusive.
     private val ULID_PATTERN = "^[0-7]$BASE_32_ULID{25}$".toRegex()
 
-    private val SUFFIXED_ULID_PATTERN = "^[0-7]$BASE_32_ULID{25}_[0-9]$".toRegex()
+    private val SUFFIXED_ULID_PATTERN = "^([0-7]$BASE_32_ULID{25})_([0-9])$".toRegex()
 
     private val NUMERIC_PATTERN = "[0-9]+".toRegex()
 
