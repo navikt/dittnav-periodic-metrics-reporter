@@ -64,9 +64,9 @@ dependencies {
     testImplementation(Kafka.Confluent.schemaRegistry)
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
-    testImplementation("io.kotest:kotest-runner-junit5:4.3.1")
-    testImplementation("io.kotest:kotest-assertions-core:4.3.1")
-    testImplementation("io.kotest:kotest-extensions:4.3.1")
+    testImplementation(Kotest.runnerJunit5)
+    testImplementation(Kotest.assertionsCore)
+    testImplementation(Kotest.extensions)
     testImplementation(ULID.sulkyUlid)
     intTestImplementation(Junit.engine)
 }
