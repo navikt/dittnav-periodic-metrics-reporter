@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSession
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.EventIdFormat
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.UniqueEventsTracker
 
 class TopicMetricsSession : CountingMetricsSession {
@@ -50,6 +51,10 @@ class TopicMetricsSession : CountingMetricsSession {
 
     fun getNumberOfUniqueEvents(produsent: String): Int {
         return uniqueEventsOnTopicByProducer.getOrDefault(produsent, 0)
+    }
+
+    fun getEventIdCountByFormat(): Map<EventIdFormat, Int> {
+        return uniqueEventsOnTopic.countEventIdsByFormat()
     }
 
     fun getDuplicates(): Int {

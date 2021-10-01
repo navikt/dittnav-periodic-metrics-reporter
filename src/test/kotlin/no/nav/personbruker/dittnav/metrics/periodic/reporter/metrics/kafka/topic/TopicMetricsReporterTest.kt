@@ -52,7 +52,7 @@ internal class TopicMetricsReporterTest {
             topicMetricsReporter.report(session)
         }
 
-        coVerify(exactly = 6) { metricsReporter.registerDataPoint(any(), any(), any()) }
+        coVerify(exactly = 7) { metricsReporter.registerDataPoint(any(), any(), any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerUniqueEvents(3, any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerTotalNumberOfEvents(4, any()) }
         verify(exactly = 1) { PrometheusMetricsCollector.registerUniqueEventsByProducer(3, any(), any()) }

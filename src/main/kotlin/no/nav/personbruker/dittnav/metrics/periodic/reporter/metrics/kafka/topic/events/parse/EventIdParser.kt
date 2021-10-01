@@ -35,16 +35,42 @@ object EventIdParser {
     // character is only 3 bits wide (128 mod 5), and can only be in the range 0-7 inclusive.
     private val ULID_PATTERN = "^[0-7]$BASE_32_ULID{25}$".toRegex()
 
+    private val SUFFIXED_ULID_PATTERN = "^([0-7]$BASE_32_ULID{25})_([0-9])$".toRegex()
+
+    private val NUMERIC_PATTERN = "[0-9]+".toRegex()
+
     fun parseEventId(eventIdString: String): EventId {
         return when {
             UUID_PATTERN.matches(eventIdString) -> parseUuid(eventIdString)
             ULID_PATTERN.matches(eventIdString) -> parseUlid(eventIdString)
-            PREFIXED_UUID_PATTERN.matches(eventIdString) -> parseCustomUuid(eventIdString)
+            PREFIXED_UUID_PATTERN.matches(eventIdString) -> parsePrefixedUuid(eventIdString)
+            SUFFIXED_ULID_PATTERN.matches(eventIdString) -> parseSuffixedUlid(eventIdString)
+            NUMERIC_PATTERN.matches(eventIdString) -> parseNumericString(eventIdString)
             else -> EventIdPlainText(stringValue = eventIdString)
         }
     }
 
-    private fun parseUuid(uuidString: String): EventId {
+    private fun parseNumericString(eventIdString: String): EventId {
+        return try {
+            val numericValue = eventIdString.toLong()
+
+            EventIdNumeric(numericValue)
+        } catch (e: Exception) { // If value is above max long.
+            EventIdPlainText(eventIdString)
+        }
+    }
+
+    private fun parseSuffixedUlid(eventIdString: String): EventIdSuffixedUlid {
+        return SUFFIXED_ULID_PATTERN.find(eventIdString)!!.destructured.let { (ulidString, suffix) ->
+            val dataAs128BitNumber = parseNumericValueFromBase32Ulid(ulidString)
+
+            val suffixValue = suffix.toInt()
+
+            return EventIdSuffixedUlid(suffix = suffixValue, lowBits = dataAs128BitNumber[0], highBits = dataAs128BitNumber[1])
+        }
+    }
+
+    private fun parseUuid(uuidString: String): EventIdUuid {
         val withoutHyphen = uuidString.replace("-", "")
 
         val dataAs128BitNumber = parseNumericValueFromBase16(withoutHyphen)
@@ -52,13 +78,13 @@ object EventIdParser {
         return EventIdUuid(lowBits = dataAs128BitNumber[0], highBits = dataAs128BitNumber[1])
     }
 
-    private fun parseUlid(ulidString: String): EventId {
+    private fun parseUlid(ulidString: String): EventIdUlid {
         val dataAs128BitNumber = parseNumericValueFromBase32Ulid(ulidString)
 
         return EventIdUlid(lowBits = dataAs128BitNumber[0], highBits = dataAs128BitNumber[1])
     }
 
-    private fun parseCustomUuid(eventIdString: String): EventId {
+    private fun parsePrefixedUuid(eventIdString: String): EventIdPrefixedUuid {
         return PREFIXED_UUID_PATTERN.find(eventIdString)!!.destructured.let { (prefix, uuidString) ->
             val withoutHyphen = uuidString.replace("-", "")
 

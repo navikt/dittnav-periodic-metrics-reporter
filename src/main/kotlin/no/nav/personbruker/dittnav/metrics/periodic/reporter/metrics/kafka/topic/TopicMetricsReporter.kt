@@ -30,6 +30,7 @@ class TopicMetricsReporter(
             reportDuplicatedEventsByProducer(session)
             reportTotalNumberOfEventsByProducer(session)
             reportTimeUsed(session)
+            reportEventIdCountByFormat(session)
 
         } else {
             log.info("Ingen eventer ble funnet på topic for ${session.eventType}.")
@@ -85,6 +86,16 @@ class TopicMetricsReporter(
         }
     }
 
+    private suspend fun reportEventIdCountByFormat(session: TopicMetricsSession) {
+        session.getEventIdCountByFormat().entries.forEach { entry ->
+            val sumForFormat = entry.value
+            val eventTypeName = session.eventType.toString()
+            val eventIdFormat = entry.key.name
+
+            reportEventIdFormatCount(sumForFormat, eventTypeName, eventIdFormat)
+        }
+    }
+
     private suspend fun reportTimeUsed(session: TopicMetricsSession) {
         reportProcessingTimeEvent(session)
         PrometheusMetricsCollector.registerProcessingTime(session.getProcessingTime(), session.eventType)
@@ -113,7 +124,14 @@ class TopicMetricsReporter(
         metricsReporter.registerDataPoint(metricName, counterField(count), createTagMap(eventType))
     }
 
+    private suspend fun reportEventIdFormatCount(count: Int, eventType: String, eventIdFormat: String) {
+        metricsReporter.registerDataPoint(KAFKA_COUNT_EVENTID_FORMAT, counterField(count), createTagMapForEventIdFormat(eventType, eventIdFormat))
+    }
+
     private fun createTagMap(eventType: String): Map<String, String> =
         listOf("eventType" to eventType).toMap()
+
+    private fun createTagMapForEventIdFormat(eventType: String, eventIdFormat: String): Map<String, String> =
+            listOf("eventType" to eventType, "eventIdFormat" to eventIdFormat).toMap()
 
 }

@@ -25,4 +25,28 @@ class UniqueEventsTracker {
             true
         }
     }
+
+    fun countEventIdsByFormat(): Map<EventIdFormat, Int> {
+        return perProducerMap.values.map {
+            it.countEventIdsByFormat()
+        }.sumByKey()
+    }
+
+    private fun <T> List<Map<T, Int>>.sumByKey(): Map<T, Int> {
+        val mapOfSums = mutableMapOf<T, Int>()
+
+        forEach { map ->
+            map.entries.forEach { entry ->
+               mapOfSums.compute(entry.key) { _, currentSum ->
+                   if (currentSum == null) {
+                       entry.value
+                   } else {
+                       currentSum + entry.value
+                   }
+               }
+            }
+        }
+
+        return mapOfSums
+    }
 }
