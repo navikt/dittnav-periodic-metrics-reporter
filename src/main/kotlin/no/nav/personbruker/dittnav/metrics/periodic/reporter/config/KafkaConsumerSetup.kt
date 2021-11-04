@@ -19,11 +19,11 @@ object KafkaConsumerSetup {
         appContext.beskjedCountOnPremConsumer.startSubscription()
         appContext.oppgaveCountOnPremConsumer.startSubscription()
         appContext.doneCountOnPremConsumer.startSubscription()
+        appContext.innboksCountOnPremConsumer.startSubscription()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountOnPremConsumer.startSubscription()
             appContext.statusoppdateringCountOnPremConsumer.startSubscription()
         } else {
-            log.info("Er i produksjonsmiljø, unnlater å starte innboks- og statusoppdateringconsumer on prem.")
+            log.info("Er i produksjonsmiljø, unnlater å starte statusoppdateringconsumer on prem.")
         }
     }
 
@@ -43,8 +43,8 @@ object KafkaConsumerSetup {
         appContext.beskjedCountOnPremConsumer.stop()
         appContext.oppgaveCountOnPremConsumer.stop()
         appContext.doneCountOnPremConsumer.stop()
+        appContext.innboksCountOnPremConsumer.stop()
         if (isOtherEnvironmentThanProd()) {
-            appContext.innboksCountOnPremConsumer.stop()
             appContext.statusoppdateringCountOnPremConsumer.stop()
         }
         log.info("...ferdig med å stoppe kafka-pollerne on prem.")
