@@ -19,7 +19,12 @@ class TopicEventCounterOnPremService<K>(
         val beskjeder = beskjedCounter.countEventsAsync()
         val oppgaver = oppgaveCounter.countEventsAsync()
         val done = doneCounter.countEventsAsync()
-        val innboks = innboksCounter.countEventsAsync()
+
+        val innboks = if (isOtherEnvironmentThanProd()) {
+            innboksCounter.countEventsAsync()
+        } else {
+            async { TopicMetricsSession(EventType.INNBOKS) }
+        }
 
         val statusoppdateringer = if(isOtherEnvironmentThanProd()) {
             statusoppdateringCounter.countEventsAsync()

@@ -26,12 +26,12 @@ object CountingMetricsSessionsObjectMother {
         }
     }
 
-    fun giveMeDatabaseSessionsForAllExternalEventTypesExceptForStatusoppdatering(): CountingMetricsSessions {
+    fun giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, DbCountingMetricsSessionObjectMother.giveMeBeskjedSessionWithOneCountedEvent())
             put(EventType.DONE, DbCountingMetricsSessionObjectMother.giveMeDoneSessionWithTwoCountedEvents())
             put(EventType.OPPGAVE, DbCountingMetricsSessionObjectMother.giveMeOppgaveSessionWithFourCountedEvents())
-            put(EventType.INNBOKS, DbCountingMetricsSessionObjectMother.giveMeInnboksSessionWithThreeCountedEvents())
+            put(EventType.STATUSOPPDATERING, DbCountingMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFourCountedEvents())
         }
     }
 
@@ -56,12 +56,12 @@ object CountingMetricsSessionsObjectMother {
         }
     }
 
-    fun giveMeTopicSessionsForAllExternalEventTypesExceptForStatusoppdatering(): CountingMetricsSessions {
+    fun giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks(): CountingMetricsSessions {
         return CountingMetricsSessions().apply {
             put(EventType.BESKJED, TopicMetricsSessionObjectMother.giveMeBeskjedSessionWithTwoCountedEvents())
             put(EventType.DONE, TopicMetricsSessionObjectMother.giveMeDoneSessionWithThreeCountedEvent())
             put(EventType.OPPGAVE, TopicMetricsSessionObjectMother.giveMeOppgaveSessionWithFiveCountedEvent())
-            put(EventType.INNBOKS, TopicMetricsSessionObjectMother.giveMeInnboksSessionWithFourCountedEvent())
+            put(EventType.STATUSOPPDATERING, TopicMetricsSessionObjectMother.giveMeStatusoppdateringSessionWithFiveCountedEvent())
         }
     }
 
