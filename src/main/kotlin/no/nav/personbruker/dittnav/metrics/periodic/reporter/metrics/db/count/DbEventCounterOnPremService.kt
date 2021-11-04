@@ -58,18 +58,13 @@ class DbEventCounterOnPremService(
 
     suspend fun countInnboksEventer(): DbCountingMetricsSession {
         val eventType = EventType.INNBOKS
-        return if (isOtherEnvironmentThanProd()) {
-            try {
-                metricsProbe.runWithMetrics(eventType) {
-                    val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.INNBOKS)
-                    addEventsByProducer(grupperPerProdusent)
-                }
-
-            } catch (e: Exception) {
-                throw CountException("Klarte ikke å telle antall innboks-eventer i cache-en", e)
+        return try {
+            metricsProbe.runWithMetrics(eventType) {
+                val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.INNBOKS)
+                addEventsByProducer(grupperPerProdusent)
             }
-        } else {
-            DbCountingMetricsSession(eventType)
+        } catch (e: Exception) {
+            throw CountException("Klarte ikke å telle antall innboks-eventer i cache-en", e)
         }
     }
 
