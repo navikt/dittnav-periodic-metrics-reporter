@@ -6,8 +6,8 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.CountingMetricsSessionsObjectMother
-import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbCountingMetricsSession
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterGCPService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbEventCounterOnPremService
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.db.count.DbMetricsReporter
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.TopicEventCounterAivenService
@@ -75,9 +75,9 @@ internal class MetricsSubmitterServiceTest {
 
     @Test
     fun `Should not report metrics for event types without metrics session`() {
-        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks()
+        val topicMetricsSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForStatusoppdatering()
         val topicMetricsInternSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllInternalEventTypes()
-        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks()
+        val dbMetricsSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForStatusoppdatering()
         val dbMetricInternSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllInternalEventTypes()
 
         coEvery { topicEventCounterServiceOnPrem.countAllEventTypesAsync() } returns topicMetricsSessions
@@ -107,15 +107,17 @@ internal class MetricsSubmitterServiceTest {
             submitter.submitMetrics()
         }
 
-        reportedTopicMetricsForEventTypes `should not contain` EventType.INNBOKS
+        reportedTopicMetricsForEventTypes `should contain` EventType.INNBOKS
         reportedTopicMetricsForEventTypes `should contain` EventType.BESKJED
         reportedTopicMetricsForEventTypes `should contain` EventType.DONE
         reportedTopicMetricsForEventTypes `should contain` EventType.OPPGAVE
+        reportedTopicMetricsForEventTypes `should not contain` EventType.STATUSOPPDATERING
 
-        reportedDbMetricsForEventTypes `should not contain` EventType.INNBOKS
+        reportedDbMetricsForEventTypes `should contain` EventType.INNBOKS
         reportedDbMetricsForEventTypes `should contain` EventType.BESKJED
         reportedDbMetricsForEventTypes `should contain` EventType.DONE
         reportedDbMetricsForEventTypes `should contain` EventType.OPPGAVE
+        reportedDbMetricsForEventTypes `should not contain` EventType.STATUSOPPDATERING
     }
 
     @Test
