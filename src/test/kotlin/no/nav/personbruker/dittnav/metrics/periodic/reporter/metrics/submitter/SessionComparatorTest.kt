@@ -8,8 +8,8 @@ internal class SessionComparatorTest {
 
     @Test
     fun `Should return all sessions from both sources, when they have the same session types`() {
-        val allTopicSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForStatusoppdatering()
-        val allDbSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForStatusoppdatering()
+        val allTopicSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks()
+        val allDbSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks()
 
         val comparator = SessionComparator(allTopicSessions, allDbSessions)
 
@@ -19,7 +19,7 @@ internal class SessionComparatorTest {
 
     @Test
     fun `Should only return sessions present in both sources, if one topic session is missing`() {
-        val oneTopicSessionMissing = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForStatusoppdatering()
+        val oneTopicSessionMissing = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypesExceptForInnboks()
         val allDbSessions = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypes()
 
         val comparator = SessionComparator(oneTopicSessionMissing, allDbSessions)
@@ -29,7 +29,7 @@ internal class SessionComparatorTest {
 
     @Test
     fun `Should only return sessions present in both sources, if one database session is missing`() {
-        val oneDbSessionMissing = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForStatusoppdatering()
+        val oneDbSessionMissing = CountingMetricsSessionsObjectMother.giveMeDatabaseSessionsForAllExternalEventTypesExceptForInnboks()
         val allTopicSessions = CountingMetricsSessionsObjectMother.giveMeTopicSessionsForAllExternalEventTypes()
 
         val comparator = SessionComparator(allTopicSessions, oneDbSessionMissing)
