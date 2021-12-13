@@ -52,5 +52,4 @@ internal class DbEventCounterOnPremServiceTest {
         } `should throw` CountException::class `with message containing` "statusoppdatering"
 
     }
-
 }
