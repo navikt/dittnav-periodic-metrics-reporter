@@ -88,10 +88,10 @@ object Kafka {
 
     private fun Properties.commonProps(env: Environment, eventTypeToConsume: EventType) {
         val groupIdAndEventType = "${env.groupIdBase}_${eventTypeToConsume.eventType}"
-        val sixMinutes = 6 * 60 * 1000
+        val tenMinutes = 10 * 60 * 1000
         put(ConsumerConfig.GROUP_ID_CONFIG, groupIdAndEventType)
         put(ConsumerConfig.CLIENT_ID_CONFIG, groupIdAndEventType + getHostname(InetSocketAddress(0)))
-        put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, sixMinutes)
+        put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, tenMinutes)
         put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false)
         put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, SwallowSerializationErrorsAvroDeserializer::class.java)
         put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SwallowSerializationErrorsAvroDeserializer::class.java)
