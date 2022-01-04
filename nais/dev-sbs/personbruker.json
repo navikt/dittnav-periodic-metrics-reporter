@@ -1,9 +1,0 @@
-{
-  "namespace": "personbruker",
-  "cluster": "preprod",
-  "environment": "dev",
-  "kafkapool": "nav-dev",
-  "ingresses": [
-    "https://dittnav-periodic-metrics-reporter.dev.nav.no"
-  ]
-}
