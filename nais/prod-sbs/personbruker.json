@@ -1,9 +1,0 @@
-{
-  "namespace": "personbruker",
-  "cluster": "prod",
-  "environment": "prod",
-  "kafkapool": "nav-prod",
-  "ingresses": [
-    "https://dittnav-periodic-metrics-reporter.nais.oera.no"
-  ]
-}

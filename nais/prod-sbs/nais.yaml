@@ -35,7 +35,7 @@ spec:
       cpu: "3"
       memory: 9000Mi
     requests:
-      cpu: "1"
+      cpu: "50m"
       memory: 7680Mi
   kafka:
     pool: nav-prod
