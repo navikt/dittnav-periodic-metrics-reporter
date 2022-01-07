@@ -18,8 +18,8 @@ class TopicEventCounterOnPremService<K>(
 
         val beskjeder = beskjedCounter.countEventsAsync()
         val oppgaver = oppgaveCounter.countEventsAsync()
-        val done = doneCounter.countEventsAsync()
-        val innboks = innboksCounter.countEventsAsync()
+        //val done = doneCounter.countEventsAsync()
+        //val innboks = innboksCounter.countEventsAsync()
 
         val statusoppdateringer = if(isOtherEnvironmentThanProd()) {
             statusoppdateringCounter.countEventsAsync()
@@ -30,10 +30,10 @@ class TopicEventCounterOnPremService<K>(
         val sessions = CountingMetricsSessions()
 
         sessions.put(EventType.BESKJED, beskjeder.await())
-        sessions.put(EventType.DONE, done.await())
-        sessions.put(EventType.INNBOKS, innboks.await())
+        //sessions.put(EventType.DONE, done.await())
+        //sessions.put(EventType.INNBOKS, innboks.await())
         sessions.put(EventType.OPPGAVE, oppgaver.await())
-        sessions.put(EventType.STATUSOPPDATERING, statusoppdateringer.await())
+        //sessions.put(EventType.STATUSOPPDATERING, statusoppdateringer.await())
 
         sessions
     }
