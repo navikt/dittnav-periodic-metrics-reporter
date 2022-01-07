@@ -34,19 +34,14 @@ class MetricsSubmitterService(
     suspend fun submitMetrics() {
         try {
             val topicSessionsOnPrem = topicEventCounterServiceOnPrem.countAllEventTypesAsync()
-            val topicSessionsAiven = topicEventCounterServiceAiven.countAllEventTypesAsync()
+            //val topicSessionsAiven = topicEventCounterServiceAiven.countAllEventTypesAsync()
             val dbSessionsOnPrem = dbEventCounterOnPremService.countAllEventTypesAsync()
-            val dbSessionsAiven = dbEventCounterGCPService.countAllEventTypesAsync()
+            //val dbSessionsAiven = dbEventCounterGCPService.countAllEventTypesAsync()
 
             val sessionComparatorOnPrem = SessionComparator(topicSessionsOnPrem, dbSessionsOnPrem)
-            val sessionComparatorAiven = SessionComparator(topicSessionsAiven, dbSessionsAiven)
 
             sessionComparatorOnPrem.eventTypesWithSessionFromBothSources().forEach { eventType ->
                 reportMetricsByEventType(topicSessionsOnPrem, dbSessionsOnPrem, eventType)
-            }
-
-            sessionComparatorAiven.eventTypesWithSessionFromBothSources().forEach { eventType ->
-                reportMetricsByEventType(topicSessionsAiven, dbSessionsAiven, eventType)
             }
 
         } catch (e: CountException) {

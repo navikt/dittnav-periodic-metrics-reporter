@@ -56,33 +56,12 @@ class DbEventCounterOnPremService(
         }
     }
 
-    suspend fun countInnboksEventer(): DbCountingMetricsSession {
-        val eventType = EventType.INNBOKS
-        return try {
-            metricsProbe.runWithMetrics(eventType) {
-                val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.INNBOKS)
-                addEventsByProducer(grupperPerProdusent)
-            }
-        } catch (e: Exception) {
-            throw CountException("Klarte ikke å telle antall innboks-eventer i cache-en", e)
-        }
+    fun countInnboksEventer(): DbCountingMetricsSession {
+        return DbCountingMetricsSession(EventType.INNBOKS)
     }
 
-    suspend fun countStatusoppdateringer(): DbCountingMetricsSession {
-        val eventType = EventType.STATUSOPPDATERING
-        return if (isOtherEnvironmentThanProd()) {
-            try {
-                metricsProbe.runWithMetrics(eventType) {
-                    val grupperPerProdusent = repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.STATUSOPPDATERING)
-                    addEventsByProducer(grupperPerProdusent)
-                }
-
-            } catch (e: Exception) {
-                throw CountException("Klarte ikke å telle antall statusoppdatering-eventer i cache-en", e)
-            }
-        } else {
-            DbCountingMetricsSession(eventType)
-        }
+    fun countStatusoppdateringer(): DbCountingMetricsSession {
+        return DbCountingMetricsSession(EventType.STATUSOPPDATERING)
     }
 
     suspend fun countOppgaver(): DbCountingMetricsSession {
@@ -98,17 +77,8 @@ class DbEventCounterOnPremService(
         }
     }
 
-    suspend fun countDoneEvents(): DbCountingMetricsSession {
-        val eventType = EventType.DONE
-        return try {
-            metricsProbe.runWithMetrics(eventType) {
-                addEventsByProducer(repository.getNumberOfEventsOfTypeGroupedByProdusent(EventType.DONE))
-                addEventsByProducer(repository.getNumberOfInactiveBrukernotifikasjonerGroupedByProdusent())
-            }
-
-        } catch (e: Exception) {
-            throw CountException("Klarte ikke å telle antall done-eventer i cache-en", e)
-        }
+    fun countDoneEvents(): DbCountingMetricsSession {
+        return DbCountingMetricsSession(EventType.DONE)
     }
 
 }
