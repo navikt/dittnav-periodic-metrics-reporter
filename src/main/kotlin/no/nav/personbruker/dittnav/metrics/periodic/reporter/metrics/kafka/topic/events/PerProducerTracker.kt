@@ -2,10 +2,11 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.EventIdParser
+import org.eclipse.collections.impl.set.mutable.UnifiedSet
 
 class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier) {
 
-    private val userEventIds = HashSet<UserEventIdEntry>()
+    private val userEventIds = UnifiedSet<UserEventIdEntry>()
 
     private val eventIdFormatCounter = EventIdFormatCounter()
 

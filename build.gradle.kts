@@ -54,6 +54,7 @@ dependencies {
     implementation(Prometheus.common)
     implementation(Prometheus.hotspot)
     implementation(Prometheus.logback)
+    implementation("org.eclipse.collections:eclipse-collections:11.0.0")
 
     testImplementation(H2Database.h2)
     testImplementation(Junit.api)
