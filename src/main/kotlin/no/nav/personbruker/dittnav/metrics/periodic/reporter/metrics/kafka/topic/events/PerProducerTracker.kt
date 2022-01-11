@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.UniqueKafkaEventIdentifier
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.EventIdParser
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.parse.FodselsnummerParser
 import org.eclipse.collections.impl.set.mutable.UnifiedSet
 
 class PerProducerTracker(initialEntry: UniqueKafkaEventIdentifier) {
@@ -51,16 +52,16 @@ private data class UserEventIdEntry(
 ) {
     companion object {
         fun fromUniqueIdentifier(uniqueIdentifier: UniqueKafkaEventIdentifier): UserEventIdEntry {
-            val fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer)
+            val fodselsnummer = FodselsnummerParser.parse(uniqueIdentifier.fodselsnummer)
 
             return if (uniqueIdentifier.fodselsnummer == uniqueIdentifier.eventId && fodselsnummer is FodselsnummerNumeric) {
                 UserEventIdEntry(
-                        fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
-                        eventId = EventIdFodselsnummer(fodselsnummer.longValue)
+                        fodselsnummer = fodselsnummer,
+                        eventId = EventIdFodselsnummer(uniqueIdentifier.eventId.toLong())
                 )
             } else {
                 UserEventIdEntry(
-                        fodselsnummer = Fodselsnummer.fromString(uniqueIdentifier.fodselsnummer),
+                        fodselsnummer = fodselsnummer,
                         eventId = EventIdParser.parseEventId(uniqueIdentifier.eventId)
                 )
             }
