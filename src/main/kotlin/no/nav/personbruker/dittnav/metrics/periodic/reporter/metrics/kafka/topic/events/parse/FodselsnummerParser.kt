@@ -2,73 +2,30 @@ package no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topi
 
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.metrics.kafka.topic.events.*
 
+// Denne "parseren" drar nytte av det faktum at de to siste siffrene i et fødselsnummer er gitt
+// etter de ni første. Dette betyr at hvis vi antar at alle fødselsnummer vi mottar er gyldige,
+// vil de to siste siffrene kun gi oss informasjon vi allerede har. Vi kan derfor sløyfe disse siffrene
+// uten å tape data om unikhet, og vi kan plassere all nødvendig info i en Int.
+// Dette sparer oss fire byte per event, sett mot å plassere hele sifferet i en Long.
 object FodselsnummerParser {
-    private val FODSELSNUMMER_FORMAT = "^[0-3][0-9][0-1][0-9]{8}$".toRegex()
-    private val D_NUMMER_FORMAT = "^[4-7][0-9][0-1][0-9]{8}$".toRegex()
-    private val H_NUMMER_FORMAT = "^[0-3][0-9][4-5][0-9]{8}$".toRegex()
+    private val FODSELSNUMMER_FORMAT = "^[0-9]{11}$".toRegex()
 
     fun parse(fnrString: String): Fodselsnummer {
 
         return when {
             FODSELSNUMMER_FORMAT.matches(fnrString) -> parseAsFnr(fnrString)
-            D_NUMMER_FORMAT.matches(fnrString) -> parseAsDnr(fnrString)
-            H_NUMMER_FORMAT.matches(fnrString) -> parseAsHnr(fnrString)
             else -> FodselsnummerPlainText(fnrString)
         }
     }
 
     private fun parseAsFnr(fnrString: String): FodselsnummerNumeric {
-        val encoded = buildString(9) {
-            append(fnrString.month)
-            append(fnrString.day)
-            append(fnrString.year)
-            append(fnrString.id)
-        }
 
-        val backingValue = encoded.toInt()
+        val dataDigits = fnrString.withoutControlDigits
 
-        return FodselsnummerNumeric(backingValue)
+        return FodselsnummerNumeric(dataDigits.toInt())
     }
 
-    private fun parseAsDnr(fnrString: String): FodselsnummerDNummer {
-        val encoded = buildString(9) {
-            append(fnrString.month)
-            append(fnrString.day)
-            append(fnrString.year)
-            append(fnrString.id)
-        }
-
-        val backingValue = encoded.toInt()
-
-        return FodselsnummerDNummer(backingValue)
-    }
-
-    private fun parseAsHnr(fnrString: String): FodselsnummerHNummer {
-
-        val encoded = buildString(9) {
-            append(calculateMonthForHnr(fnrString.month))
-            append(fnrString.day)
-            append(fnrString.year)
-            append(fnrString.id)
-        }
-
-        val backingValue = encoded.toInt()
-
-        return FodselsnummerHNummer(backingValue)
-    }
-
-    private fun calculateMonthForHnr(monthSegment: CharSequence): String {
-        val offsetMonthAsInt = monthSegment.toString().toInt()
-
-        val trueMonthAsInt = offsetMonthAsInt - 40
-
-        return trueMonthAsInt.toString()
-    }
-
-    private val String.day: CharSequence get() = subSequence(0, 2)
-    private val String.month: CharSequence get() = subSequence(2, 4)
-    private val String.year: CharSequence get() = subSequence(4, 6)
-    private val String.id: CharSequence get() = subSequence(6, 9)
+    private val String.withoutControlDigits: String get() = subSequence(0, 9).toString()
 
 
 }

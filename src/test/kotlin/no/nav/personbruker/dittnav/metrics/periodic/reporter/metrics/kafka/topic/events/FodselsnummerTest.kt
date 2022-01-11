@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 internal class FodselsnummerTest {
     @Test
     fun `Should use numeric variable to store fodselsnummer if possible`() {
-        val fodselsnummerText = "01122212345"
-        val expected = 120122123
+        val fodselsnummerText = "12345612345"
+        val expected = 123456123
 
         val fodselsnummer = FodselsnummerParser.parse(fodselsnummerText)
 
