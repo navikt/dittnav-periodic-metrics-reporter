@@ -23,7 +23,9 @@ object AvroBeskjedObjectMother {
                 text,
                 "https://nav.no/systemX/$lopenummer",
                 4,
-                defaultEksternVarsling)
+                defaultEksternVarsling,
+                emptyList()
+        )
     }
 
     fun createBeskjedWithoutSynligFremTilSatt(): Beskjed {
@@ -35,6 +37,8 @@ object AvroBeskjedObjectMother {
                 defaultText,
                 "https://nav.no/systemX/$defaultLopenummer",
                 4,
-                defaultEksternVarsling)
+                defaultEksternVarsling,
+                emptyList()
+        )
     }
 }

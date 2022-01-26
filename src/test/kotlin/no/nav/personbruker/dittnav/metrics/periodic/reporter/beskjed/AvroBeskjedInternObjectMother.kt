@@ -14,14 +14,13 @@ object AvroBeskjedInternObjectMother {
 
     fun createBeskjedIntern(): BeskjedIntern {
         return BeskjedIntern(
-            createULID(),
             Instant.now().toEpochMilli(),
             Instant.now().toEpochMilli(),
-            defaultGrupperingsId,
             defaultText,
             defaultLink,
             4,
-            defaultEksternVarsling
+            defaultEksternVarsling,
+            emptyList()
         )
     }
 }
