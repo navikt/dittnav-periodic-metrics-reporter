@@ -8,6 +8,7 @@ import no.nav.brukernotifikasjon.schemas.internal.NokkelIntern
 import no.nav.brukernotifikasjon.schemas.internal.domain.FeilresponsBegrunnelse
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedInternObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.beskjed.AvroBeskjedObjectMother
+import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.createULID
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.common.objectmother.ConsumerRecordsObjectMother
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.config.EventType
 import no.nav.personbruker.dittnav.metrics.periodic.reporter.done.AvroDoneInternObjectMother
@@ -44,7 +45,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform external BeskjedIntern to internal`() {
-        val nokkelIntern = NokkelIntern("sysBruker1", "1", "12345678901")
+        val nokkelIntern = NokkelIntern(createULID(), "123", "123", "12345678901", "ns", "app", "sysBruker1")
         val beskjedIntern = AvroBeskjedInternObjectMother.createBeskjedIntern()
         val original: ConsumerRecord<NokkelIntern, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelIntern, beskjedIntern)
@@ -72,7 +73,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform external InnboksIntern to internal`() {
-        val nokkelIntern = NokkelIntern("sysBruker2", "2", "12345678901")
+        val nokkelIntern = NokkelIntern(createULID(), "345", "123", "12345678901", "ns", "app", "sysBruker2")
         val innboksEvent = AvroInnboksInternObjectMother.createInnboksIntern()
         val original: ConsumerRecord<NokkelIntern, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelIntern, innboksEvent)
@@ -100,7 +101,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform external OppgaveIntern to internal`() {
-        val nokkelIntern = NokkelIntern("sysBruker3", "3", "12345678901")
+        val nokkelIntern = NokkelIntern(createULID(), "567", "123", "12345678901", "ns", "app", "sysBruker3")
         val oppgave = AvroOppgaveInternObjectMother.createOppgaveIntern()
         val original: ConsumerRecord<NokkelIntern, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelIntern, oppgave)
@@ -128,7 +129,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform external StatusoppdateringIntern to internal`() {
-        val nokkelIntern = NokkelIntern("sysBruker3", "1", "12345678901")
+        val nokkelIntern = NokkelIntern(createULID(), "6878", "123", "12345678901", "ns", "app", "sysBruker3")
         val statusoppdateringEvent = AvroStatusoppdateringInternObjectMother.createStatusoppdateringIntern()
         val original: ConsumerRecord<NokkelIntern, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelIntern, statusoppdateringEvent)
@@ -156,7 +157,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform external DoneIntern-event to internal`() {
-        val nokkelIntern = NokkelIntern("sysBruker3", "3", "12345678901")
+        val nokkelIntern = NokkelIntern(createULID(), "799", "123", "12345678901", "ns", "app", "sysBruker3")
         val done = AvroDoneInternObjectMother.createDoneIntern()
         val original: ConsumerRecord<NokkelIntern, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelIntern, done)
@@ -170,7 +171,7 @@ internal class UniqueKafkaEventIdentifierTransformerTest {
 
     @Test
     fun `Should transform Feilrespons to internal`() {
-        val nokkelFeilrespons = NokkelFeilrespons("sysBruker4", "4", EventType.BESKJED.toString())
+        val nokkelFeilrespons = NokkelFeilrespons("4", EventType.BESKJED.toString(), "ns", "app", "sysBruker4")
         val feilrespons = Feilrespons(Instant.now().toEpochMilli(), FeilresponsBegrunnelse.VALIDERINGSFEIL.toString(), "Simulert feil i en test")
         val original: ConsumerRecord<NokkelFeilrespons, GenericRecord> =
             ConsumerRecordsObjectMother.createConsumerRecord(nokkelFeilrespons, feilrespons)

@@ -21,7 +21,9 @@ object AvroOppgaveObjectMother {
                 tekst,
                 "https://nav.no/systemX/$lopenummer",
                 4,
-                defaultEksternVarsling)
+                defaultEksternVarsling,
+                emptyList()
+        )
     }
 
 }
