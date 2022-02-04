@@ -61,7 +61,7 @@ object EventIdParser {
     }
 
     private fun parseSuffixedUlid(eventIdString: String): EventIdSuffixedUlid {
-        return SUFFIXED_ULID_PATTERN.find(eventIdString)!!.destructured.let { (ulidString, suffix) ->
+        SUFFIXED_ULID_PATTERN.find(eventIdString)!!.destructured.let { (ulidString, suffix) ->
             val dataAs128BitNumber = parseNumericValueFromBase32Ulid(ulidString)
 
             val suffixValue = suffix.toInt()

@@ -54,9 +54,10 @@ private class FixedLengthBooleanQueue(private val maxLength: Int) {
     }
 
     fun countTrueEntries(): Int {
-        return array.sumBy { entry ->
+        val lambda = { entry: Boolean ->
             if (entry) 1 else 0
         }
+        return array.sumOf(lambda)
     }
 
     fun getCurrentLength() = entries
