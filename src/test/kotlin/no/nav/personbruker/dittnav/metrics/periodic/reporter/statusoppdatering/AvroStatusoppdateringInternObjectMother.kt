@@ -6,7 +6,6 @@ import java.time.Instant
 
 object AvroStatusoppdateringInternObjectMother {
 
-    private val defaultGrupperingsId = "123"
     private val defaultLink = "https://nav.no/systemX/"
     private val defaultStatusGlobal = "statusGlobal"
     private val defaultStatusIntern = "statusIntern"
@@ -14,9 +13,7 @@ object AvroStatusoppdateringInternObjectMother {
 
     fun createStatusoppdateringIntern(): StatusoppdateringIntern {
         return StatusoppdateringIntern(
-            createULID(),
             Instant.now().toEpochMilli(),
-            defaultGrupperingsId,
             defaultLink,
             4,
             defaultStatusGlobal,

@@ -17,7 +17,6 @@ tasks.withType<KotlinCompile> {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     maven("https://packages.confluent.io/maven")
     mavenLocal()
@@ -58,10 +57,7 @@ dependencies {
     testImplementation(H2Database.h2)
     testImplementation(Junit.api)
     testImplementation(Junit.engine)
-    testImplementation(Kafka.Apache.kafka_2_12)
-    testImplementation(Kafka.Apache.streams)
     testImplementation(Kluent.kluent)
-    testImplementation(Kafka.Confluent.schemaRegistry)
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
     testImplementation("io.kotest:kotest-runner-junit5:4.3.1")
