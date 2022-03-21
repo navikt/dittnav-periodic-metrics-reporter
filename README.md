@@ -1,3 +1,6 @@
+# Arkivert
+Erstattet av internal-periodic-metrics-reporter
+
 # DittNAV periodic metrics reporter
 
 Denne appen samler periodisk inn metrikker for DittNAV sine apper, og tilgjengeliggjør disse via Influx og Prometheus.
